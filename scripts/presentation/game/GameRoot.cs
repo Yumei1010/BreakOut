@@ -107,6 +107,7 @@ public partial class GameRoot : Node2D
         if (Paddle != null && Ball != null)
         {
             Ball.OnSceneReady(Paddle);
+            Ball.PlayAppear(); // 开局出现动画
         }
     }
 

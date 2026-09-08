@@ -26,9 +26,11 @@ public partial class BallView : CharacterBody2D
     private GameRoot _root = null!;
     private PaddleView _paddle = null!;
     private Sprite2D _sprite = null!;
+    private AnimationPlayer _anim = null!;
     private GpuParticles2D _speedParticles = null!;
     private GpuParticles2D _appearParticles = null!;
     private Line2D _velocityLine = null!;
+    private bool _lastCollisionFacing;
     private bool _attached;
     private float _boostFactor = BumpJudge.NoBoost;
     private int _framesSincePaddleCollision;
@@ -81,6 +83,7 @@ public partial class BallView : CharacterBody2D
     private void ResolveVisualNodes()
     {
         _sprite = GetNodeOrNull<Sprite2D>("Sprite2D");
+        _anim = GetNodeOrNull<AnimationPlayer>("AnimationPlayer");
         _speedParticles = GetNodeOrNull<GpuParticles2D>("SpeedParticles");
         _appearParticles = GetNodeOrNull<GpuParticles2D>("AppearParticles");
         _velocityLine = GetNodeOrNull<Line2D>("VelocityLine");
@@ -95,21 +98,51 @@ public partial class BallView : CharacterBody2D
             return;
         }
 
-        // 速度反馈：随速度拉伸/变色/旋转
-        var speed = Velocity.Length();
-        var t = Mathf.Clamp((speed - BallMotion.Speed) / (BallMotion.MaxSpeed - BallMotion.Speed), 0f, 1f);
-        _sprite.Scale = new Vector2(0.375f + t * 0.12f, 0.375f - t * 0.06f);
-        _sprite.Rotation = Velocity.Angle();
-        _sprite.SelfModulate = new Color(1f, 1f - t * 0.5f, 1f - t * 0.7f);
+        ScaleByVelocity();
+        ColorByVelocity();
+    }
 
-        if (_velocityLine != null)
+    /// <summary>
+    ///     随速度拉伸/朝向（原版 scale_based_on_velocity：动画播放时不覆盖）。
+    /// </summary>
+    private void ScaleByVelocity()
+    {
+        if (_anim != null && _anim.IsPlaying())
         {
-            _velocityLine.Visible = speed > BallMotion.Speed * 1.2f;
+            return; // bounce/appear 动画期间保持动画姿态
+        }
+
+        var speedRatio = Mathf.Clamp(Velocity.Length() / BallMotion.MaxSpeed, 0f, 1f);
+        // 基准 0.375 缩放到 max 时 1.4×0.375 / 0.5×0.375
+        _sprite.Scale = new Vector2(
+            Mathf.Lerp(0.375f, 0.375f * 1.4f, speedRatio),
+            Mathf.Lerp(0.375f, 0.375f * 0.5f, speedRatio));
+        _sprite.Rotation = Velocity.Angle();
+    }
+
+    /// <summary>
+    ///     随速度变色（原版 color_based_on_velocity：球/拖尾/速度粒子同步）。
+    /// </summary>
+    private void ColorByVelocity()
+    {
+        // val = remap(speed, Speed→MaxSpeed, 0→1) 钳制
+        var val = Mathf.Clamp(
+            (Velocity.Length() - BallMotion.Speed) / (BallMotion.MaxSpeed - BallMotion.Speed),
+            0f, 1f);
+        // 高速时变红（原版 max_speed_color = (1, 0, 0.2, 1)）
+        var tint = Colors.White.Lerp(new Color(1f, 0f, 0.2f), val);
+        _sprite.SelfModulate = tint;
+
+        var trail = GetNodeOrNull<Line2D>("Trail2D");
+        if (trail != null)
+        {
+            trail.DefaultColor = tint;
         }
 
         if (_speedParticles != null)
         {
-            _speedParticles.Emitting = speed > BallMotion.Speed + 100f;
+            _speedParticles.SelfModulate = tint;
+            _speedParticles.Emitting = Velocity.Length() > BallMotion.Speed + 100f;
         }
     }
 
@@ -170,6 +203,7 @@ public partial class BallView : CharacterBody2D
         _root.Shake.Shake(0.3f, 20f, 15f);
 
         var normal = collision.GetNormal();
+        PlayBounceFx(normal);
 
         if (normal.Dot(Vector2.Up) > 0f)
         {
@@ -200,6 +234,8 @@ public partial class BallView : CharacterBody2D
     /// </summary>
     private void HandleBrickCollision(BrickView brick, Vector2 normal, Vector2 velocityBeforeCollision)
     {
+        PlayBounceFx(normal);
+
         if (brick.IsEnergyOrExplosive)
         {
             Velocity = velocityBeforeCollision;
@@ -215,6 +251,21 @@ public partial class BallView : CharacterBody2D
 
         brick.OnBallHit();
         Velocity = ToGodot(BallMotion.ClampToMax(ToVec(Velocity)));
+    }
+
+    /// <summary>
+    ///     碰撞表现：sprite 朝向法线 + 播放 bounce 动画（原版行为）。
+    /// </summary>
+    /// <param name="normal">碰撞法线。</param>
+    private void PlayBounceFx(Vector2 normal)
+    {
+        if (!_visualReady)
+        {
+            return;
+        }
+
+        _sprite.Rotation = -normal.Angle();
+        _anim?.Play("bounce");
     }
 
     /// <summary>
@@ -272,9 +323,21 @@ public partial class BallView : CharacterBody2D
     /// <summary>
     ///     出现粒子表现（发球/重生时）。
     /// </summary>
-    public void PlayAppear()
+    /// <summary>
+    ///     出现动画序列：RESET → appear（原版 await 编排），并触发出现粒子。
+    /// </summary>
+    public async void PlayAppear()
     {
         _appearParticles?.Restart();
+
+        if (_anim == null)
+        {
+            return;
+        }
+
+        _anim.Play("RESET");
+        await ToSignal(_anim, AnimationPlayer.SignalName.AnimationFinished);
+        _anim.Play("appear");
     }
 
     private static Vec2 ToVec(Vector2 v) => new(v.X, v.Y);
