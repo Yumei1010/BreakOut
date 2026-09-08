@@ -138,6 +138,9 @@ public partial class GameRoot : Node2D
         var hud = new HudView { Name = "Hud" };
         hudLayer.AddChild(hud);
 
+        var feedback = new FeedbackLayer { Name = "Feedback" };
+        hudLayer.AddChild(feedback);
+
         var overlay = new ResultOverlay { Name = "ResultOverlay" };
         hudLayer.AddChild(overlay);
         AddChild(hudLayer);
@@ -226,7 +229,11 @@ public partial class GameRoot : Node2D
     public void OnBrickHit(BrickType visualType)
     {
         Run.OnBrickHit();
-        this.SendEvent(ChannelConstants.Gameplay, new EnergyChangedEvent(Run.Energy, Run.Energy >= RunState.MaxEnergy));
+        Score.OnBrickTouched();
+        this.SendEvent(ChannelConstants.Gameplay,
+            new ScoreChangedEvent(Score.Score, Score.Combo));
+        this.SendEvent(ChannelConstants.Gameplay,
+            new EnergyChangedEvent(Run.Energy, Run.Energy >= RunState.MaxEnergy));
     }
 
     /// <summary>

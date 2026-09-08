@@ -162,7 +162,6 @@ public partial class BallView : CharacterBody2D
         else
         {
             Velocity = Velocity.Bounce(normal);
-            _root.Score.OnBrickTouched();
             _root.Sfx.PlayBrickHit();
             _root.Shake.Shake(0.25f, 20f, 15f);
         }
