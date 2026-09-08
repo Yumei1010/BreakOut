@@ -2,6 +2,7 @@ using Godot;
 using GFramework.Core.SourceGenerators.Abstractions.Logging;
 using GFramework.Core.SourceGenerators.Abstractions.Rule;
 using BreakOut.scripts.domain.brick;
+using BreakOut.scripts.presentation.assets;
 using BreakOut.scripts.presentation.game;
 
 namespace BreakOut.scripts.presentation.brick;
@@ -16,11 +17,10 @@ namespace BreakOut.scripts.presentation.brick;
 [ContextAware]
 public partial class BrickView : StaticBody2D
 {
-    private static readonly Vector2 SmallSize = new(96, 32);
-    private static readonly Vector2 LongSize = new(192, 32);
-
     private GameRoot _root = null!;
-    private ColorRect _body = null!;
+    private Sprite2D _bgSprite = null!;
+    private Sprite2D _iconSprite = null!;
+    private CollisionShape2D _shape = null!;
     private bool _hitHandled;
 
     /// <summary>
@@ -89,15 +89,39 @@ public partial class BrickView : StaticBody2D
     /// </summary>
     public void RefreshVisual()
     {
-        if (_body == null)
+        if (_bgSprite == null)
         {
             return;
         }
 
-        var size = Data.Size == BrickSize.Long ? LongSize : SmallSize;
-        _body.Size = size;
-        _body.Color = ColorFor(Data.VisualType, Data.Type);
-        UpdateShape(size);
+        // 背景：普通砖 Full 底 / 特效砖 Border 底（尺寸由资产决定，仅定缩放）
+        var isEffect = BrickSpecs.IsEnergy(Data.Type) || BrickSpecs.IsExplosive(Data.Type);
+        var isLong = Data.Size == BrickSize.Long;
+        var bgScale = isLong ? new Vector2(1.0f, 1.0f) : new Vector2(0.55f, 1.0f);
+        _bgSprite.Texture = isEffect
+            ? (isLong ? GameTextures.BrickLongBorder : GameTextures.BrickSmallBorder)
+            : (isLong ? GameTextures.BrickLongFull : GameTextures.BrickSmallFull);
+        _bgSprite.Scale = bgScale;
+
+        // 前景：按当前血量对应的视觉类型选图标
+        _iconSprite.Texture = Data.Type switch
+        {
+            BrickType.Explosive => GameTextures.BrickBomb,
+            BrickType.Energy => GameTextures.BrickEnergy,
+            _ => Data.VisualType switch
+            {
+                BrickType.Three => GameTextures.BrickThree,
+                BrickType.Two => GameTextures.BrickTwo,
+                _ => GameTextures.BrickOne
+            }
+        };
+        _iconSprite.Scale = bgScale;
+
+        // 碰撞尺寸：长砖 192×64 / 短砖 96×64
+        if (_shape.Shape is RectangleShape2D rect)
+        {
+            rect.Size = isLong ? new Vector2(192, 64) : new Vector2(96, 64);
+        }
     }
 
     /// <summary>
@@ -108,46 +132,27 @@ public partial class BrickView : StaticBody2D
         // 占位：后续 tween 弹性动画
     }
 
-    private void UpdateShape(Vector2 size)
-    {
-        foreach (var child in GetChildren())
-        {
-            if (child is CollisionShape2D shape && shape.Shape is RectangleShape2D rect)
-            {
-                rect.Size = size;
-            }
-        }
-    }
-
     /// <summary>
-    ///     构建视觉节点。
+    ///     构建视觉节点（双层 Sprite：背景 + 图标）。
     /// </summary>
     private void BuildVisual()
     {
-        _body = new ColorRect { Name = "Body" };
-        AddChild(_body);
+        _bgSprite = new Sprite2D { Name = "Bg" };
+        AddChild(_bgSprite);
 
-        var shape = new CollisionShape2D
+        _iconSprite = new Sprite2D { Name = "Icon" };
+        _iconSprite.ZIndex = 1;
+        AddChild(_iconSprite);
+
+        _shape = new CollisionShape2D
         {
-            Shape = new RectangleShape2D { Size = SmallSize }
+            Shape = new RectangleShape2D { Size = new Vector2(192, 64) }
         };
-        AddChild(shape);
+        AddChild(_shape);
 
         AddToGroup("Bricks");
-    }
 
-    private static Color ColorFor(BrickType visual, BrickType raw)
-    {
-        return raw switch
-        {
-            BrickType.Explosive => new Color(1.0f, 0.3f, 0.2f),
-            BrickType.Energy => new Color(0.3f, 1.0f, 0.5f),
-            _ => visual switch
-            {
-                BrickType.Three => new Color(0.95f, 0.6f, 0.1f),
-                BrickType.Two => new Color(0.3f, 0.7f, 1.0f),
-                _ => new Color(0.8f, 0.8f, 0.9f)
-            }
-        };
+        // 尺寸在 Setup 后随数据刷新
+        RefreshVisual();
     }
 }

@@ -4,6 +4,7 @@ using GFramework.Core.SourceGenerators.Abstractions.Rule;
 using BreakOut.scripts.domain.ability;
 using BreakOut.scripts.domain.run;
 using BreakOut.scripts.presentation.game;
+using BreakOut.scripts.presentation.assets;
 using BreakOut.scripts.presentation.ball;
 
 namespace BreakOut.scripts.presentation.paddle;
@@ -121,12 +122,12 @@ public partial class PaddleView : CharacterBody2D
     /// </summary>
     private void BuildVisual()
     {
-        var color = new ColorRect
+        var sprite = new Sprite2D
         {
-            Size = new Vector2(192, 24),
-            Color = new Color(0.9f, 0.9f, 1.0f)
+            Texture = GameTextures.Paddle,
+            Scale = new Vector2(0.5f, 0.5f)
         };
-        AddChild(color);
+        AddChild(sprite);
 
         var shape = new CollisionShape2D
         {

@@ -14,6 +14,7 @@ using BreakOut.scripts.domain.common;
 using BreakOut.scripts.domain.level;
 using BreakOut.scripts.domain.run;
 using BreakOut.scripts.domain.scoring;
+using BreakOut.scripts.presentation.assets;
 using BreakOut.scripts.presentation.ball;
 using BreakOut.scripts.presentation.brick;
 using BreakOut.scripts.presentation.paddle;
@@ -99,6 +100,14 @@ public partial class GameRoot : Node2D
     /// </summary>
     private void BuildScene()
     {
+        var background = new Sprite2D
+        {
+            Texture = GameTextures.Background,
+            Centered = false,
+            Scale = new Vector2(2f, 2f)
+        };
+        AddChild(background);
+
         Paddle = new PaddleView { Position = new Vector2(960, 990) };
         Ball = new BallView { Position = new Vector2(960, 900) };
         AddChild(Paddle);
@@ -107,6 +116,9 @@ public partial class GameRoot : Node2D
         var hudLayer = new CanvasLayer { Name = "HudLayer" };
         var hud = new HudView { Name = "Hud" };
         hudLayer.AddChild(hud);
+
+        var overlay = new ResultOverlay { Name = "ResultOverlay" };
+        hudLayer.AddChild(overlay);
         AddChild(hudLayer);
     }
 

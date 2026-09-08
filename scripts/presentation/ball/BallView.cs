@@ -4,6 +4,7 @@ using GFramework.Core.SourceGenerators.Abstractions.Rule;
 using BreakOut.scripts.domain.ball;
 using BreakOut.scripts.domain.bump;
 using BreakOut.scripts.domain.common;
+using BreakOut.scripts.presentation.assets;
 using BreakOut.scripts.presentation.brick;
 using BreakOut.scripts.presentation.game;
 using BreakOut.scripts.presentation.paddle;
@@ -217,10 +218,17 @@ public partial class BallView : CharacterBody2D
     }
 
     /// <summary>
-    ///     构建视觉与碰撞（占位圆形，后续替换球 Sprite/粒子）。
+    ///     构建视觉与碰撞（球纹理 + 圆形碰撞）。
     /// </summary>
     private void BuildVisual()
     {
+        var sprite = new Sprite2D
+        {
+            Texture = GameTextures.Ball,
+            Scale = new Vector2(0.35f, 0.35f)
+        };
+        AddChild(sprite);
+
         var shape = new CollisionShape2D
         {
             Shape = new CircleShape2D { Radius = Radius }
@@ -232,8 +240,6 @@ public partial class BallView : CharacterBody2D
     /// <inheritdoc />
     public override void _Draw()
     {
-        DrawCircle(Vector2.Zero, Radius, Colors.White);
-        DrawCircle(Vector2.Zero, Radius - 4f, Colors.LightSkyBlue);
     }
 
     /// <summary>
