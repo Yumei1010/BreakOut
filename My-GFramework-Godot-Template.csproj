@@ -1,4 +1,4 @@
-<Project Sdk="Godot.NET.Sdk/4.7.2">
+﻿<Project Sdk="Godot.NET.Sdk/4.7.2">
     <PropertyGroup>
         <TargetFramework>net10.0</TargetFramework>
         <TargetFramework Condition=" '$(GodotTargetPlatform)' == 'android' ">net9.0</TargetFramework>
@@ -44,6 +44,9 @@
         <Content Include=".github\workflows\release.yml" />
         <Content Include="addons.jsonc" />
         <Content Include="global\README.md" />
+    </ItemGroup>
+    <ItemGroup>
+        <InternalsVisibleTo Include="My-GFramework-Godot-Template.Tests" />
     </ItemGroup>
     <ItemGroup>
         <Folder Include="scripts\component\" />

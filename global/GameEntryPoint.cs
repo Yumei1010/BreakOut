@@ -17,6 +17,7 @@ using GFrameworkTemplate.scripts.core;
 using GFrameworkTemplate.scripts.core.environment;
 using GFrameworkTemplate.scripts.core.resource;
 using GFrameworkTemplate.scripts.core.state.impls;
+using GFrameworkTemplate.scripts.framework.logging;
 using GFrameworkTemplate.scripts.enums.scene;
 using GFrameworkTemplate.scripts.utility.registry;
 using GFrameworkTemplate.scripts.cqrs.setting.command;
@@ -48,18 +49,31 @@ public partial class GameEntryPoint : Node
     public static IArchitecture Architecture { get; private set; } = null!;
     public static SceneTree Tree { get; private set; } = null!;
 
+    /// <summary>
+    ///     获取本次会话的日志文件信息，供日志导出与排查入口使用。
+    /// </summary>
+    public static SessionLogFileInfo? SessionLogFile { get; private set; }
+
+    private static SessionFileLoggerFactoryProvider _logProvider = null!;
+
     public override void _Ready()
     {
         Tree = GetTree();
+
+        // 初始化会话日志文件（先于架构创建，供 LoggerProperties 引用）
+        var logDirectory = ProjectSettings.GlobalizePath("user://logs/");
+        SessionLogFile = SessionLogFileHelper.CreateNow(logDirectory);
+        _logProvider = new SessionFileLoggerFactoryProvider(SessionLogFile.FullPath)
+        {
+            MinLevel = LogLevel.Debug
+        };
+        LogOpenHelper.PrintSessionLogPath(SessionLogFile.FullPath);
 
         var arch = new GameArchitecture(new ArchitectureConfiguration
         {
             LoggerProperties = new LoggerProperties
             {
-                LoggerFactoryProvider = new GodotLoggerFactoryProvider
-                {
-                    MinLevel = LogLevel.Debug
-                }
+                LoggerFactoryProvider = _logProvider
             }
         }, IsDev ? new GameDevEnvironment() : new GameMainEnvironment())
         .UseArch(); // 接入 Arch ECS（World 注册进容器，可选：UseArch(options => options.WorldCapacity = 2048)）
@@ -113,8 +127,41 @@ public partial class GameEntryPoint : Node
             StringComparison.Ordinal);
     }
 
+    /// <summary>
+    ///     打开本次会话日志文件所在目录（供开发调试入口调用）。
+    /// </summary>
+    public static void OpenSessionLogDirectory()
+    {
+        if (SessionLogFile == null)
+        {
+            GD.PrintErr("[Log] 会话日志尚未初始化。");
+            return;
+        }
+
+        LogOpenHelper.OpenLogDirectory(SessionLogFile.DirectoryPath);
+    }
+
+    /// <summary>
+    ///     开发模式下按 F12 打开本次会话日志目录。
+    /// </summary>
+    /// <param name="event">未处理的输入事件。</param>
+    public override void _UnhandledInput(InputEvent @event)
+    {
+        if (!IsDev)
+        {
+            return;
+        }
+
+        if (@event is InputEventKey { Pressed: true, Keycode: Key.F12 })
+        {
+            OpenSessionLogDirectory();
+            GetViewport().SetInputAsHandled();
+        }
+    }
+
     public override void _ExitTree()
     {
+        _logProvider?.Flush();
         _ = this.SendCommandAsync(new SaveSettingsCommand());
     }
 }
