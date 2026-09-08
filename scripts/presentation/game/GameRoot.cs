@@ -90,6 +90,7 @@ public partial class GameRoot : Node2D
         GenerateLevel();
         PublishInitialState();
         _log.Info($"BreakOut 玩法就绪：{BrickField.AliveCount} 块砖");
+
     }
 
     /// <summary>
@@ -113,7 +114,7 @@ public partial class GameRoot : Node2D
         {
             Ball.OnSceneReady(Paddle);
             Ball.PlayAppear(); // 开局出现动画
-            _log.Info($"初始位置 Paddle={Paddle.Position} Ball={Ball.Position} 相机={_camera?.Position}");
+
         }
     }
 
@@ -158,6 +159,7 @@ public partial class GameRoot : Node2D
 
         if (Ball.GlobalPosition.Y > GetViewportRect().Size.Y + 60f)
         {
+            _log.Warn($"球出界 Y={Ball.GlobalPosition.Y}");
             OnBallLost();
         }
     }

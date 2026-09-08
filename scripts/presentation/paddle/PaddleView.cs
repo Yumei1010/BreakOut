@@ -245,7 +245,15 @@ public partial class PaddleView : CharacterBody2D
             return;
         }
 
-        MoveAndSlide();
+        // 仅在有速度时才做物理移动（避免 MoveAndSlide 将板从墙碰撞体内推出）
+        if (Velocity.LengthSquared() > 0.001f)
+        {
+            MoveAndSlide();
+        }
+        else
+        {
+            Velocity = Vector2.Zero;
+        }
     }
 
     /// <summary>

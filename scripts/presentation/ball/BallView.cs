@@ -164,8 +164,6 @@ public partial class BallView : CharacterBody2D
 
         _framesSincePaddleCollision += 1;
 
-        Velocity = ToGodot(BallMotion.DecayToward(ToVec(Velocity), BallMotion.Speed, (float)delta));
-
         if (_attached)
         {
             GlobalPosition = _paddle.LaunchPoint.GlobalPosition;
