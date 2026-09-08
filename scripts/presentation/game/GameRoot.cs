@@ -15,6 +15,7 @@ using BreakOut.scripts.domain.level;
 using BreakOut.scripts.domain.run;
 using BreakOut.scripts.domain.scoring;
 using BreakOut.scripts.presentation.assets;
+using BreakOut.scripts.presentation.effect;
 using BreakOut.scripts.presentation.ball;
 using BreakOut.scripts.presentation.brick;
 using BreakOut.scripts.presentation.paddle;
@@ -57,6 +58,16 @@ public partial class GameRoot : Node2D
     ///     获取砖墙（domain）。
     /// </summary>
     public BrickField BrickField { get; } = new(ExplosionRadius);
+
+    /// <summary>
+    ///     获取音效管理器。
+    /// </summary>
+    public SfxManager Sfx { get; private set; } = null!;
+
+    /// <summary>
+    ///     获取相机抖动控制器。
+    /// </summary>
+    public CameraShake Shake { get; private set; } = null!;
 
     /// <summary>
     ///     获取板视图。
@@ -107,6 +118,16 @@ public partial class GameRoot : Node2D
             Scale = new Vector2(2f, 2f)
         };
         AddChild(background);
+
+        // 相机 + 抖动
+        var camera = new Camera2D { Position = new Vector2(960, 540) };
+        AddChild(camera);
+        Shake = new CameraShake { Name = "Shake" };
+        camera.AddChild(Shake);
+
+        // 音效
+        Sfx = new SfxManager { Name = "Sfx" };
+        AddChild(Sfx);
 
         Paddle = new PaddleView { Position = new Vector2(960, 990) };
         Ball = new BallView { Position = new Vector2(960, 900) };
@@ -183,6 +204,8 @@ public partial class GameRoot : Node2D
 
         Ball.Die();
         var dead = Run.OnBallLost();
+        Sfx.PlayBallDestroyed();
+        Shake.Shake(0.45f, 30f, 25f);
         this.SendEvent(ChannelConstants.Gameplay, new BallLostEvent(Run.Health, dead));
         _log.Debug($"球落底，剩余生命 {Run.Health}");
 
@@ -217,6 +240,13 @@ public partial class GameRoot : Node2D
             _log.Debug($"砖摧毁 {result.Brick.Type}（{result.Reason}）");
         }
 
+        // 表现：任何摧毁播爆炸声；若含爆炸砖源则强化
+        Sfx.PlayBrickDestroyed();
+        if (results.Any(r => BrickSpecs.IsExplosive(r.Brick.Type)))
+        {
+            Sfx.PlayExplosion();
+        }
+
         view.QueueFree();
         _brickViews.Remove(view);
 
@@ -237,6 +267,12 @@ public partial class GameRoot : Node2D
     /// </summary>
     public void OnBumpJudged(BumpGrade grade)
     {
+        Sfx.PlaySoftHit();
+        if (grade == BumpGrade.Perfect)
+        {
+            Sfx.PlayStrongHit();
+        }
+
         this.SendEvent(ChannelConstants.Gameplay, new BumpJudgedEvent(grade));
     }
 

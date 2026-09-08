@@ -114,6 +114,8 @@ public partial class BallView : CharacterBody2D
     {
         _framesSincePaddleCollision = 0;
         paddle.PlayBounce();
+        _root.Sfx.PlayPaddleBounce();
+        _root.Shake.Shake(0.3f, 20f, 15f);
 
         var normal = collision.GetNormal();
 
@@ -152,13 +154,17 @@ public partial class BallView : CharacterBody2D
     {
         if (brick.IsEnergyOrExplosive)
         {
-            // 能量/爆炸砖：不反弹直接穿过（保留原版手感）
+            // 能量/爆炸砖：不反弹直接穿过（保留原版手感），强反馈
             Velocity = velocityBeforeCollision;
+            _root.Sfx.PlayStrongHit();
+            _root.Shake.Shake(1.0f, 25f, 20f);
         }
         else
         {
             Velocity = Velocity.Bounce(normal);
             _root.Score.OnBrickTouched();
+            _root.Sfx.PlayBrickHit();
+            _root.Shake.Shake(0.25f, 20f, 15f);
         }
 
         brick.OnBallHit();
