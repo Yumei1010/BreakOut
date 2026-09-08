@@ -64,8 +64,6 @@ folder_colors={
 
 [gui]
 
-theme/custom="uid://drg0lvsgoqfsc"
-
 [input]
 
 ui_accept={
