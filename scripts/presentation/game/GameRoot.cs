@@ -37,7 +37,7 @@ public partial class GameRoot : Node2D
 {
     private static readonly string[] PreloadScenePaths =
     [
-        "res://scenes/brick/brick_layout.tscn",
+        "res://scenes/brick/brick.tscn",
         "res://scenes/ui/game_over/game_over.tscn",
         "res://scenes/ui/stage_clear/stage_clear.tscn",
         "res://scenes/ui/ultimate/ultimate_ready.tscn",
@@ -216,7 +216,7 @@ public partial class GameRoot : Node2D
         var generator = new LevelGenerator();
         var spawns = generator.Generate(anchors, LevelConfig.Default);
 
-        var brickScene = GetScene("res://scenes/brick/brick_layout.tscn");
+        var brickScene = GetScene("res://scenes/brick/brick.tscn");
         var bricksRoot = GetNodeOrNull<Node2D>("Bricks") ?? this;
 
         foreach (var spawn in spawns)

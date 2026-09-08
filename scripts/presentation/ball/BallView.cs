@@ -11,10 +11,10 @@ using BreakOut.scripts.presentation.paddle;
 namespace BreakOut.scripts.presentation.ball;
 
 /// <summary>
-///     球视图（薄壳）：加载 ball_layout 场景骨架，把碰撞结果转发给 domain 规则后回写速度与表现。
+///     球视图（薄壳）：加载 ball 场景骨架，把碰撞结果转发给 domain 规则后回写速度与表现。
 /// </summary>
 /// <remarks>
-///     挂载于 scenes/ball/ball_layout.tscn 根（CharacterBody2D），子节点（Sprite/粒子/拖尾/动画/音效）由布局场景提供。
+///     挂载于 scenes/ball/ball.tscn 根（CharacterBody2D），子节点（Sprite/粒子/拖尾/动画/音效）由布局场景提供。
 ///     碰撞分派：碰板 → 顶部/侧面 × 移动/静止细分调 domain BallMotion；碰砖 → BrickField 判定。
 /// </remarks>
 [Log]

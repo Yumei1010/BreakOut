@@ -8,10 +8,10 @@ using BreakOut.scripts.presentation.game;
 namespace BreakOut.scripts.presentation.brick;
 
 /// <summary>
-///     砖视图（薄壳）：加载 brick_layout 场景骨架，绑定 domain Brick 并转发受击。
+///     砖视图（薄壳）：加载 brick 场景骨架，绑定 domain Brick 并转发受击。
 /// </summary>
 /// <remarks>
-///     挂载于 scenes/brick/brick_layout.tscn 根（StaticBody2D）。Size/Type 双层 Sprite 由布局提供，
+///     挂载于 scenes/brick/brick.tscn 根（StaticBody2D）。Size/Type 双层 Sprite 由布局提供，
 ///     Setup 时按 domain 砖数据切换纹理与碰撞形状；摧毁通知 GameRoot 结算。
 /// </remarks>
 [Log]

@@ -9,7 +9,7 @@ using BreakOut.scripts.presentation.game;
 namespace BreakOut.scripts.presentation.paddle;
 
 /// <summary>
-///     板视图（薄壳）：加载 paddle_layout 场景骨架，输入/动效转发，规则判定走 domain。
+///     板视图（薄壳）：加载 paddle 场景骨架，输入/动效转发，规则判定走 domain。
 /// </summary>
 /// <remarks>
 ///     表现层还原原版 paddle.gd 手感：
