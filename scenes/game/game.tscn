@@ -117,18 +117,6 @@ offset_bottom = 2463.0
 rotation = -0.785398
 pivot_offset = Vector2(1801, 1801)
 
-[node name="Combo" type="Label" parent="."]
-modulate = Color(0.462745, 0.462745, 0.462745, 0.180392)
-material = SubResource("ShaderMaterial_ua5mp")
-offset_left = 310.0
-offset_top = 402.0
-offset_right = 1629.0
-offset_bottom = 737.0
-pivot_offset = Vector2(659, 167)
-theme_override_fonts/font = ExtResource("4_lbq23")
-theme_override_font_sizes/font_size = 400
-text = "COMBO 4"
-
 [node name="DeathArea" type="Area2D" parent="."]
 position = Vector2(960, 1101)
 

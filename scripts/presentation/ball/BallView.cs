@@ -189,7 +189,26 @@ public partial class BallView : CharacterBody2D
             case BrickView brick:
                 HandleBrickCollision(brick, collision.GetNormal(), velocityBeforeCollision);
                 break;
+            default:
+                // 墙/其他（原版 HIT OTHER）：软碰撞反馈 + 标准反射
+                HandleWallCollision(collision);
+                break;
         }
+    }
+
+    /// <summary>
+    ///     处理墙等普通碰撞（原版 HIT OTHER：软震 + 粒子 + 标准 bounce）。
+    /// </summary>
+    private void HandleWallCollision(KinematicCollision2D collision)
+    {
+        var normal = collision.GetNormal();
+        Velocity = Velocity.Bounce(normal);
+        _root.Sfx.PlaySoftHit();
+        _root.Shake.Shake(0.15f, 20f, 5f);
+        _root.PatternBounce(0.1f);
+        _root.SpawnParticle("res://scenes/ball/bounce_particles.tscn",
+            collision.GetPosition(), Mathf.RadToDeg(normal.Angle()));
+        PlayBounceFx(normal);
     }
 
     /// <summary>
