@@ -31,6 +31,14 @@ public partial class BrickView : StaticBody2D
         }
 
         ResolveVisualNodes();
+
+        // 预置砖（无规则数据）：禁用碰撞形状，避免球撞到未初始化砖
+        if (Data == null)
+        {
+            _shapeLong?.SetDeferred(CollisionShape2D.PropertyName.Disabled, true);
+            _shapeSmall?.SetDeferred(CollisionShape2D.PropertyName.Disabled, true);
+            SetPhysicsProcess(false);
+        }
     }
 
     /// <summary>
@@ -44,7 +52,7 @@ public partial class BrickView : StaticBody2D
     /// <param name="damage">伤害值。</param>
     public void OnBallHit(int damage)
     {
-        if (_hitHandled)
+        if (_hitHandled || Data == null)
         {
             return;
         }

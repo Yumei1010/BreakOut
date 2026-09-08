@@ -230,46 +230,6 @@ position = Vector2(1259, 493)
 position = Vector2(1459, 493)
 
 [node name="Bricks" type="Node" parent="." unique_id=1928774448]
-
-[node name="Brick" parent="Bricks" unique_id=782012238 instance=ExtResource("4")]
-visible = false
-position = Vector2(161, 128)
-
-[node name="Brick2" parent="Bricks" unique_id=1029613610 instance=ExtResource("4")]
-visible = false
-position = Vector2(361, 128)
-
-[node name="Brick3" parent="Bricks" unique_id=543673677 instance=ExtResource("4")]
-visible = false
-position = Vector2(561, 128)
-
-[node name="Brick4" parent="Bricks" unique_id=1127936330 instance=ExtResource("4")]
-visible = false
-position = Vector2(761, 128)
-
-[node name="Brick5" parent="Bricks" unique_id=830639172 instance=ExtResource("4")]
-visible = false
-position = Vector2(961, 128)
-
-[node name="Brick6" parent="Bricks" unique_id=326204135 instance=ExtResource("4")]
-visible = false
-position = Vector2(1161, 128)
-
-[node name="Brick7" parent="Bricks" unique_id=685992252 instance=ExtResource("4")]
-visible = false
-position = Vector2(1361, 128)
-
-[node name="Brick8" parent="Bricks" unique_id=799051290 instance=ExtResource("4")]
-visible = false
-position = Vector2(1561, 128)
-
-[node name="Brick9" parent="Bricks" unique_id=1902778263 instance=ExtResource("4")]
-visible = false
-position = Vector2(1761, 128)
-
-[node name="Paddle" parent="." unique_id=1052820655 instance=ExtResource("1")]
-position = Vector2(960, 990)
-
 [node name="Camera2D" type="Camera2D" parent="." unique_id=381149863]
 position = Vector2(960, 540)
 

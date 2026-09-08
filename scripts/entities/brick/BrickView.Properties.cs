@@ -18,7 +18,7 @@ public partial class BrickView
     ///     获取砖是否属于能量/爆炸类型（球不反弹而穿过）。
     /// </summary>
     public bool IsEnergyOrExplosive =>
-        BrickSpecs.IsEnergy(Data.Type) || BrickSpecs.IsExplosive(Data.Type);
+        Data != null && (BrickSpecs.IsEnergy(Data.Type) || BrickSpecs.IsExplosive(Data.Type));
 
     private Sprite2D _sizeSprite = null!;
     private Sprite2D _typeSprite = null!;
