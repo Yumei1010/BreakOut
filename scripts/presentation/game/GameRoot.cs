@@ -3,6 +3,11 @@ using System.Linq;
 using Godot;
 using GFramework.Core.SourceGenerators.Abstractions.Logging;
 using GFramework.Core.SourceGenerators.Abstractions.Rule;
+using BreakOut.scripts.constants;
+using BreakOut.scripts.cqrs.brick.@event;
+using BreakOut.scripts.cqrs.bump.@event;
+using BreakOut.scripts.cqrs.run.@event;
+using BreakOut.scripts.cqrs.scoring.@event;
 using BreakOut.scripts.domain.brick;
 using BreakOut.scripts.domain.bump;
 using BreakOut.scripts.domain.common;
@@ -12,15 +17,17 @@ using BreakOut.scripts.domain.scoring;
 using BreakOut.scripts.presentation.ball;
 using BreakOut.scripts.presentation.brick;
 using BreakOut.scripts.presentation.paddle;
+using BreakOut.scripts.presentation.ui;
+using BreakOut.scripts.utility.@event;
 
 namespace BreakOut.scripts.presentation.game;
 
 /// <summary>
-///     玩法场景根节点：组装 domain 实例、生成关卡、驱动各视图并结算事件。
+///     玩法场景根节点：组装 domain 实例、生成关卡、驱动视图，并在规则级状态变化时广播 CQRS 事件。
 /// </summary>
 /// <remarks>
 ///     单场景游戏不走 UI 页面栈，本节点常驻 main.tscn。
-///     持有 domain 单例（RunState/ScoreRule/BrickField），视图薄壳把碰撞/输入转发到这里做规则结算。
+///     事件桥：规则变化（得分/生命/能量/bump/砖毁）发事件 → HUD/特效订阅刷新，视图不做直接耦合。
 /// </remarks>
 [Log]
 [ContextAware]
@@ -34,9 +41,6 @@ public partial class GameRoot : Node2D
     private static readonly Vec2[] SpawnPositions = BuildSpawnGrid();
 
     private readonly List<BrickView> _brickViews = new();
-    private int _earlyBumps;
-    private int _lateBumps;
-    private int _perfectBumps;
 
     /// <summary>
     ///     获取本局状态（domain）。
@@ -64,12 +68,13 @@ public partial class GameRoot : Node2D
     public BallView? Ball { get; private set; }
 
     /// <summary>
-    ///     创建视图节点（场景树构建）。
+    ///     创建视图节点（场景树构建）并广播初始状态。
     /// </summary>
     public override void _Ready()
     {
         BuildScene();
         GenerateLevel();
+        PublishInitialState();
         _log.Info($"BreakOut 玩法就绪：{BrickField.AliveCount} 块砖");
     }
 
@@ -98,6 +103,11 @@ public partial class GameRoot : Node2D
         Ball = new BallView { Position = new Vector2(960, 900) };
         AddChild(Paddle);
         AddChild(Ball);
+
+        var hudLayer = new CanvasLayer { Name = "HudLayer" };
+        var hud = new HudView { Name = "Hud" };
+        hudLayer.AddChild(hud);
+        AddChild(hudLayer);
     }
 
     /// <summary>
@@ -136,12 +146,21 @@ public partial class GameRoot : Node2D
 
         foreach (var brick in BrickField.Bricks.ToArray())
         {
-            BrickField.HitBrick(brick, 999); // domain 内清场不产生连锁视觉
+            BrickField.HitBrick(brick, 999);
         }
     }
 
     /// <summary>
-    ///     球落底：扣命并处理重挂/游戏结束。
+    ///     广播初始状态（HUD 首次填充）。
+    /// </summary>
+    private void PublishInitialState()
+    {
+        this.SendEvent(ChannelConstants.Gameplay, new ScoreChangedEvent(Score.Score, Score.Combo));
+        this.SendEvent(ChannelConstants.Gameplay, new EnergyChangedEvent(Run.Energy, false));
+    }
+
+    /// <summary>
+    ///     球落底：扣命、广播事件并处理重挂/游戏结束。
     /// </summary>
     private void OnBallLost()
     {
@@ -152,6 +171,7 @@ public partial class GameRoot : Node2D
 
         Ball.Die();
         var dead = Run.OnBallLost();
+        this.SendEvent(ChannelConstants.Gameplay, new BallLostEvent(Run.Health, dead));
         _log.Debug($"球落底，剩余生命 {Run.Health}");
 
         if (dead)
@@ -160,23 +180,22 @@ public partial class GameRoot : Node2D
             return;
         }
 
-        // 还有生命：重置球回板
         Ball.Dead = false;
         Ball.CanMove = true;
         Ball.AttachToPaddle();
     }
 
     /// <summary>
-    ///     砖被球碰到（未摧毁）：连击分数已在视图层累加，这里刷新统计。
+    ///     砖被球碰到（未摧毁）：补充能量并广播。
     /// </summary>
-    /// <param name="visualType">当前砖视觉类型。</param>
     public void OnBrickHit(BrickType visualType)
     {
         Run.OnBrickHit();
+        this.SendEvent(ChannelConstants.Gameplay, new EnergyChangedEvent(Run.Energy, Run.Energy >= RunState.MaxEnergy));
     }
 
     /// <summary>
-    ///     砖被摧毁：能量砖回调已在 BrickField 处理，这里统计清场。
+    ///     砖被摧毁：计分、统计清场并广播。
     /// </summary>
     public void OnBrickDestroyed(BrickView view, IReadOnlyList<BrickDestroyedResult> results)
     {
@@ -189,8 +208,12 @@ public partial class GameRoot : Node2D
         view.QueueFree();
         _brickViews.Remove(view);
 
-        // 普通砖全清 → 过关
-        if (BrickField.AliveCount == 0)
+        var levelCleared = BrickField.AliveCount == 0;
+        this.SendEvent(ChannelConstants.Gameplay,
+            new BrickDestroyedEvent(results.Count, BrickField.AliveCount, levelCleared));
+        this.SendEvent(ChannelConstants.Gameplay, new ScoreChangedEvent(Score.Score, Score.Combo));
+
+        if (levelCleared)
         {
             Run.OnLevelCleared();
             _log.Info("关卡清除！");
@@ -198,36 +221,11 @@ public partial class GameRoot : Node2D
     }
 
     /// <summary>
-    ///     记录 bump 判定结果（结算统计）。
+    ///     记录 bump 判定结果并广播（结算统计由订阅方维护或本地汇总）。
     /// </summary>
-    /// <param name="grade">判定等级。</param>
     public void OnBumpJudged(BumpGrade grade)
     {
-        switch (grade)
-        {
-            case BumpGrade.Perfect:
-                _perfectBumps += 1;
-                break;
-            case BumpGrade.Late:
-                _lateBumps += 1;
-                break;
-            case BumpGrade.Early:
-                _earlyBumps += 1;
-                break;
-        }
-    }
-
-    /// <summary>
-    ///     计算当前对局结算结果。
-    /// </summary>
-    public StageResult BuildStageResult()
-    {
-        return new StageResult(
-            _earlyBumps,
-            _lateBumps,
-            _perfectBumps,
-            Ball?.Bounces ?? 0,
-            Score.Score);
+        this.SendEvent(ChannelConstants.Gameplay, new BumpJudgedEvent(grade));
     }
 
     /// <summary>
@@ -239,7 +237,6 @@ public partial class GameRoot : Node2D
         for (var row = 0; row < 3; row++)
         {
             var y = 237 + row * 128;
-            // 前两行 8 列，第三行中间 6 列（原版布局）
             var minCol = row == 2 ? 1 : 0;
             var maxCol = row == 2 ? 7 : 8;
             for (var col = minCol; col < maxCol; col++)
