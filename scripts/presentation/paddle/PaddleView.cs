@@ -28,6 +28,7 @@ public partial class PaddleView : CharacterBody2D
     private GameRoot _root = null!;
     private bool _dashCooldownReady = true;
     private bool _magnetCooldownReady = true;
+    private Sprite2D _sprite = null!;
 
     /// <summary>
     ///     获取发射点（球吸附位置）。
@@ -72,8 +73,9 @@ public partial class PaddleView : CharacterBody2D
             if (AbilityRule.TryDash(true) == AbilityResult.Success)
             {
                 _dashCooldownReady = false;
-                // 表现：冲刺动画（简化，先平移加速）
+                // 表现：冲刺加速 + 残影
                 Velocity = new Vector2(Mathf.Sign(dir == 0 ? 1 : dir) * 1500f, 0);
+                SpawnGhosts();
                 GetTree().CreateTimer(0.1).Timeout += () => _dashCooldownReady = true;
             }
         }
@@ -135,16 +137,40 @@ public partial class PaddleView : CharacterBody2D
     }
 
     /// <summary>
-    ///     构建板视觉（占位：渐变矩形，后续替换为 Paddle.png）。
+    ///     冲刺残影：克隆板贴图逐帧落后并淡出（原版 ghost_spawner 简化）。
+    /// </summary>
+    private void SpawnGhosts()
+    {
+        for (var i = 0; i < 3; i++)
+        {
+            var delay = i * 0.04;
+            var ghost = new Sprite2D
+            {
+                Texture = _sprite.Texture,
+                Scale = _sprite.Scale,
+                GlobalPosition = GlobalPosition,
+                Modulate = new Color(0.7f, 0.8f, 1f, 0.6f)
+            };
+            GetParent().AddChild(ghost);
+
+            var tween = CreateTween();
+            tween.TweenInterval(delay);
+            tween.TweenProperty(ghost, "modulate:a", 0f, 0.25);
+            tween.TweenCallback(Callable.From(ghost.QueueFree));
+        }
+    }
+
+    /// <summary>
+    ///     构建板视觉（Sprite 贴图 + 碰撞）。
     /// </summary>
     private void BuildVisual()
     {
-        var sprite = new Sprite2D
+        _sprite = new Sprite2D
         {
             Texture = GameTextures.Paddle,
             Scale = new Vector2(0.5f, 0.5f)
         };
-        AddChild(sprite);
+        AddChild(_sprite);
 
         var shape = new CollisionShape2D
         {

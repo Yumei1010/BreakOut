@@ -28,6 +28,7 @@ public partial class BallView : CharacterBody2D
 
     private GameRoot _root = null!;
     private PaddleView _paddle = null!;
+    private Sprite2D _sprite = null!;
     private bool _attached;
     private float _boostFactor = BumpJudge.NoBoost;
     private int _framesSincePaddleCollision;
@@ -57,6 +58,23 @@ public partial class BallView : CharacterBody2D
         _paddle = _root.Paddle!;
         BuildVisual();
         AttachToPaddle();
+    }
+
+    /// <inheritdoc />
+    public override void _Process(double delta)
+    {
+        // 速度反馈：随速度水平拉伸/变色（原版 scale/color_based_on_velocity）
+        if (_sprite == null || Dead)
+        {
+            return;
+        }
+
+        var speed = Velocity.Length();
+        var t = Mathf.Clamp((speed - BallMotion.Speed) / (BallMotion.MaxSpeed - BallMotion.Speed), 0f, 1f);
+        _sprite.Scale = new Vector2(0.35f + t * 0.15f, 0.35f - t * 0.08f);
+        var tint = new Color(1f, 1f - t * 0.5f, 1f - t * 0.7f);
+        _sprite.SelfModulate = tint;
+        _sprite.Rotation = Velocity.Angle();
     }
 
     /// <summary>
@@ -227,12 +245,12 @@ public partial class BallView : CharacterBody2D
     /// </summary>
     private void BuildVisual()
     {
-        var sprite = new Sprite2D
+        _sprite = new Sprite2D
         {
             Texture = GameTextures.Ball,
             Scale = new Vector2(0.35f, 0.35f)
         };
-        AddChild(sprite);
+        AddChild(_sprite);
 
         var shape = new CollisionShape2D
         {
