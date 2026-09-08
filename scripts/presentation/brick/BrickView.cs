@@ -8,20 +8,23 @@ using BreakOut.scripts.presentation.game;
 namespace BreakOut.scripts.presentation.brick;
 
 /// <summary>
-///     砖视图（薄壳）：Godot 静态物理体，绑定 domain Brick 并转发受击。
+///     砖视图（薄壳）：加载 brick_layout 场景骨架，绑定 domain Brick 并转发受击。
 /// </summary>
 /// <remarks>
-///     视觉状态（纹理/大小）由 domain Brick 的类型与血量决定；摧毁时通知 GameRoot 结算。
+///     挂载于 scenes/brick/brick_layout.tscn 根（StaticBody2D）。Size/Type 双层 Sprite 由布局提供，
+///     Setup 时按 domain 砖数据切换纹理与碰撞形状；摧毁通知 GameRoot 结算。
 /// </remarks>
 [Log]
 [ContextAware]
 public partial class BrickView : StaticBody2D
 {
     private GameRoot _root = null!;
-    private Sprite2D _bgSprite = null!;
-    private Sprite2D _iconSprite = null!;
-    private CollisionShape2D _shape = null!;
+    private Sprite2D _sizeSprite = null!;
+    private Sprite2D _typeSprite = null!;
+    private CollisionShape2D _shapeLong = null!;
+    private CollisionShape2D _shapeSmall = null!;
     private bool _hitHandled;
+    private bool _visualReady;
 
     /// <summary>
     ///     获取绑定的 domain 砖。
@@ -35,17 +38,26 @@ public partial class BrickView : StaticBody2D
         BrickSpecs.IsEnergy(Data.Type) || BrickSpecs.IsExplosive(Data.Type);
 
     /// <summary>
-    ///     初始化视图（由工厂在实例化后调用）。
+    ///     初始化视图。
     /// </summary>
     public override void _Ready()
     {
         _root = GetParent<GameRoot>();
         if (_root == null)
         {
-            _root = GetTree().CurrentScene.GetNodeOrNull<GameRoot>(".");
+            _root = GetTree().CurrentScene?.GetNodeOrNull<GameRoot>(".");
         }
 
-        BuildVisual();
+        ResolveVisualNodes();
+    }
+
+    private void ResolveVisualNodes()
+    {
+        _sizeSprite = GetNodeOrNull<Sprite2D>("Size");
+        _typeSprite = GetNodeOrNull<Sprite2D>("Type");
+        _shapeLong = GetNodeOrNull<CollisionShape2D>("CollisionShapeLong");
+        _shapeSmall = GetNodeOrNull<CollisionShape2D>("CollisionShapeSmall");
+        _visualReady = _sizeSprite != null && _typeSprite != null;
     }
 
     /// <summary>
@@ -75,7 +87,7 @@ public partial class BrickView : StaticBody2D
     }
 
     /// <summary>
-    ///     用 domain 数据初始化本视图（由砖墙生成器调用）。
+    ///     用 domain 数据初始化本视图（由砖墙生成器在实例化后调用）。
     /// </summary>
     /// <param name="data">domain 砖。</param>
     public void Setup(Brick data)
@@ -89,56 +101,70 @@ public partial class BrickView : StaticBody2D
     /// </summary>
     public void RefreshVisual()
     {
-        if (_bgSprite == null)
+        if (!_visualReady)
         {
             return;
         }
 
-        // 背景：普通砖 Full 底 / 特效砖 Border 底（尺寸由资产决定，仅定缩放）
-        var isEffect = BrickSpecs.IsEnergy(Data.Type) || BrickSpecs.IsExplosive(Data.Type)
-                       || Data.Type is BrickType.Metal;
+        // 尺寸：长砖启用 Long 碰撞 / 短砖启用 Small
         var isLong = Data.Size == BrickSize.Long;
-        var bgScale = isLong ? new Vector2(1.0f, 1.0f) : new Vector2(0.55f, 1.0f);
-        _bgSprite.Texture = isEffect
-            ? (isLong ? GameTextures.BrickLongBorder : GameTextures.BrickSmallBorder)
-            : (isLong ? GameTextures.BrickLongFull : GameTextures.BrickSmallFull);
-        _bgSprite.Scale = bgScale;
-
-        // 前景：按类型选图标；Metal/Rainbow 复用基础图标 + 色调区分
-        var (iconTexture, tint) = SelectIcon();
-        _iconSprite.Texture = iconTexture;
-        _iconSprite.SelfModulate = tint;
-        _iconSprite.Scale = bgScale;
-
-        // 碰撞尺寸：长砖 192×64 / 短砖 96×64
-        if (_shape.Shape is RectangleShape2D rect)
+        if (_shapeLong != null)
         {
-            rect.Size = isLong ? new Vector2(192, 64) : new Vector2(96, 64);
+            _shapeLong.Disabled = !isLong;
         }
+
+        if (_shapeSmall != null)
+        {
+            _shapeSmall.Disabled = isLong;
+        }
+
+        var (bgTexture, iconTexture, tint) = SelectTextures();
+        _sizeSprite.Texture = bgTexture;
+        _typeSprite.Texture = iconTexture;
+        _typeSprite.SelfModulate = tint;
     }
 
     /// <summary>
-    ///     选择图标纹理与色调（Metal 金属灰 / Rainbow 随视觉循环变色）。
+    ///     选择背景/图标纹理与色调。
     /// </summary>
-    private (Texture2D, Color) SelectIcon()
+    private (Texture2D, Texture2D, Color) SelectTextures()
     {
-        return Data.Type switch
+        var isLong = Data.Size == BrickSize.Long;
+        var isEffect = BrickSpecs.IsEnergy(Data.Type) || BrickSpecs.IsExplosive(Data.Type)
+                       || Data.Type is BrickType.Metal;
+
+        var bg = Data.Type switch
+        {
+            BrickType.Metal when isLong => GameTextures.BrickLongBorder,
+            BrickType.Metal => GameTextures.BrickSmallBorder,
+            _ when isEffect => isLong ? GameTextures.BrickLongBorder : GameTextures.BrickSmallBorder,
+            _ => isLong ? GameTextures.BrickLongFull : GameTextures.BrickSmallFull
+        };
+
+        var (icon, tint) = Data.Type switch
         {
             BrickType.Explosive => (GameTextures.BrickBomb, Colors.White),
             BrickType.Energy => (GameTextures.BrickEnergy, Colors.White),
             BrickType.Metal => (GameTextures.BrickTwo, new Color(0.75f, 0.75f, 0.8f)),
-            BrickType.Rainbow => Data.VisualType switch
-            {
-                BrickType.Two => (GameTextures.BrickTwo, new Color(1f, 0.4f, 0.4f)),
-                BrickType.Three => (GameTextures.BrickThree, new Color(0.4f, 1f, 0.4f)),
-                _ => (GameTextures.BrickOne, new Color(0.4f, 0.6f, 1f))
-            },
+            BrickType.Rainbow => RainbowIcon(),
             _ => Data.VisualType switch
             {
                 BrickType.Three => (GameTextures.BrickThree, Colors.White),
                 BrickType.Two => (GameTextures.BrickTwo, Colors.White),
                 _ => (GameTextures.BrickOne, Colors.White)
             }
+        };
+
+        return (bg, icon, tint);
+    }
+
+    private (Texture2D, Color) RainbowIcon()
+    {
+        return Data.VisualType switch
+        {
+            BrickType.Two => (GameTextures.BrickTwo, new Color(1f, 0.4f, 0.4f)),
+            BrickType.Three => (GameTextures.BrickThree, new Color(0.4f, 1f, 0.4f)),
+            _ => (GameTextures.BrickOne, new Color(0.4f, 0.6f, 1f))
         };
     }
 
@@ -147,30 +173,6 @@ public partial class BrickView : StaticBody2D
     /// </summary>
     public void PlayHitBounce()
     {
-        // 占位：后续 tween 弹性动画
-    }
-
-    /// <summary>
-    ///     构建视觉节点（双层 Sprite：背景 + 图标）。
-    /// </summary>
-    private void BuildVisual()
-    {
-        _bgSprite = new Sprite2D { Name = "Bg" };
-        AddChild(_bgSprite);
-
-        _iconSprite = new Sprite2D { Name = "Icon" };
-        _iconSprite.ZIndex = 1;
-        AddChild(_iconSprite);
-
-        _shape = new CollisionShape2D
-        {
-            Shape = new RectangleShape2D { Size = new Vector2(192, 64) }
-        };
-        AddChild(_shape);
-
-        AddToGroup("Bricks");
-
-        // 尺寸在 Setup 后随数据刷新
-        RefreshVisual();
+        GetNodeOrNull<AnimationPlayer>("AnimationPlayer")?.Play("bounce");
     }
 }

@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://stcivysk52ie"]
 
-[ext_resource type="Script" path="res://scenes/brick/scripts/brick.gd" id="1"]
+[ext_resource type="Script" uid="uid://bp308mxbqpfp1" path="res://scripts/presentation/brick/BrickView.cs" id="brickview"]
+
 [ext_resource type="Texture2D" uid="uid://sj3pgix10e46" path="res://scenes/brick/visuals/BlockSmallBorder.png" id="2_13k7k"]
 [ext_resource type="Texture2D" uid="uid://bwm4qn3tg7gfe" path="res://scenes/brick/visuals/Bomb.png" id="3_tq0m8"]
 [ext_resource type="AudioStream" uid="uid://5411lypwr5lo" path="res://scenes/brick/audio/destroyed.sfxr" id="4_hm4ru"]
@@ -148,9 +149,9 @@ _data = {
 }
 
 [node name="Brick" type="StaticBody2D" groups=["Bricks"]]
+script = ExtResource("brickview")
 collision_layer = 5
 collision_mask = 5
-script = ExtResource("1")
 
 [node name="CollisionShapeLong" type="CollisionShape2D" parent="."]
 shape = SubResource("1")

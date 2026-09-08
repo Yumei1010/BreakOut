@@ -166,14 +166,17 @@ public partial class GameRoot : Node2D
         var generator = new LevelGenerator();
         var spawns = generator.Generate(SpawnPositions, LevelConfig.Default);
 
+        var brickScene = GD.Load<PackedScene>("res://scenes/brick/brick_layout.tscn");
+
         foreach (var spawn in spawns)
         {
             var data = new Brick(spawn.Type, spawn.Size);
             BrickField.Add(data, spawn.Position);
 
-            var view = new BrickView { Position = ToGodot(spawn.Position) };
-            view.Setup(data);
+            var view = brickScene.Instantiate<BrickView>();
+            view.Position = ToGodot(spawn.Position);
             AddChild(view);
+            view.Setup(data);
             _brickViews.Add(view);
         }
     }
