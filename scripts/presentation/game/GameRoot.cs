@@ -21,6 +21,7 @@ using BreakOut.scripts.presentation.effect;
 using BreakOut.scripts.presentation.paddle;
 using BreakOut.scripts.presentation.ui;
 using BreakOut.scripts.system.brick;
+using BreakOut.scripts.system.effect;
 using BreakOut.scripts.system.level;
 using BreakOut.scripts.system.run;
 using BreakOut.scripts.system.scoring;
@@ -84,6 +85,11 @@ public partial class GameRoot : Node2D
     public RunFlowSystem Flow { get; } = new();
 
     /// <summary>
+    ///     获取特效系统（音效/震动/粒子/相机）。
+    /// </summary>
+    public EffectSystem Effects { get; } = new();
+
+    /// <summary>
     ///     获取砖墙系统（规则 + 视图注册表）。
     /// </summary>
     public BrickSystem Bricks { get; } = new();
@@ -94,14 +100,14 @@ public partial class GameRoot : Node2D
     public LevelSystem Level { get; } = new();
 
     /// <summary>
-    ///     获取音效管理器。
+    ///     获取音效管理器（由 EffectSystem 持有）。
     /// </summary>
-    public SfxManager Sfx { get; private set; } = null!;
+    public SfxManager Sfx => Effects.Sfx;
 
     /// <summary>
-    ///     获取相机抖动控制器。
+    ///     获取相机抖动控制器（由 EffectSystem 持有）。
     /// </summary>
-    public CameraShake Shake { get; private set; } = null!;
+    public CameraShake Shake => Effects.Shake;
 
     /// <summary>
     ///     获取板视图（场景实例）。
@@ -168,17 +174,15 @@ public partial class GameRoot : Node2D
     /// </summary>
     private void AttachJuice()
     {
-        Sfx = new SfxManager { Name = "Sfx" };
-        AddChild(Sfx);
-
         if (_camera == null)
         {
             _camera = new Camera2D { Position = new Vector2(960, 540) };
             AddChild(_camera);
         }
 
-        Shake = new CameraShake { Name = "Shake" };
-        _camera.AddChild(Shake);
+        Effects.Name = "Effects";
+        AddChild(Effects);
+        Effects.Setup(_camera);
 
         // 弹层统一挂 HUDCanvasLayer（原版 UI 场景已在场景内）
         _uiLayer = GetNodeOrNull<CanvasLayer>("HUDCanvasLayer");
@@ -527,17 +531,7 @@ public partial class GameRoot : Node2D
     /// <param name="force">冲击强度 0-1。</param>
     public void PatternBounce(float force)
     {
-        if (_pattern?.Material is not ShaderMaterial material)
-        {
-            return;
-        }
-
-        var target = Mathf.Lerp(22.5f, 27.5f, 1f - force);
-        var tween = CreateTween();
-        tween.TweenProperty(material, "shader_parameter/size_scale", target, 0.15)
-            .SetTrans(Tween.TransitionType.Elastic).SetEase(Tween.EaseType.Out);
-        tween.TweenProperty(material, "shader_parameter/size_scale", 30f, 0.3)
-            .SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.InOut);
+        Effects.PatternBounce(_pattern, force);
     }
 
     // ==== 粒子效果（实例化 *_particles.tscn，one_shot 自停 + 延迟清理） ====
@@ -584,20 +578,7 @@ public partial class GameRoot : Node2D
     /// <param name="rotationDegrees">旋转（法线角转度）。</param>
     public void SpawnParticle(string scenePath, Vector2 position, float rotationDegrees = 0f)
     {
-        var packed = GetScene(scenePath);
-        if (packed == null)
-        {
-            return;
-        }
-
-        var particles = packed.Instantiate<GpuParticles2D>();
-        AddChild(particles);
-        particles.GlobalPosition = position;
-        particles.RotationDegrees = rotationDegrees;
-        particles.Emitting = true;
-
-        // one_shot 结束后延迟一帧清理
-        particles.Finished += particles.QueueFree;
+        Effects.Burst(scenePath, position, rotationDegrees);
     }
 
     // ==== juice：相机序列 + 碎裂粒子 ====
