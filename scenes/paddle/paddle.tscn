@@ -3,10 +3,10 @@
 [ext_resource type="Script" uid="uid://hp5irq2l5x3n" path="res://scripts/presentation/paddle/PaddleView.cs" id="paddleview"]
 
 [ext_resource type="PackedScene" uid="uid://bf0hn220saeh8" path="res://scenes/paddle/laser.tscn" id="2"]
-[ext_resource type="Texture2D" uid="uid://ffq17u6t3jsj" path="res://assets/texture/paddle/Paddle.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://mv5dda55c7c7" path="res://assets/texture/paddle/Paddle.png" id="3"]
 [ext_resource type="Shader" path="res://assets/shader/deform.gdshader" id="3_75eq2"]
 [ext_resource type="PackedScene" uid="uid://ctm4reyuyvi3j" path="res://scenes/paddle/ghost_spawner.tscn" id="4_gipss"]
-[ext_resource type="AudioStream" uid="uid://bem4rbdupfoth" path="res://assets/sound/bump.sfxr" id="6_ob0ir"]
+[ext_resource type="AudioStream" uid="uid://oat8dndoen10" path="res://assets/sound/bump.sfxr" id="6_ob0ir"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_r6y1s"]
 shader = ExtResource("3_75eq2")

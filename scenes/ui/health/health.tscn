@@ -2,8 +2,8 @@
 
 [ext_resource type="Script" uid="uid://drapyo78d4rgl" path="res://scripts/presentation/ui/HealthBarView.cs" id="view"]
 
-[ext_resource type="Texture2D" uid="uid://cmb7r8kkmhk4y" path="res://assets/texture/ui/HeartFull.png" id="1"]
-[ext_resource type="Texture2D" uid="uid://detnlim5hn6js" path="res://assets/texture/ui/Container.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://du7fa513yg3n5" path="res://assets/texture/ui/HeartFull.png" id="1"]
+[ext_resource type="Texture2D" uid="uid://dmky5p3nl7ego" path="res://assets/texture/ui/Container.png" id="3"]
 
 [node name="HealthBar" type="Control"]
 script = ExtResource("view")

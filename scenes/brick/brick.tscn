@@ -2,8 +2,8 @@
 
 [ext_resource type="Script" uid="uid://bp308mxbqpfp1" path="res://scripts/presentation/brick/BrickView.cs" id="brickview"]
 
-[ext_resource type="Texture2D" uid="uid://cvs001v7avpg7" path="res://assets/texture/brick/BlockSmallBorder.png" id="2_13k7k"]
-[ext_resource type="Texture2D" uid="uid://tywoj37huyg8" path="res://assets/texture/brick/Bomb.png" id="3_tq0m8"]
+[ext_resource type="Texture2D" uid="uid://bdr21iqh3scjq" path="res://assets/texture/brick/BlockSmallBorder.png" id="2_13k7k"]
+[ext_resource type="Texture2D" uid="uid://dtlir7m080xm8" path="res://assets/texture/brick/Bomb.png" id="3_tq0m8"]
 [ext_resource type="AudioStream" uid="uid://cmu12j86g4caq" path="res://assets/sound/destroyed.sfxr" id="4_hm4ru"]
 [ext_resource type="AudioStream" uid="uid://cixmlrcduq846" path="res://assets/sound/explosion.sfxr" id="5_gqq7x"]
 [ext_resource type="AudioStream" uid="uid://c5misocuelb25" path="res://assets/sound/explosion_2.sfxr" id="6_c24lc"]
