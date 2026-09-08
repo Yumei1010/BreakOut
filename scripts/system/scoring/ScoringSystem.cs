@@ -1,5 +1,4 @@
 using BreakOut.scripts.rules.bump;
-using BreakOut.scripts.rules.run;
 using BreakOut.scripts.rules.scoring;
 
 namespace BreakOut.scripts.system.scoring;
@@ -23,11 +22,6 @@ public sealed class ScoringSystem
     public ScoreRule Score { get; } = new();
 
     /// <summary>
-    ///     获取对局状态（生命/能量）。
-    /// </summary>
-    public RunState Run { get; } = new();
-
-    /// <summary>
     ///     触碰砖（未毁）：触碰分 + 连击。
     /// </summary>
     public void OnBrickTouched()
@@ -41,31 +35,6 @@ public sealed class ScoringSystem
     public void OnBrickDestroyed()
     {
         Score.OnBrickDestroyed();
-    }
-
-    /// <summary>
-    ///     撞击普通砖：补能量。
-    /// </summary>
-    public void OnBrickHitEnergy()
-    {
-        Run.OnBrickHit();
-    }
-
-    /// <summary>
-    ///     能量砖被摧毁：补满能量。
-    /// </summary>
-    public void OnEnergyBrickDestroyed()
-    {
-        Run.OnEnergyBrickDestroyed();
-    }
-
-    /// <summary>
-    ///     消耗能量（激光/吸引）。
-    /// </summary>
-    /// <param name="amount">消耗量。</param>
-    public void SpendEnergy(float amount)
-    {
-        Run.SpendEnergy(amount);
     }
 
     /// <summary>
@@ -89,18 +58,6 @@ public sealed class ScoringSystem
     }
 
     /// <summary>
-    ///     累计对局时间（Playing 阶段）。
-    /// </summary>
-    /// <param name="delta">帧时间。</param>
-    public void TickTime(double delta)
-    {
-        if (Run.Phase == RunPhase.Playing)
-        {
-            _elapsedTime += delta;
-        }
-    }
-
-    /// <summary>
     ///     构建对局结算结果。
     /// </summary>
     /// <param name="ballBounces">球反弹次数（由视图统计提供）。</param>
@@ -119,6 +76,5 @@ public sealed class ScoringSystem
         _perfectBumps = 0;
         _elapsedTime = 0;
         Score.Reset();
-        Run.Reset();
     }
 }

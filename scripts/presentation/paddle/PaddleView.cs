@@ -159,7 +159,7 @@ public partial class PaddleView : CharacterBody2D
             {
                 AttachedBall.Launch();
                 AttachedBall = null;
-                _root.Scoring.Run.StartBall();
+                _root.Flow.Run.StartBall();
             }
             else if (_root.Ball != null)
             {
@@ -182,9 +182,9 @@ public partial class PaddleView : CharacterBody2D
 
         if (Input.IsActionJustPressed("special"))
         {
-            if (AbilityRule.TryLaser(_root.Scoring.Run) == AbilityResult.Success)
+            if (AbilityRule.TryLaser(_root.Flow.Run) == AbilityResult.Success)
             {
-                _root.Scoring.Run.SpendEnergy(RunState.MaxEnergy);
+                _root.Flow.Run.SpendEnergy(RunState.MaxEnergy);
                 _laser?.Shoot();
                 _log.Debug("激光发射");
             }

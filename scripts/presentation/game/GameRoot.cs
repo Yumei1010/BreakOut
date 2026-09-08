@@ -22,6 +22,7 @@ using BreakOut.scripts.presentation.paddle;
 using BreakOut.scripts.presentation.ui;
 using BreakOut.scripts.system.brick;
 using BreakOut.scripts.system.level;
+using BreakOut.scripts.system.run;
 using BreakOut.scripts.system.scoring;
 using BreakOut.scripts.utility.@event;
 
@@ -76,6 +77,11 @@ public partial class GameRoot : Node2D
     ///     获取计分/对局系统（持有规则，纯 C#）。
     /// </summary>
     public ScoringSystem Scoring { get; } = new();
+
+    /// <summary>
+    ///     获取对局流程系统（状态流转）。
+    /// </summary>
+    public RunFlowSystem Flow { get; } = new();
 
     /// <summary>
     ///     获取砖墙系统（规则 + 视图注册表）。
@@ -183,7 +189,7 @@ public partial class GameRoot : Node2D
     /// </summary>
     public override void _PhysicsProcess(double delta)
     {
-        Scoring.TickTime(delta);
+        Flow.TickTime(delta);
 
         if (Ball == null || Ball.Dead || !Ball.CanMove)
         {
@@ -263,7 +269,7 @@ public partial class GameRoot : Node2D
     private void PublishInitialState()
     {
         this.SendEvent(ChannelConstants.Gameplay, new ScoreChangedEvent(Scoring.Score.Score, Scoring.Score.Combo));
-        this.SendEvent(ChannelConstants.Gameplay, new EnergyChangedEvent(Scoring.Run.Energy, false));
+        this.SendEvent(ChannelConstants.Gameplay, new EnergyChangedEvent(Flow.Run.Energy, false));
     }
 
     /// <summary>
@@ -279,11 +285,11 @@ public partial class GameRoot : Node2D
         Ball.Die();
         SpawnParticle("res://scenes/ball/ball_explode_particles.tscn", Ball.GlobalPosition);
         SpawnParticle("res://scenes/game/lava_splash_particles.tscn", Ball.GlobalPosition + new Vector2(0, 20));
-        var dead = Scoring.Run.OnBallLost();
+        var dead = Flow.OnBallLost().IsGameOver;
         Sfx.PlayBallDestroyed();
         Shake.Shake(0.45f, 30f, 25f);
-        this.SendEvent(ChannelConstants.Gameplay, new BallLostEvent(Scoring.Run.Health, dead));
-        _log.Debug($"球落底，剩余生命 {Scoring.Run.Health}");
+        this.SendEvent(ChannelConstants.Gameplay, new BallLostEvent(Flow.Run.Health, dead));
+        _log.Debug($"球落底，剩余生命 {Flow.Run.Health}");
 
         if (dead)
         {
@@ -303,13 +309,13 @@ public partial class GameRoot : Node2D
     /// </summary>
     public void OnBrickHit(BrickType visualType)
     {
-        Scoring.OnBrickHitEnergy();
+        Flow.Run.OnBrickHit();
         Scoring.OnBrickTouched();
         ShowCombo();
         TryShowUltimate();
         this.SendEvent(ChannelConstants.Gameplay, new ScoreChangedEvent(Scoring.Score.Score, Scoring.Score.Combo));
         this.SendEvent(ChannelConstants.Gameplay,
-            new EnergyChangedEvent(Scoring.Run.Energy, Scoring.Run.Energy >= BreakOut.scripts.rules.run.RunState.MaxEnergy));
+            new EnergyChangedEvent(Flow.Run.Energy, Flow.Run.Energy >= BreakOut.scripts.rules.run.RunState.MaxEnergy));
     }
 
     /// <summary>
@@ -317,7 +323,7 @@ public partial class GameRoot : Node2D
     /// </summary>
     public void OnEnergyBrickDestroyed()
     {
-        Scoring.OnEnergyBrickDestroyed();
+        Flow.Run.OnEnergyBrickDestroyed();
         TryShowUltimate();
     }
 
@@ -353,7 +359,7 @@ public partial class GameRoot : Node2D
     /// </summary>
     private void TryShowUltimate()
     {
-        if (Scoring.Run.Energy >= BreakOut.scripts.rules.run.RunState.MaxEnergy)
+        if (Flow.Run.Energy >= BreakOut.scripts.rules.run.RunState.MaxEnergy)
         {
             ShowUltimateReady();
         }
@@ -393,7 +399,7 @@ public partial class GameRoot : Node2D
 
         if (levelCleared)
         {
-            Scoring.Run.OnLevelCleared();
+            Flow.Run.OnLevelCleared();
             _log.Info("关卡清除！");
             PlayLevelClearSequence();
             ShowStageClear();
