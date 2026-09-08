@@ -640,7 +640,11 @@ public partial class GameRoot : Node2D
 
         Sfx.PlayUltimateReady();
         Shake.Shake(0.5f, 25f, 25f);
-        await FocusBallTween(zoomTo: 1.6f);
+
+        // 短促慢动作（镜头不动，避免出界露纹理边）
+        global::Godot.Engine.TimeScale = 0.4f;
+        await ToSignal(GetTree().CreateTimer(0.35), SceneTreeTimer.SignalName.Timeout);
+        global::Godot.Engine.TimeScale = 1.0f;
     }
 
     /// <summary>
@@ -656,7 +660,11 @@ public partial class GameRoot : Node2D
         Sfx.PlayBallDestroyed();
         Shake.Shake(0.5f, 30f, 20f);
         FadeGrayscale(true);
-        await FocusBallTween(zoomTo: 1.5f);
+
+        // 短促慢动作（镜头不动）
+        global::Godot.Engine.TimeScale = 0.3f;
+        await ToSignal(GetTree().CreateTimer(0.5), SceneTreeTimer.SignalName.Timeout);
+        global::Godot.Engine.TimeScale = 1.0f;
         FadeGrayscale(false);
     }
 
@@ -679,33 +687,6 @@ public partial class GameRoot : Node2D
     /// <summary>
     ///     慢动作 → 聚焦球放大 → 停顿 → 恢复回位。
     /// </summary>
-    private async System.Threading.Tasks.Task FocusBallTween(float zoomTo)
-    {
-        if (_camera == null || Ball == null)
-        {
-            return;
-        }
-
-        var originalZoom = _camera.Zoom;
-        var originalPos = _camera.Position;
-
-        global::Godot.Engine.TimeScale = 0.15f;
-
-        var focus = CreateTween().SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.InOut);
-        focus.Parallel().TweenProperty(_camera, "position", Ball.GlobalPosition, 0.3);
-        focus.Parallel().TweenProperty(_camera, "zoom", new Vector2(zoomTo, zoomTo), 0.3);
-        await ToSignal(focus, Tween.SignalName.Finished);
-
-        await ToSignal(GetTree().CreateTimer(0.4), SceneTreeTimer.SignalName.Timeout);
-
-        global::Godot.Engine.TimeScale = 1.0f;
-
-        var restore = CreateTween().SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.InOut);
-        restore.Parallel().TweenProperty(_camera, "position", originalPos, 0.4);
-        restore.Parallel().TweenProperty(_camera, "zoom", originalZoom, 0.4);
-        await ToSignal(restore, Tween.SignalName.Finished);
-    }
-
     /// <summary>
     ///     在位置生成一次碎裂视觉。
     /// </summary>

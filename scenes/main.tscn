@@ -1,21 +1,25 @@
 [gd_scene format=3 uid="uid://6s2urcdmkpbt"]
 
+[ext_resource type="PackedScene" uid="uid://dyy7lp07carkr" path="res://scenes/paddle/paddle_layout.tscn" id="1"]
+[ext_resource type="PackedScene" uid="uid://cvg0cmgxvdkk0" path="res://scenes/ball/ball_layout.tscn" id="2"]
+[ext_resource type="PackedScene" uid="uid://stcivysk52ie" path="res://scenes/brick/brick_layout.tscn" id="4"]
+[ext_resource type="FontFile" uid="uid://e6lyd63ocyd8" path="res://shared/fonts/aldo_the_apache/AldotheApache.ttf" id="4_lbq23"]
+[ext_resource type="Shader" uid="uid://dfpodkn2c4r2d" path="res://scenes/game/effects/combo.gdshader" id="5_a2d6o"]
+[ext_resource type="Texture2D" uid="uid://dccnr2ba7mfqv" path="res://scenes/game/visuals/walls.png" id="7"]
+[ext_resource type="Shader" uid="uid://bo50akjr7yyyy" path="res://scenes/game/effects/wave.gdshader" id="7_hww07"]
+[ext_resource type="Texture2D" uid="uid://i7x3k1ebfg2q" path="res://scenes/game/visuals/background.png" id="8"]
+[ext_resource type="Texture2D" uid="uid://cjqq3huxrcfne" path="res://scenes/ball/visuals/ball.png" id="8_a1usc"]
+[ext_resource type="Texture2D" uid="uid://g74fai4tqv2w" path="res://scenes/game/visuals/pattern.png" id="9"]
+[ext_resource type="Shader" uid="uid://ctd8xquxy2fm5" path="res://scenes/game/effects/grayscale.gdshader" id="17_wq6rs"]
 [ext_resource type="Script" uid="uid://dehhmutvtlldg" path="res://scripts/presentation/game/GameRoot.cs" id="gameroot"]
 [ext_resource type="PackedScene" uid="uid://c48m66isx4utm" path="res://scenes/ui/energy_bar/energy_bar.tscn" id="ui_energy"]
 [ext_resource type="PackedScene" uid="uid://lc5lho6dqctj" path="res://scenes/ui/health/health.tscn" id="ui_health"]
 [ext_resource type="PackedScene" uid="uid://cn3a4bs7x53tq" path="res://scenes/ui/score/score.tscn" id="ui_score"]
 
-[ext_resource type="PackedScene" uid="uid://dyy7lp07carkr" path="res://scenes/paddle/paddle_layout.tscn" id="1"]
-[ext_resource type="PackedScene" uid="uid://cvg0cmgxvdkk0" path="res://scenes/ball/ball_layout.tscn" id="2"]
-[ext_resource type="PackedScene" uid="uid://stcivysk52ie" path="res://scenes/brick/brick_layout.tscn" id="4"]
-[ext_resource type="FontFile" uid="uid://e6lyd63ocyd8" path="res://shared/fonts/aldo_the_apache/AldotheApache.ttf" id="4_lbq23"]
-[ext_resource type="Shader" path="res://scenes/game/effects/combo.gdshader" id="5_a2d6o"]
-[ext_resource type="Texture2D" uid="uid://dccnr2ba7mfqv" path="res://scenes/game/visuals/walls.png" id="7"]
-[ext_resource type="Shader" path="res://scenes/game/effects/wave.gdshader" id="7_hww07"]
-[ext_resource type="Texture2D" uid="uid://i7x3k1ebfg2q" path="res://scenes/game/visuals/background.png" id="8"]
-[ext_resource type="Texture2D" uid="uid://cjqq3huxrcfne" path="res://scenes/ball/visuals/ball.png" id="8_a1usc"]
-[ext_resource type="Texture2D" uid="uid://g74fai4tqv2w" path="res://scenes/game/visuals/pattern.png" id="9"]
-[ext_resource type="Shader" path="res://scenes/game/effects/grayscale.gdshader" id="17_wq6rs"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ua5mp"]
+shader = ExtResource("5_a2d6o")
+shader_parameter/fill_v = 0.0
+shader_parameter/color = Color(0.462745, 0.462745, 0.462745, 0.180392)
 
 [sub_resource type="Shader" id="6"]
 code = "shader_type canvas_item;
@@ -36,15 +40,10 @@ void fragment() {
 
 [sub_resource type="ShaderMaterial" id="7"]
 shader = SubResource("6")
+shader_parameter/pattern = ExtResource("9")
 shader_parameter/speed = 0.3
 shader_parameter/size_scale = 30.0
 shader_parameter/color = Color(0.74902, 0.74902, 0.74902, 0.254902)
-shader_parameter/pattern = ExtResource("9")
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_ua5mp"]
-shader = ExtResource("5_a2d6o")
-shader_parameter/fill_v = 0.0
-shader_parameter/color = Color(0.462745, 0.462745, 0.462745, 0.180392)
 
 [sub_resource type="RectangleShape2D" id="1"]
 size = Vector2(1920, 80)
@@ -80,15 +79,13 @@ curve = SubResource("Curve_s646s")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_aauo2"]
 lifetime_randomness = 0.38
+particle_flag_disable_z = true
 emission_shape = 3
 emission_box_extents = Vector3(1000, 1, 1)
-particle_flag_disable_z = true
 direction = Vector3(0, -1, 0)
-gravity = Vector3(0, -10, 0)
 initial_velocity_min = 28.0
 initial_velocity_max = 45.0
-orbit_velocity_min = 0.0
-orbit_velocity_max = 0.0
+gravity = Vector3(0, -10, 0)
 scale_min = 0.05
 scale_max = 0.25
 scale_curve = SubResource("CurveTexture_qj7lp")
@@ -98,10 +95,11 @@ color_ramp = SubResource("GradientTexture1D_pa3m8")
 shader = ExtResource("17_wq6rs")
 shader_parameter/mix_val = 0.0
 
-[node name="Game" type="Node2D"]
+[node name="Game" type="Node2D" unique_id=1553994093]
 script = ExtResource("gameroot")
 
-[node name="Combo" type="Label" parent="."]
+[node name="Combo" type="Label" parent="." unique_id=373833895]
+visible = false
 modulate = Color(0.462745, 0.462745, 0.462745, 0.180392)
 material = SubResource("ShaderMaterial_ua5mp")
 offset_left = 310.0
@@ -112,14 +110,12 @@ pivot_offset = Vector2(659, 167)
 theme_override_fonts/font = ExtResource("4_lbq23")
 theme_override_font_sizes/font_size = 400
 text = "COMBO"
-visible = false
 
-
-[node name="Background" type="Sprite2D" parent="."]
+[node name="Background" type="Sprite2D" parent="." unique_id=1377644153]
 position = Vector2(960, 540)
 texture = ExtResource("8")
 
-[node name="Pattern" type="ColorRect" parent="."]
+[node name="Pattern" type="ColorRect" parent="." unique_id=1551530328]
 material = SubResource("7")
 anchors_preset = 15
 anchor_right = 1.0
@@ -131,13 +127,13 @@ offset_bottom = 2463.0
 rotation = -0.785398
 pivot_offset = Vector2(1801, 1801)
 
-[node name="DeathArea" type="Area2D" parent="."]
+[node name="DeathArea" type="Area2D" parent="." unique_id=540436643]
 position = Vector2(960, 1101)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="DeathArea"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DeathArea" unique_id=368628540]
 shape = SubResource("1")
 
-[node name="Polygon2D" type="Polygon2D" parent="DeathArea"]
+[node name="Polygon2D" type="Polygon2D" parent="DeathArea" unique_id=696011791]
 material = SubResource("ShaderMaterial_tkmje")
 position = Vector2(-960, -1104)
 color = Color(1, 0.752941, 0.0117647, 1)
@@ -145,161 +141,142 @@ antialiased = true
 texture = SubResource("5")
 polygon = PackedVector2Array(-152, 1067, -152, 1579, 2072, 1579, 2072, 1067, 1824, 1067, 1792, 1067, 1760, 1067, 1728, 1067, 1696, 1067, 1664, 1067, 1632, 1067, 1600, 1067, 1568, 1067, 1536, 1067, 1504, 1067, 1472, 1067, 1440, 1067, 1408, 1067, 1376, 1067, 1352, 1067, 1320, 1067, 1280, 1067, 1248, 1067, 1216, 1067, 1184, 1067, 1152, 1067, 1120, 1067, 1088, 1067, 1056, 1067, 1024, 1067, 1000, 1067, 960, 1067, 928, 1067, 896, 1067, 864, 1067, 832, 1067, 800, 1067, 768, 1067, 744, 1067, 704, 1067, 672, 1067, 640, 1067, 608, 1067, 576, 1067, 544, 1067, 512, 1067, 472, 1067, 448, 1067, 416, 1067, 384, 1067, 352, 1067, 320, 1067, 288, 1067, 256, 1067, 224, 1067, 192, 1067, 160, 1067, 128, 1067, 96, 1067, 64, 1067)
 
-[node name="GPUParticles2D" type="GPUParticles2D" parent="DeathArea"]
+[node name="GPUParticles2D" type="GPUParticles2D" parent="DeathArea" unique_id=168440252]
 show_behind_parent = true
 position = Vector2(0, -24)
 amount = 150
-process_material = SubResource("ParticleProcessMaterial_aauo2")
 texture = ExtResource("8_a1usc")
 lifetime = 3.5
+process_material = SubResource("ParticleProcessMaterial_aauo2")
 
-[node name="StaticBody2D" type="StaticBody2D" parent="."]
+[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=1918904386]
 
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="StaticBody2D"]
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="StaticBody2D" unique_id=422157588]
 polygon = PackedVector2Array(106, 1189, -151, 1189, -153, -152, 2073, -150, 2070, 1189, 1814, 1189, 1814, 778, 1766, 705, 1766, 414, 1814, 342, 1814, 107, 106, 108, 106, 342, 154, 415, 154, 705, 106, 777)
 
-[node name="Walls" type="Sprite2D" parent="StaticBody2D"]
+[node name="Walls" type="Sprite2D" parent="StaticBody2D" unique_id=1968272112]
 position = Vector2(960, 498)
 texture = ExtResource("7")
 
-[node name="Ball" parent="." instance=ExtResource("2")]
+[node name="Ball" parent="." unique_id=962140182 instance=ExtResource("2")]
 position = Vector2(960, 912)
 
-[node name="SpawnPos" type="Node" parent="."]
+[node name="SpawnPos" type="Node" parent="." unique_id=738821034]
 
-[node name="Marker2D" type="Marker2D" parent="SpawnPos"]
+[node name="Marker2D" type="Marker2D" parent="SpawnPos" unique_id=1764713183]
 position = Vector2(259, 237)
 
-[node name="Position2D2" type="Marker2D" parent="SpawnPos"]
+[node name="Position2D2" type="Marker2D" parent="SpawnPos" unique_id=1346299042]
 position = Vector2(459, 237)
 
-[node name="Position2D3" type="Marker2D" parent="SpawnPos"]
+[node name="Position2D3" type="Marker2D" parent="SpawnPos" unique_id=1435405469]
 position = Vector2(659, 237)
 
-[node name="Position2D4" type="Marker2D" parent="SpawnPos"]
+[node name="Position2D4" type="Marker2D" parent="SpawnPos" unique_id=1506840841]
 position = Vector2(859, 237)
 
-[node name="Position2D5" type="Marker2D" parent="SpawnPos"]
+[node name="Position2D5" type="Marker2D" parent="SpawnPos" unique_id=120813643]
 position = Vector2(1059, 237)
 
-[node name="Position2D6" type="Marker2D" parent="SpawnPos"]
+[node name="Position2D6" type="Marker2D" parent="SpawnPos" unique_id=31331875]
 position = Vector2(1259, 237)
 
-[node name="Position2D7" type="Marker2D" parent="SpawnPos"]
+[node name="Position2D7" type="Marker2D" parent="SpawnPos" unique_id=482993170]
 position = Vector2(1459, 237)
 
-[node name="Position2D8" type="Marker2D" parent="SpawnPos"]
+[node name="Position2D8" type="Marker2D" parent="SpawnPos" unique_id=2037374889]
 position = Vector2(1659, 237)
 
-[node name="Position2D10" type="Marker2D" parent="SpawnPos"]
+[node name="Position2D10" type="Marker2D" parent="SpawnPos" unique_id=1703029522]
 position = Vector2(259, 365)
 
-[node name="Position2D11" type="Marker2D" parent="SpawnPos"]
+[node name="Position2D11" type="Marker2D" parent="SpawnPos" unique_id=2096814287]
 position = Vector2(459, 365)
 
-[node name="Position2D12" type="Marker2D" parent="SpawnPos"]
+[node name="Position2D12" type="Marker2D" parent="SpawnPos" unique_id=1737824304]
 position = Vector2(659, 365)
 
-[node name="Position2D13" type="Marker2D" parent="SpawnPos"]
+[node name="Position2D13" type="Marker2D" parent="SpawnPos" unique_id=687302538]
 position = Vector2(859, 365)
 
-[node name="Position2D14" type="Marker2D" parent="SpawnPos"]
+[node name="Position2D14" type="Marker2D" parent="SpawnPos" unique_id=2023627074]
 position = Vector2(1059, 365)
 
-[node name="Position2D15" type="Marker2D" parent="SpawnPos"]
+[node name="Position2D15" type="Marker2D" parent="SpawnPos" unique_id=2011412617]
 position = Vector2(1259, 365)
 
-[node name="Position2D16" type="Marker2D" parent="SpawnPos"]
+[node name="Position2D16" type="Marker2D" parent="SpawnPos" unique_id=1339915872]
 position = Vector2(1459, 365)
 
-[node name="Position2D17" type="Marker2D" parent="SpawnPos"]
+[node name="Position2D17" type="Marker2D" parent="SpawnPos" unique_id=446551746]
 position = Vector2(1659, 365)
 
-[node name="Position2D20" type="Marker2D" parent="SpawnPos"]
+[node name="Position2D20" type="Marker2D" parent="SpawnPos" unique_id=934873447]
 position = Vector2(459, 493)
 
-[node name="Position2D21" type="Marker2D" parent="SpawnPos"]
+[node name="Position2D21" type="Marker2D" parent="SpawnPos" unique_id=1502896188]
 position = Vector2(659, 493)
 
-[node name="Position2D22" type="Marker2D" parent="SpawnPos"]
+[node name="Position2D22" type="Marker2D" parent="SpawnPos" unique_id=870281973]
 position = Vector2(859, 493)
 
-[node name="Position2D23" type="Marker2D" parent="SpawnPos"]
+[node name="Position2D23" type="Marker2D" parent="SpawnPos" unique_id=1910857670]
 position = Vector2(1059, 493)
 
-[node name="Position2D24" type="Marker2D" parent="SpawnPos"]
+[node name="Position2D24" type="Marker2D" parent="SpawnPos" unique_id=1741386056]
 position = Vector2(1259, 493)
 
-[node name="Position2D25" type="Marker2D" parent="SpawnPos"]
+[node name="Position2D25" type="Marker2D" parent="SpawnPos" unique_id=854535509]
 position = Vector2(1459, 493)
 
-[node name="Bricks" type="Node" parent="."]
+[node name="Bricks" type="Node" parent="." unique_id=1928774448]
 
-[node name="Brick" parent="Bricks" instance=ExtResource("4")]
+[node name="Brick" parent="Bricks" unique_id=782012238 instance=ExtResource("4")]
 visible = false
 position = Vector2(161, 128)
 
-[node name="Brick2" parent="Bricks" instance=ExtResource("4")]
+[node name="Brick2" parent="Bricks" unique_id=1029613610 instance=ExtResource("4")]
 visible = false
 position = Vector2(361, 128)
-type = 1
 
-[node name="Brick3" parent="Bricks" instance=ExtResource("4")]
+[node name="Brick3" parent="Bricks" unique_id=543673677 instance=ExtResource("4")]
 visible = false
 position = Vector2(561, 128)
-type = 2
 
-[node name="Brick4" parent="Bricks" instance=ExtResource("4")]
+[node name="Brick4" parent="Bricks" unique_id=1127936330 instance=ExtResource("4")]
 visible = false
 position = Vector2(761, 128)
-type = 3
-size = 1
 
-[node name="Brick5" parent="Bricks" instance=ExtResource("4")]
+[node name="Brick5" parent="Bricks" unique_id=830639172 instance=ExtResource("4")]
 visible = false
 position = Vector2(961, 128)
-type = 4
-size = 1
 
-[node name="Brick6" parent="Bricks" instance=ExtResource("4")]
+[node name="Brick6" parent="Bricks" unique_id=326204135 instance=ExtResource("4")]
 visible = false
 position = Vector2(1161, 128)
-type = 4
-size = 1
 
-[node name="Brick7" parent="Bricks" instance=ExtResource("4")]
+[node name="Brick7" parent="Bricks" unique_id=685992252 instance=ExtResource("4")]
 visible = false
 position = Vector2(1361, 128)
-type = 4
-size = 1
 
-[node name="Brick8" parent="Bricks" instance=ExtResource("4")]
+[node name="Brick8" parent="Bricks" unique_id=799051290 instance=ExtResource("4")]
 visible = false
 position = Vector2(1561, 128)
-type = 4
-size = 1
 
-[node name="Brick9" parent="Bricks" instance=ExtResource("4")]
+[node name="Brick9" parent="Bricks" unique_id=1902778263 instance=ExtResource("4")]
 visible = false
 position = Vector2(1761, 128)
-type = 4
-size = 1
 
-[node name="Paddle" parent="." instance=ExtResource("1")]
+[node name="Paddle" parent="." unique_id=1052820655 instance=ExtResource("1")]
 position = Vector2(960, 990)
-damp = 7.0
-velocity_multiplier = 0.5
 
-[node name="Camera2D" type="Camera2D" parent="."]
+[node name="Camera2D" type="Camera2D" parent="." unique_id=381149863]
 position = Vector2(960, 540)
-dynamic_enabled = true
-dynamic_factor = 0.3
 
-[node name="HUDCanvasLayer" type="CanvasLayer" parent="."]
+[node name="HUDCanvasLayer" type="CanvasLayer" parent="." unique_id=1911267701]
 follow_viewport_enabled = true
 
-
-[node name="EnergyBar" parent="HUDCanvasLayer" instance=ExtResource("ui_energy")]
+[node name="EnergyBar" parent="HUDCanvasLayer" unique_id=1215513627 instance=ExtResource("ui_energy")]
 anchors_preset = 6
 anchor_left = 1.0
 anchor_top = 0.5
@@ -312,7 +289,7 @@ offset_bottom = 128.0
 grow_horizontal = 0
 grow_vertical = 2
 
-[node name="HealthBar" parent="HUDCanvasLayer" instance=ExtResource("ui_health")]
+[node name="HealthBar" parent="HUDCanvasLayer" unique_id=639526728 instance=ExtResource("ui_health")]
 anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
@@ -322,7 +299,7 @@ offset_right = 87.0
 offset_bottom = 128.0
 grow_vertical = 2
 
-[node name="Score" parent="HUDCanvasLayer" instance=ExtResource("ui_score")]
+[node name="Score" parent="HUDCanvasLayer" unique_id=671385981 instance=ExtResource("ui_score")]
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
@@ -332,10 +309,9 @@ offset_right = 178.5
 offset_bottom = 98.0
 grow_horizontal = 2
 
+[node name="EffectCanvasLayer" type="CanvasLayer" parent="." unique_id=2139528285]
 
-[node name="EffectCanvasLayer" type="CanvasLayer" parent="."]
-
-[node name="BW" type="ColorRect" parent="EffectCanvasLayer"]
+[node name="BW" type="ColorRect" parent="EffectCanvasLayer" unique_id=1016359963]
 material = SubResource("ShaderMaterial_ttwcg")
 anchors_preset = 15
 anchor_right = 1.0
@@ -343,9 +319,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="UICanvasLayer" type="CanvasLayer" parent="."]
+[node name="UICanvasLayer" type="CanvasLayer" parent="." unique_id=32699619]
 
-[node name="ComboTimer" type="Timer" parent="."]
+[node name="ComboTimer" type="Timer" parent="." unique_id=478263307]
 wait_time = 2.0
 one_shot = true
 
