@@ -1,10 +1,13 @@
-[gd_scene format=3 uid="uid://bf0hn220saeh8"]
+[gd_scene load_steps=2 format=3 uid="uid://bf0hn220saeh8"]
+
+[ext_resource type="Script" uid="uid://snt48g0r6v22" path="res://scripts/presentation/paddle/LaserView.cs" id="laserview"]
 
 
 [sub_resource type="RectangleShape2D" id="4"]
 size = Vector2(152.522, 1298)
 
 [node name="Laser" type="Area2D"]
+script = ExtResource("laserview")
 visible = false
 collision_layer = 4
 collision_mask = 4

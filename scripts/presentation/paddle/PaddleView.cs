@@ -60,6 +60,7 @@ public partial class PaddleView : CharacterBody2D
     private bool _dashing;
     private bool _dashCooldownReady = true;
     private bool _magnetCooldownReady = true;
+    private LaserView? _laser;
     private bool _visualReady;
 
     // ---- 振荡器状态 ----
@@ -101,6 +102,7 @@ public partial class PaddleView : CharacterBody2D
 
         _sprite = GetNodeOrNull<Sprite2D>("Paddle");
         _anim = GetNodeOrNull<AnimationPlayer>("AnimationPlayer");
+        _laser = GetNodeOrNull<LaserView>("Laser");
         _visualReady = _sprite != null;
     }
 
@@ -183,7 +185,7 @@ public partial class PaddleView : CharacterBody2D
             if (AbilityRule.TryLaser(_root.Run) == AbilityResult.Success)
             {
                 _root.Run.SpendEnergy(RunState.MaxEnergy);
-                _root.Sfx.PlayBigExplosion();
+                _laser?.Shoot();
                 _log.Debug("激光发射");
             }
         }

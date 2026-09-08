@@ -25,6 +25,7 @@ public partial class BrickView : StaticBody2D
     private CollisionShape2D _shapeSmall = null!;
     private bool _hitHandled;
     private bool _visualReady;
+    private Tween? _hitTween;
 
     /// <summary>
     ///     获取绑定的 domain 砖。
@@ -64,7 +65,13 @@ public partial class BrickView : StaticBody2D
     /// <summary>
     ///     球击中本砖：转发 domain BrickField 判定并处理视觉。
     /// </summary>
-    public void OnBallHit()
+    public void OnBallHit() => OnBallHit(1);
+
+    /// <summary>
+    ///     球/激光击中本砖：按伤害值转发 domain 判定并处理视觉。
+    /// </summary>
+    /// <param name="damage">伤害值。</param>
+    public void OnBallHit(int damage)
     {
         if (_hitHandled)
         {
@@ -72,7 +79,7 @@ public partial class BrickView : StaticBody2D
         }
 
         var field = _root.BrickField;
-        var results = field.HitBrick(Data, 1, onEnergyBrickDestroyed: _root.OnEnergyBrickDestroyed);
+        var results = field.HitBrick(Data, damage, onEnergyBrickDestroyed: _root.OnEnergyBrickDestroyed);
 
         if (Data.IsDestroyed)
         {
@@ -82,6 +89,7 @@ public partial class BrickView : StaticBody2D
         else
         {
             _root.OnBrickHit(Data.VisualType);
+            PlayHitBounce();
         }
 
         RefreshVisual();
@@ -170,11 +178,29 @@ public partial class BrickView : StaticBody2D
     }
 
     /// <summary>
-    ///     播放击中弹跳表现。
+    ///     播放击中弹跳表现（原版 brick.gd bounce：Size 弹性缩放 + 随机旋转回位）。
     /// </summary>
     public void PlayHitBounce()
     {
-        GetNodeOrNull<AnimationPlayer>("AnimationPlayer")?.Play("bounce");
+        if (_sizeSprite == null)
+        {
+            return;
+        }
+
+        if (_hitTween != null && _hitTween.IsRunning())
+        {
+            _hitTween.Kill();
+        }
+
+        _hitTween = CreateTween();
+        _hitTween.TweenProperty(_sizeSprite, "scale", new Vector2(1.15f, 1.15f), 0.15)
+            .SetEase(Tween.EaseType.Out).SetTrans(Tween.TransitionType.Elastic);
+        _hitTween.Parallel().TweenProperty(_sizeSprite, "rotation_degrees", (float)GD.RandRange(-10, 10), 0.15)
+            .SetEase(Tween.EaseType.Out).SetTrans(Tween.TransitionType.Elastic);
+        _hitTween.TweenProperty(_sizeSprite, "scale", Vector2.One, 0.2)
+            .SetEase(Tween.EaseType.In).SetTrans(Tween.TransitionType.Cubic);
+        _hitTween.Parallel().TweenProperty(_sizeSprite, "rotation_degrees", 0f, 0.2)
+            .SetEase(Tween.EaseType.In).SetTrans(Tween.TransitionType.Cubic);
     }
 
     private GameRoot FindGameRoot()
