@@ -2,19 +2,16 @@
 
 [ext_resource type="PackedScene" uid="uid://dyy7lp07carkr" path="res://scenes/paddle/paddle.tscn" id="1"]
 [ext_resource type="PackedScene" uid="uid://cvg0cmgxvdkk0" path="res://scenes/ball/ball.tscn" id="2"]
-[ext_resource type="Script" path="res://scenes/game/scripts/game.gd" id="3"]
 [ext_resource type="PackedScene" uid="uid://stcivysk52ie" path="res://scenes/brick/brick.tscn" id="4"]
-[ext_resource type="Script" path="res://scenes/game/scripts/pattern.gd" id="4_ar0yk"]
-[ext_resource type="FontFile" uid="uid://br01odh1twpni" path="res://shared/fonts/aldo_the_apache/AldotheApache.ttf" id="4_lbq23"]
+[ext_resource type="FontFile" uid="uid://e6lyd63ocyd8" path="res://shared/fonts/aldo_the_apache/AldotheApache.ttf" id="4_lbq23"]
 [ext_resource type="PackedScene" uid="uid://c48m66isx4utm" path="res://scenes/ui/energy_bar/energy_bar.tscn" id="5"]
 [ext_resource type="Shader" path="res://scenes/game/effects/combo.gdshader" id="5_a2d6o"]
 [ext_resource type="PackedScene" uid="uid://lc5lho6dqctj" path="res://scenes/ui/health/health.tscn" id="6"]
-[ext_resource type="Texture2D" uid="uid://cca2cimj26xys" path="res://scenes/game/visuals/walls.png" id="7"]
+[ext_resource type="Texture2D" uid="uid://dccnr2ba7mfqv" path="res://scenes/game/visuals/walls.png" id="7"]
 [ext_resource type="Shader" path="res://scenes/game/effects/wave.gdshader" id="7_hww07"]
-[ext_resource type="Texture2D" uid="uid://dds87jvstluyg" path="res://scenes/game/visuals/background.png" id="8"]
-[ext_resource type="Texture2D" uid="uid://doqriorw2lonx" path="res://scenes/ball/visuals/ball.png" id="8_a1usc"]
-[ext_resource type="Texture2D" uid="uid://sh7g4gfmqe73" path="res://scenes/game/visuals/pattern.png" id="9"]
-[ext_resource type="Script" path="res://scenes/game/scripts/camera_final.gd" id="9_mbjye"]
+[ext_resource type="Texture2D" uid="uid://i7x3k1ebfg2q" path="res://scenes/game/visuals/background.png" id="8"]
+[ext_resource type="Texture2D" uid="uid://cjqq3huxrcfne" path="res://scenes/ball/visuals/ball.png" id="8_a1usc"]
+[ext_resource type="Texture2D" uid="uid://g74fai4tqv2w" path="res://scenes/game/visuals/pattern.png" id="9"]
 [ext_resource type="PackedScene" uid="uid://cn3a4bs7x53tq" path="res://scenes/ui/score/score.tscn" id="10_lkj00"]
 [ext_resource type="Shader" path="res://scenes/game/effects/grayscale.gdshader" id="17_wq6rs"]
 
@@ -100,7 +97,6 @@ shader = ExtResource("17_wq6rs")
 shader_parameter/mix_val = 0.0
 
 [node name="Game" type="Node2D"]
-script = ExtResource("3")
 
 [node name="Background" type="Sprite2D" parent="."]
 position = Vector2(960, 540)
@@ -117,7 +113,6 @@ offset_right = 2756.0
 offset_bottom = 2463.0
 rotation = -0.785398
 pivot_offset = Vector2(1801, 1801)
-script = ExtResource("4_ar0yk")
 
 [node name="Combo" type="Label" parent="."]
 modulate = Color(0.462745, 0.462745, 0.462745, 0.180392)
@@ -292,7 +287,6 @@ velocity_multiplier = 0.5
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(960, 540)
-script = ExtResource("9_mbjye")
 dynamic_enabled = true
 dynamic_factor = 0.3
 

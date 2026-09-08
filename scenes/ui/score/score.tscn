@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://cn3a4bs7x53tq"]
 
 [ext_resource type="Texture2D" uid="uid://btadntwh8x77a" path="res://scenes/ui/score/visuals/container_horizontal.png" id="1_wktrx"]
-[ext_resource type="FontFile" uid="uid://br01odh1twpni" path="res://shared/fonts/aldo_the_apache/AldotheApache.ttf" id="2_cniln"]
+[ext_resource type="FontFile" uid="uid://e6lyd63ocyd8" path="res://shared/fonts/aldo_the_apache/AldotheApache.ttf" id="2_cniln"]
 
 [node name="Score" type="Control"]
 layout_mode = 3

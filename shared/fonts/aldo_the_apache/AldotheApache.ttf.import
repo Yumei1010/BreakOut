@@ -2,13 +2,13 @@
 
 importer="font_data_dynamic"
 type="FontFile"
-uid="uid://cl70tiuj3hrrj"
-path="res://.godot/imported/AldotheApache.ttf-366d5d8835a171aa12da27930dd1c616.fontdata"
+uid="uid://e6lyd63ocyd8"
+path="res://.godot/imported/AldotheApache.ttf-cffa48075c0951025613714b623191ef.fontdata"
 
 [deps]
 
 source_file="res://shared/fonts/aldo_the_apache/AldotheApache.ttf"
-dest_files=["res://.godot/imported/AldotheApache.ttf-366d5d8835a171aa12da27930dd1c616.fontdata"]
+dest_files=["res://.godot/imported/AldotheApache.ttf-cffa48075c0951025613714b623191ef.fontdata"]
 
 [params]
 

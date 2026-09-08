@@ -71,6 +71,10 @@ GAMEPLAY_GD = {
     "res://scenes/paddle/scripts/ghost_spawner.gd",
     "res://scenes/paddle/scripts/laser.gd",
     "res://scenes/ui/energy_bar/scripts/energy_bar.gd",
+    "res://scenes/ui/game_over/scripts/game_over.gd",
+    "res://scenes/ui/stage_clear/scripts/stage_clear.gd",
+    "res://scenes/ui/ultimate/scripts/ultimate_ready.gd",
+
     "res://scenes/ui/health/scripts/health.gd",
     "res://scenes/ui/score/scripts/score.gd",
     "res://scenes/ui/ultimate/scripts/ultimate_ready.gd",
