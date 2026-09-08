@@ -268,6 +268,7 @@ public partial class GameRoot : Node2D
 
         Ball.Die();
         SpawnParticle("res://scenes/ball/ball_explode_particles.tscn", Ball.GlobalPosition);
+        SpawnParticle("res://scenes/game/lava_splash_particles.tscn", Ball.GlobalPosition + new Vector2(0, 20));
         var dead = Run.OnBallLost();
         Sfx.PlayBallDestroyed();
         Shake.Shake(0.45f, 30f, 25f);
