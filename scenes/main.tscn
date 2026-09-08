@@ -1,6 +1,9 @@
 [gd_scene format=3 uid="uid://6s2urcdmkpbt"]
 
 [ext_resource type="Script" uid="uid://dehhmutvtlldg" path="res://scripts/presentation/game/GameRoot.cs" id="gameroot"]
+[ext_resource type="PackedScene" uid="uid://c48m66isx4utm" path="res://scenes/ui/energy_bar/energy_bar.tscn" id="ui_energy"]
+[ext_resource type="PackedScene" uid="uid://lc5lho6dqctj" path="res://scenes/ui/health/health.tscn" id="ui_health"]
+[ext_resource type="PackedScene" uid="uid://cn3a4bs7x53tq" path="res://scenes/ui/score/score.tscn" id="ui_score"]
 
 [ext_resource type="PackedScene" uid="uid://dyy7lp07carkr" path="res://scenes/paddle/paddle_layout.tscn" id="1"]
 [ext_resource type="PackedScene" uid="uid://cvg0cmgxvdkk0" path="res://scenes/ball/ball_layout.tscn" id="2"]
@@ -280,6 +283,41 @@ dynamic_factor = 0.3
 
 [node name="HUDCanvasLayer" type="CanvasLayer" parent="."]
 follow_viewport_enabled = true
+
+
+[node name="EnergyBar" parent="HUDCanvasLayer" instance=ExtResource("ui_energy")]
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -87.0
+offset_top = -128.0
+offset_right = 24.0
+offset_bottom = 128.0
+grow_horizontal = 0
+grow_vertical = 2
+
+[node name="HealthBar" parent="HUDCanvasLayer" instance=ExtResource("ui_health")]
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = -24.0
+offset_top = -128.0
+offset_right = 87.0
+offset_bottom = 128.0
+grow_vertical = 2
+
+[node name="Score" parent="HUDCanvasLayer" instance=ExtResource("ui_score")]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -178.5
+offset_top = -14.0
+offset_right = 178.5
+offset_bottom = 98.0
+grow_horizontal = 2
+
 
 [node name="EffectCanvasLayer" type="CanvasLayer" parent="."]
 

@@ -113,6 +113,7 @@ public partial class GameRoot : Node2D
         {
             Ball.OnSceneReady(Paddle);
             Ball.PlayAppear(); // 开局出现动画
+            _log.Info($"初始位置 Paddle={Paddle.Position} Ball={Ball.Position} 相机={_camera?.Position}");
         }
     }
 
@@ -133,19 +134,15 @@ public partial class GameRoot : Node2D
         Shake = new CameraShake { Name = "Shake" };
         _camera.AddChild(Shake);
 
-        // HUD（场景无 HUD 节点时动态创建）
-        if (GetNodeOrNull("HudLayer") == null)
+        // 反馈层与结算层（原版 UI 场景已在场景内：EnergyBar/HealthBar/Score）
+        var hudLayer = GetNodeOrNull<CanvasLayer>("HUDCanvasLayer");
+        if (hudLayer != null && GetNodeOrNull("Feedback") == null)
         {
-            var hudLayer = new CanvasLayer { Name = "HudLayer" };
-            var hud = new HudView { Name = "Hud" };
-            hudLayer.AddChild(hud);
-
             var feedback = new FeedbackLayer { Name = "Feedback" };
             hudLayer.AddChild(feedback);
 
             var overlay = new ResultOverlay { Name = "ResultOverlay" };
             hudLayer.AddChild(overlay);
-            AddChild(hudLayer);
         }
     }
 

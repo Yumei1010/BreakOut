@@ -1,5 +1,7 @@
 [gd_scene load_steps=12 format=3 uid="uid://c48m66isx4utm"]
 
+[ext_resource type="Script" uid="uid://2pxtjjirklqk" path="res://scripts/presentation/ui/EnergyBarView.cs" id="view"]
+
 [ext_resource type="Texture2D" uid="uid://detnlim5hn6js" path="res://scenes/ui/shared/visuals/Container.png" id="2"]
 [ext_resource type="Texture2D" uid="uid://cjqq3huxrcfne" path="res://scenes/ball/visuals/ball.png" id="3_i66wm"]
 [ext_resource type="Script" path="res://addons/shaker/shaker.gd" id="4_sclbk"]
@@ -54,6 +56,7 @@ scale_curve = SubResource("CurveTexture_2xagg")
 color_ramp = SubResource("GradientTexture1D_otxi7")
 
 [node name="EnergyBar" type="Control"]
+script = ExtResource("view")
 layout_mode = 3
 anchors_preset = 0
 offset_right = 111.0
