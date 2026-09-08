@@ -26,7 +26,9 @@ My-GFramework-Godot-Template.sln.DotSettings.user
 bin/
 obj/
 addons/*
-!addons/.editorconfig
+!addons/gdfxr/
+!addons/shaker/
+!addons/trail_2d/
 .addons/*
 
 # IDE cache
