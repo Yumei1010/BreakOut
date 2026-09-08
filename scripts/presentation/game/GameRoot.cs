@@ -25,6 +25,7 @@ using BreakOut.scripts.system.effect;
 using BreakOut.scripts.system.level;
 using BreakOut.scripts.system.run;
 using BreakOut.scripts.system.scoring;
+using BreakOut.scripts.system.ui;
 using BreakOut.scripts.utility.@event;
 
 namespace BreakOut.scripts.presentation.game;
@@ -88,6 +89,11 @@ public partial class GameRoot : Node2D
     ///     获取特效系统（音效/震动/粒子/相机）。
     /// </summary>
     public EffectSystem Effects { get; } = new();
+
+    /// <summary>
+    ///     获取 UI 弹层系统。
+    /// </summary>
+    public UiOverlaySystem Overlays { get; } = new();
 
     /// <summary>
     ///     获取砖墙系统（规则 + 视图注册表）。
@@ -186,6 +192,12 @@ public partial class GameRoot : Node2D
 
         // 弹层统一挂 HUDCanvasLayer（原版 UI 场景已在场景内）
         _uiLayer = GetNodeOrNull<CanvasLayer>("HUDCanvasLayer");
+        if (_uiLayer != null)
+        {
+            Overlays.Name = "Overlays";
+            AddChild(Overlays);
+            Overlays.Bind(_uiLayer);
+        }
     }
 
     /// <summary>
@@ -415,7 +427,7 @@ public partial class GameRoot : Node2D
     /// </summary>
     private void ShowGameOver()
     {
-        AddOverlay<GameOverView>("res://scenes/ui/game_over/game_over.tscn");
+        Overlays.ShowGameOver();
     }
 
     /// <summary>
@@ -423,7 +435,7 @@ public partial class GameRoot : Node2D
     /// </summary>
     private void ShowStageClear()
     {
-        AddOverlay<StageClearView>("res://scenes/ui/stage_clear/stage_clear.tscn");
+        Overlays.ShowStageClear();
     }
 
     /// <summary>
@@ -431,11 +443,7 @@ public partial class GameRoot : Node2D
     /// </summary>
     public void ShowUltimateReady()
     {
-        if (_uiLayer != null && _uiLayer.GetNodeOrNull("UltimateReady") == null)
-        {
-            var view = GetScene("res://scenes/ui/ultimate/ultimate_ready.tscn").Instantiate<UltimateReadyView>();
-            _uiLayer.AddChild(view);
-        }
+        Overlays.ShowUltimateReady();
     }
 
     /// <summary>
@@ -460,22 +468,6 @@ public partial class GameRoot : Node2D
     /// <summary>
     ///     向 UI 层添加一个弹层场景实例。
     /// </summary>
-    private void AddOverlay<T>(string scenePath) where T : Node
-    {
-        if (_uiLayer == null)
-        {
-            return;
-        }
-
-        var packed = GetScene(scenePath);
-        var view = packed.Instantiate<T>();
-        view.Name = typeof(T).Name;
-        _uiLayer.AddChild(view);
-        if (view is CanvasItem canvasItem)
-        {
-            canvasItem.MoveToFront();
-        }
-    }
 
     /// <summary>
     ///     记录 bump 判定并广播。
