@@ -101,6 +101,20 @@ shader_parameter/mix_val = 0.0
 [node name="Game" type="Node2D"]
 script = ExtResource("gameroot")
 
+[node name="Combo" type="Label" parent="."]
+modulate = Color(0.462745, 0.462745, 0.462745, 0.180392)
+material = SubResource("ShaderMaterial_ua5mp")
+offset_left = 310.0
+offset_top = 402.0
+offset_right = 1629.0
+offset_bottom = 737.0
+pivot_offset = Vector2(659, 167)
+theme_override_fonts/font = ExtResource("4_lbq23")
+theme_override_font_sizes/font_size = 400
+text = "COMBO"
+visible = false
+
+
 [node name="Background" type="Sprite2D" parent="."]
 position = Vector2(960, 540)
 texture = ExtResource("8")

@@ -45,6 +45,8 @@ public partial class GameRoot : Node2D
     private ColorRect? _pattern;
     private ColorRect? _bw;
     private CanvasLayer? _uiLayer;
+    private Label? _comboLabel;
+    private Timer? _comboHideTimer;
     private int _earlyBumps;
     private int _lateBumps;
     private int _perfectBumps;
@@ -114,6 +116,17 @@ public partial class GameRoot : Node2D
 
         _pattern = GetNodeOrNull<ColorRect>("Pattern");
         _bw = GetNodeOrNull<ColorRect>("EffectCanvasLayer/BW");
+        _comboLabel = GetNodeOrNull<Label>("Combo");
+        if (_comboLabel != null)
+        {
+            _comboHideTimer = new Timer { OneShot = true, WaitTime = 2.0 };
+            AddChild(_comboHideTimer);
+            _comboHideTimer.Timeout += () =>
+            {
+                var tween = CreateTween().SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.InOut);
+                tween.TweenProperty(_comboLabel, "scale", Vector2.Zero, 0.3);
+            };
+        }
 
         // 组装完成后再初始化球（Paddle 已就绪）
         if (Paddle != null && Ball != null)
@@ -295,6 +308,7 @@ public partial class GameRoot : Node2D
     {
         Run.OnBrickHit();
         Score.OnBrickTouched();
+        ShowCombo();
         TryShowUltimate();
         this.SendEvent(ChannelConstants.Gameplay, new ScoreChangedEvent(Score.Score, Score.Combo));
         this.SendEvent(ChannelConstants.Gameplay,
@@ -308,6 +322,33 @@ public partial class GameRoot : Node2D
     {
         Run.OnEnergyBrickDestroyed();
         TryShowUltimate();
+    }
+
+    /// <summary>
+    ///     显示 Combo 大字（combo&gt;1 时居中弹出，2s 超时缩放消失）。
+    /// </summary>
+    private void ShowCombo()
+    {
+        if (_comboLabel == null || _comboHideTimer == null)
+        {
+            return;
+        }
+
+        if (Score.Combo <= 1)
+        {
+            _comboLabel.Visible = false;
+            _comboHideTimer.Stop();
+            return;
+        }
+
+        _comboLabel.Visible = true;
+        _comboLabel.Text = $"COMBO {Score.Combo}";
+        _comboLabel.Scale = new Vector2(0.4f, 0.4f);
+        var tween = CreateTween().SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.InOut);
+        tween.TweenProperty(_comboLabel, "scale", Vector2.One, 0.25);
+        tween.TweenProperty(_comboLabel, "modulate:a", 1f, 0.1);
+
+        _comboHideTimer.Start(2.0);
     }
 
     /// <summary>
@@ -348,6 +389,7 @@ public partial class GameRoot : Node2D
         _brickViews.Remove(view);
 
         var levelCleared = BrickField.AliveCount == 0;
+        ShowCombo();
         this.SendEvent(ChannelConstants.Gameplay,
             new BrickDestroyedEvent(results.Count, BrickField.AliveCount, levelCleared));
         this.SendEvent(ChannelConstants.Gameplay, new ScoreChangedEvent(Score.Score, Score.Combo));
