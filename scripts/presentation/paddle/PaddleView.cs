@@ -3,18 +3,18 @@ using GFramework.Core.SourceGenerators.Abstractions.Logging;
 using GFramework.Core.SourceGenerators.Abstractions.Rule;
 using BreakOut.scripts.domain.ability;
 using BreakOut.scripts.domain.run;
-using BreakOut.scripts.presentation.game;
 using BreakOut.scripts.presentation.assets;
 using BreakOut.scripts.presentation.ball;
+using BreakOut.scripts.presentation.game;
 
 namespace BreakOut.scripts.presentation.paddle;
 
 /// <summary>
-///     板视图（薄壳）：Godot 物理载体，输入与能力触发转发给 domain。
+///     板视图（薄壳）：加载 paddle_layout 场景骨架，输入与能力触发转发给 domain。
 /// </summary>
 /// <remarks>
-///     只负责表现层职责：读取输入、移动板、播放能力动画/粒子；能力规则判定走 domain AbilityRule。
-///     球吸附跟随由 <see cref="LaunchPoint"/> 提供挂点。
+///     挂载于 scenes/paddle/paddle_layout.tscn 根（CharacterBody2D），子节点（Sprite/碰撞/LaunchPoint/音效/幽灵）由布局提供。
+///     能力判定走 domain AbilityRule；LaunchPoint 供球吸附。
 /// </remarks>
 [Log]
 [ContextAware]
@@ -28,7 +28,7 @@ public partial class PaddleView : CharacterBody2D
     private GameRoot _root = null!;
     private bool _dashCooldownReady = true;
     private bool _magnetCooldownReady = true;
-    private Sprite2D _sprite = null!;
+    private bool _visualReady;
 
     /// <summary>
     ///     获取发射点（球吸附位置）。
@@ -41,18 +41,24 @@ public partial class PaddleView : CharacterBody2D
     public BallView? AttachedBall { get; set; }
 
     /// <summary>
-    ///     初始化视图：构建板节点。
+    ///     初始化：引用布局子节点。
     /// </summary>
     public override void _Ready()
     {
         _root = GetParent<GameRoot>();
-        BuildVisual();
-        LaunchPoint = new Marker2D
+        ResolveVisualNodes();
+    }
+
+    private void ResolveVisualNodes()
+    {
+        LaunchPoint = GetNodeOrNull<Marker2D>("LaunchPoint") ?? new Marker2D();
+        if (GetNodeOrNull<Marker2D>("LaunchPoint") == null)
         {
-            Name = "LaunchPoint",
-            Position = new Vector2(0, -30)
-        };
-        AddChild(LaunchPoint);
+            LaunchPoint.Position = new Vector2(0, -30);
+            AddChild(LaunchPoint);
+        }
+
+        _visualReady = GetNodeOrNull<Sprite2D>("Paddle") != null;
     }
 
     /// <summary>
@@ -60,7 +66,7 @@ public partial class PaddleView : CharacterBody2D
     /// </summary>
     public override void _Process(double delta)
     {
-        if (GetTree().Paused)
+        if (GetTree().Paused || !_visualReady)
         {
             return;
         }
@@ -73,7 +79,6 @@ public partial class PaddleView : CharacterBody2D
             if (AbilityRule.TryDash(true) == AbilityResult.Success)
             {
                 _dashCooldownReady = false;
-                // 表现：冲刺加速 + 残影
                 Velocity = new Vector2(Mathf.Sign(dir == 0 ? 1 : dir) * 1500f, 0);
                 SpawnGhosts();
                 GetTree().CreateTimer(0.1).Timeout += () => _dashCooldownReady = true;
@@ -125,7 +130,7 @@ public partial class PaddleView : CharacterBody2D
     /// </summary>
     public override void _PhysicsProcess(double delta)
     {
-        if (GetTree().Paused)
+        if (GetTree().Paused || !_visualReady)
         {
             return;
         }
@@ -134,25 +139,31 @@ public partial class PaddleView : CharacterBody2D
     }
 
     /// <summary>
-    ///     球碰板时的弹跳表现（占位：后续 tween/音效）。
+    ///     球碰板时的弹跳表现。
     /// </summary>
     public void PlayBounce()
     {
-        // 占位：后续接入 juice 表现
+        GetNodeOrNull<AnimationPlayer>("AnimationPlayer")?.Play("bounce");
     }
 
     /// <summary>
-    ///     冲刺残影：克隆板贴图逐帧落后并淡出（原版 ghost_spawner 简化）。
+    ///     冲刺残影：克隆板贴图逐帧落后并淡出。
     /// </summary>
     private void SpawnGhosts()
     {
+        var sprite = GetNodeOrNull<Sprite2D>("Paddle");
+        if (sprite == null)
+        {
+            return;
+        }
+
         for (var i = 0; i < 3; i++)
         {
             var delay = i * 0.04;
             var ghost = new Sprite2D
             {
-                Texture = _sprite.Texture,
-                Scale = _sprite.Scale,
+                Texture = sprite.Texture,
+                Scale = sprite.Scale,
                 GlobalPosition = GlobalPosition,
                 Modulate = new Color(0.7f, 0.8f, 1f, 0.6f)
             };
@@ -163,26 +174,5 @@ public partial class PaddleView : CharacterBody2D
             tween.TweenProperty(ghost, "modulate:a", 0f, 0.25);
             tween.TweenCallback(Callable.From(ghost.QueueFree));
         }
-    }
-
-    /// <summary>
-    ///     构建板视觉（Sprite 贴图 + 碰撞）。
-    /// </summary>
-    private void BuildVisual()
-    {
-        _sprite = new Sprite2D
-        {
-            Texture = GameTextures.Paddle,
-            Scale = new Vector2(0.5f, 0.5f)
-        };
-        AddChild(_sprite);
-
-        var shape = new CollisionShape2D
-        {
-            Shape = new RectangleShape2D { Size = new Vector2(192, 24) }
-        };
-        AddChild(shape);
-
-        AddToGroup("Paddle");
     }
 }

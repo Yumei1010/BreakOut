@@ -132,7 +132,10 @@ public partial class GameRoot : Node2D
         Sfx = new SfxManager { Name = "Sfx" };
         AddChild(Sfx);
 
-        Paddle = new PaddleView { Position = new Vector2(960, 990) };
+        // 板：实例化布局场景（paddle_layout.tscn 挂 PaddleView.cs）
+        var paddleScene = GD.Load<PackedScene>("res://scenes/paddle/paddle_layout.tscn");
+        Paddle = paddleScene.Instantiate<PaddleView>();
+        Paddle.Position = new Vector2(960, 990);
         AddChild(Paddle);
 
         // 球：实例化布局场景（ball_layout.tscn 挂 BallView.cs）

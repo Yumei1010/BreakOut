@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://ctm4reyuyvi3j"]
+
+
+[node name="GhostSpawner" type="Node2D"]
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.02
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
