@@ -10,62 +10,62 @@ public static class GameTextures
     /// <summary>
     ///     球纹理。
     /// </summary>
-    public static Texture2D Ball => Load("res://scenes/ball/visuals/ball.png");
+    public static Texture2D Ball => Load("res://assets/texture/ball/ball.png");
 
     /// <summary>
     ///     板纹理。
     /// </summary>
-    public static Texture2D Paddle => Load("res://scenes/paddle/visuals/Paddle.png");
+    public static Texture2D Paddle => Load("res://assets/texture/paddle/Paddle.png");
 
     /// <summary>
     ///     背景纹理。
     /// </summary>
-    public static Texture2D Background => Load("res://scenes/game/visuals/background.png");
+    public static Texture2D Background => Load("res://assets/texture/game/background.png");
 
     /// <summary>
     ///     普通砖背景（长）。
     /// </summary>
-    public static Texture2D BrickLongFull => Load("res://scenes/brick/visuals/BlockLongFull.png");
+    public static Texture2D BrickLongFull => Load("res://assets/texture/brick/BlockLongFull.png");
 
     /// <summary>
     ///     普通砖背景（短）。
     /// </summary>
-    public static Texture2D BrickSmallFull => Load("res://scenes/brick/visuals/BlockSmallFull.png");
+    public static Texture2D BrickSmallFull => Load("res://assets/texture/brick/BlockSmallFull.png");
 
     /// <summary>
     ///     特效砖背景（长，爆炸/能量）。
     /// </summary>
-    public static Texture2D BrickLongBorder => Load("res://scenes/brick/visuals/BlockLongBorder.png");
+    public static Texture2D BrickLongBorder => Load("res://assets/texture/brick/BlockLongBorder.png");
 
     /// <summary>
     ///     特效砖背景（短，爆炸/能量）。
     /// </summary>
-    public static Texture2D BrickSmallBorder => Load("res://scenes/brick/visuals/BlockSmallBorder.png");
+    public static Texture2D BrickSmallBorder => Load("res://assets/texture/brick/BlockSmallBorder.png");
 
     /// <summary>
     ///     一血砖图标。
     /// </summary>
-    public static Texture2D BrickOne => Load("res://scenes/brick/visuals/One.png");
+    public static Texture2D BrickOne => Load("res://assets/texture/brick/One.png");
 
     /// <summary>
     ///     两血砖图标。
     /// </summary>
-    public static Texture2D BrickTwo => Load("res://scenes/brick/visuals/Two.png");
+    public static Texture2D BrickTwo => Load("res://assets/texture/brick/Two.png");
 
     /// <summary>
     ///     三血砖图标。
     /// </summary>
-    public static Texture2D BrickThree => Load("res://scenes/brick/visuals/Three.png");
+    public static Texture2D BrickThree => Load("res://assets/texture/brick/Three.png");
 
     /// <summary>
     ///     爆炸砖图标。
     /// </summary>
-    public static Texture2D BrickBomb => Load("res://scenes/brick/visuals/Bomb.png");
+    public static Texture2D BrickBomb => Load("res://assets/texture/brick/Bomb.png");
 
     /// <summary>
     ///     能量砖图标。
     /// </summary>
-    public static Texture2D BrickEnergy => Load("res://scenes/brick/visuals/Energy.png");
+    public static Texture2D BrickEnergy => Load("res://assets/texture/brick/Energy.png");
 
     private static Texture2D Load(string path)
     {

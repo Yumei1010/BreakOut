@@ -31,15 +31,15 @@ public partial class SfxManager : Node
     /// </summary>
     public override void _Ready()
     {
-        _bump = Load("res://scenes/ball/audio/bump.sfxr");
-        _bumpStrong = Load("res://scenes/ball/audio/bump_strong.sfxr");
-        _bumpOthers = Load("res://scenes/ball/audio/bump_others.sfxr");
-        _ballDestroyed = Load("res://scenes/ball/audio/ball_destroyed.sfxr");
-        _brickDestroyed = Load("res://scenes/brick/audio/destroyed.sfxr");
-        _explosion = Load("res://scenes/brick/audio/explosion.sfxr");
-        _explosion2 = Load("res://scenes/brick/audio/explosion_2.sfxr");
-        _paddleBump = Load("res://scenes/paddle/audio/paddle_bump.sfxr");
-        _ultimate = Load("res://scenes/ui/ultimate/audio/ultimate.sfxr");
+        _bump = Load("res://assets/sound/bump.sfxr");
+        _bumpStrong = Load("res://assets/sound/bump_strong.sfxr");
+        _bumpOthers = Load("res://assets/sound/bump_others.sfxr");
+        _ballDestroyed = Load("res://assets/sound/ball_destroyed.sfxr");
+        _brickDestroyed = Load("res://assets/sound/destroyed.sfxr");
+        _explosion = Load("res://assets/sound/explosion.sfxr");
+        _explosion2 = Load("res://assets/sound/explosion_2.sfxr");
+        _paddleBump = Load("res://assets/sound/bump.sfxr");
+        _ultimate = Load("res://assets/sound/ultimate.sfxr");
 
         for (var i = 0; i < PoolSize; i++)
         {

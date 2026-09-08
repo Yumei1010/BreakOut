@@ -1,0 +1,17 @@
+[remap]
+
+importer="com.timothyqiu.gdfxr.importer"
+type="AudioStreamWAV"
+uid="uid://bscftjy0sbcdt"
+path="res://.godot/imported/ball_destroyed.sfxr-535fc6047fcd71c0f2e05fdd52e32378.sample"
+
+[deps]
+
+source_file="res://assets/sound/ball_destroyed.sfxr"
+dest_files=["res://.godot/imported/ball_destroyed.sfxr-535fc6047fcd71c0f2e05fdd52e32378.sample"]
+
+[params]
+
+loop=false
+bit_depth=0
+sample_rate=0

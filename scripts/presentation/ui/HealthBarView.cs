@@ -26,8 +26,8 @@ public partial class HealthBarView : Control
     /// </summary>
     public override void _Ready()
     {
-        _full = GD.Load<Texture2D>("res://scenes/ui/health/visuals/HeartFull.png");
-        _empty = GD.Load<Texture2D>("res://scenes/ui/health/visuals/HeartEmpty.png");
+        _full = GD.Load<Texture2D>("res://assets/texture/ui/HeartFull.png");
+        _empty = GD.Load<Texture2D>("res://assets/texture/ui/HeartEmpty.png");
 
         var vbox = GetNodeOrNull<VBoxContainer>("VBox");
         if (vbox != null)

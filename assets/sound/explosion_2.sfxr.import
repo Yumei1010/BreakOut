@@ -1,0 +1,17 @@
+[remap]
+
+importer="com.timothyqiu.gdfxr.importer"
+type="AudioStreamWAV"
+uid="uid://c5misocuelb25"
+path="res://.godot/imported/explosion_2.sfxr-c4082e267e6dd8d979d9469bcb36baf6.sample"
+
+[deps]
+
+source_file="res://assets/sound/explosion_2.sfxr"
+dest_files=["res://.godot/imported/explosion_2.sfxr-c4082e267e6dd8d979d9469bcb36baf6.sample"]
+
+[params]
+
+loop=false
+bit_depth=0
+sample_rate=0

@@ -6,7 +6,7 @@
 
 
 [ext_resource type="FontFile" uid="uid://e6lyd63ocyd8" path="res://shared/fonts/aldo_the_apache/AldotheApache.ttf" id="1_3l6qb"]
-[ext_resource type="AudioStream" uid="uid://de05b6ymuy7wv" path="res://scenes/ui/ultimate/audio/ultimate.sfxr" id="4_4hdf7"]
+[ext_resource type="AudioStream" uid="uid://de05b6ymuy7wv" path="res://assets/sound/ultimate.sfxr" id="4_4hdf7"]
 
 [sub_resource type="Curve" id="Curve_fhsjk"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]

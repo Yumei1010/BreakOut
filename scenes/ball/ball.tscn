@@ -1,13 +1,13 @@
-[gd_scene load_steps=6 format=3 uid="uid://cvg0cmgxvdkk0"]
+[gd_scene format=3 uid="uid://cvg0cmgxvdkk0"]
 
 [ext_resource type="Script" uid="uid://1kobawbexdb3" path="res://scripts/presentation/ball/BallView.cs" id="ballview"]
 
-[ext_resource type="Texture2D" uid="uid://cjqq3huxrcfne" path="res://scenes/ball/visuals/ball.png" id="1"]
+[ext_resource type="Texture2D" uid="uid://cjqq3huxrcfne" path="res://assets/texture/ball/ball.png" id="1"]
 [ext_resource type="Script" path="res://addons/trail_2d/trail_2d.gd" id="3_io5yy"]
-[ext_resource type="AudioStream" uid="uid://bscftjy0sbcdt" path="res://scenes/ball/audio/ball_destroyed.sfxr" id="4_b0qps"]
-[ext_resource type="AudioStream" uid="uid://oat8dndoen10" path="res://scenes/ball/audio/bump.sfxr" id="5_kxdy1"]
-[ext_resource type="AudioStream" uid="uid://cj2as41e31lvj" path="res://scenes/ball/audio/bump_others.sfxr" id="6_y81pt"]
-[ext_resource type="AudioStream" uid="uid://cvkak7sfcndc8" path="res://scenes/ball/audio/bump_strong.sfxr" id="7_4dlnh"]
+[ext_resource type="AudioStream" uid="uid://bscftjy0sbcdt" path="res://assets/sound/ball_destroyed.sfxr" id="4_b0qps"]
+[ext_resource type="AudioStream" uid="uid://oat8dndoen10" path="res://assets/sound/bump.sfxr" id="5_kxdy1"]
+[ext_resource type="AudioStream" uid="uid://cj2as41e31lvj" path="res://assets/sound/bump_others.sfxr" id="6_y81pt"]
+[ext_resource type="AudioStream" uid="uid://cvkak7sfcndc8" path="res://assets/sound/bump_strong.sfxr" id="7_4dlnh"]
 
 [sub_resource type="Curve" id="Curve_lhv00"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]

@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://bh1hj74875de6" path="res://scripts/presentation/ui/StageClearView.cs" id="view"]
 
 [ext_resource type="FontFile" uid="uid://e6lyd63ocyd8" path="res://shared/fonts/aldo_the_apache/AldotheApache.ttf" id="1"]
-[ext_resource type="Shader" path="res://scenes/ui/stage_clear/effects/blur.gdshader" id="2_tpdoi"]
+[ext_resource type="Shader" path="res://assets/shader/blur.gdshader" id="2_tpdoi"]
 [ext_resource type="Theme" uid="uid://8wej1kve5gix" path="res://scenes/ui/shared/theme.tres" id="3_ihxgv"]
 [ext_resource type="Script" path="res://addons/shaker/shaker.gd" id="5_8wkd6"]
 
