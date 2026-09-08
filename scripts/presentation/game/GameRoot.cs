@@ -164,6 +164,13 @@ public partial class GameRoot : Node2D
         }
     }
 
+    /// <inheritdoc />
+    public override void _ExitTree()
+    {
+        // 兜底：离开场景时恢复时间尺度（死亡慢动作可能被重载中断）
+        global::Godot.Engine.TimeScale = 1.0f;
+    }
+
     /// <summary>
     ///     生成新关卡：读场景 SpawnPos 锚点生成砖墙。
     /// </summary>

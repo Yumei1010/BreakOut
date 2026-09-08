@@ -93,6 +93,8 @@ public partial class ResultOverlay : Control
 
 	private void ReloadGame()
 	{
+		// 重载前恢复时间尺度（死亡序列慢动作可能尚未结束）
+		Godot.Engine.TimeScale = 1.0f;
 		GetTree().ReloadCurrentScene();
 	}
 
