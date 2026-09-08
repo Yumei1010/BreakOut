@@ -35,6 +35,22 @@ namespace BreakOut.scripts.presentation.game;
 [ContextAware]
 public partial class GameRoot : Node2D
 {
+    private static readonly string[] PreloadScenePaths =
+    [
+        "res://scenes/brick/brick_layout.tscn",
+        "res://scenes/ui/game_over/game_over.tscn",
+        "res://scenes/ui/stage_clear/stage_clear.tscn",
+        "res://scenes/ui/ultimate/ultimate_ready.tscn",
+        "res://scenes/effects/bump/bump_timing.tscn",
+        "res://scenes/ball/bounce_particles.tscn",
+        "res://scenes/ball/bump_particles.tscn",
+        "res://scenes/ball/ball_explode_particles.tscn",
+        "res://scenes/brick/brick_explode_particles.tscn",
+        "res://scenes/brick/bomb_explode_particles.tscn",
+        "res://scenes/game/lava_splash_particles.tscn",
+    ];
+
+
     /// <summary>
     ///     砖墙碰撞影响半径（用于爆炸连锁）。
     /// </summary>
@@ -45,6 +61,7 @@ public partial class GameRoot : Node2D
     private ColorRect? _pattern;
     private ColorRect? _bw;
     private CanvasLayer? _uiLayer;
+    private readonly Dictionary<string, PackedScene> _sceneCache = new();
     private Label? _comboLabel;
     private Timer? _comboHideTimer;
     private int _earlyBumps;
@@ -93,12 +110,13 @@ public partial class GameRoot : Node2D
     /// </summary>
     public override void _Ready()
     {
+        global::Godot.Engine.TimeScale = 1.0f;
+        PreloadScenesIntoCache();
         ResolveSceneNodes();
         AttachJuice();
         GenerateLevel();
         PublishInitialState();
         _log.Info($"BreakOut 玩法就绪：{BrickField.AliveCount} 块砖");
-
     }
 
     /// <summary>
@@ -175,7 +193,7 @@ public partial class GameRoot : Node2D
 
         if (Ball.GlobalPosition.Y > GetViewportRect().Size.Y + 60f)
         {
-            _log.Warn($"球出界 Y={Ball.GlobalPosition.Y}");
+            _log.Debug($"球出界 Y={Ball.GlobalPosition.Y}");
             OnBallLost();
         }
     }
@@ -198,7 +216,7 @@ public partial class GameRoot : Node2D
         var generator = new LevelGenerator();
         var spawns = generator.Generate(anchors, LevelConfig.Default);
 
-        var brickScene = GD.Load<PackedScene>("res://scenes/brick/brick_layout.tscn");
+        var brickScene = GetScene("res://scenes/brick/brick_layout.tscn");
         var bricksRoot = GetNodeOrNull<Node2D>("Bricks") ?? this;
 
         foreach (var spawn in spawns)
@@ -290,7 +308,7 @@ public partial class GameRoot : Node2D
 
         if (dead)
         {
-            _log.Warn("游戏结束");
+            _log.Info("游戏结束");
             PlayDeathSequence();
             ShowGameOver();
             return;
@@ -426,7 +444,7 @@ public partial class GameRoot : Node2D
     {
         if (_uiLayer != null && _uiLayer.GetNodeOrNull("UltimateReady") == null)
         {
-            var view = GD.Load<PackedScene>("res://scenes/ui/ultimate/ultimate_ready.tscn").Instantiate<UltimateReadyView>();
+            var view = GetScene("res://scenes/ui/ultimate/ultimate_ready.tscn").Instantiate<UltimateReadyView>();
             _uiLayer.AddChild(view);
         }
     }
@@ -443,7 +461,7 @@ public partial class GameRoot : Node2D
             return;
         }
 
-        var packed = GD.Load<PackedScene>("res://scenes/effects/bump/bump_timing.tscn");
+        var packed = GetScene("res://scenes/effects/bump/bump_timing.tscn");
         var view = packed.Instantiate<BumpTimingView>();
         _uiLayer.AddChild(view);
         view.Position = position;
@@ -460,7 +478,7 @@ public partial class GameRoot : Node2D
             return;
         }
 
-        var packed = GD.Load<PackedScene>(scenePath);
+        var packed = GetScene(scenePath);
         var view = packed.Instantiate<T>();
         view.Name = typeof(T).Name;
         _uiLayer.AddChild(view);
@@ -560,6 +578,31 @@ public partial class GameRoot : Node2D
     ];
 
     /// <summary>
+    ///     启动时预加载全部场景（碰撞粒子/弹层），避免首次触发加载卡顿。
+    /// </summary>
+    private void PreloadScenesIntoCache()
+    {
+        foreach (var path in PreloadScenePaths)
+        {
+            _sceneCache[path] = GD.Load<PackedScene>(path);
+        }
+    }
+
+    /// <summary>
+    ///     从缓存取场景（未缓存则现载）。
+    /// </summary>
+    private PackedScene GetScene(string path)
+    {
+        if (!_sceneCache.TryGetValue(path, out var packed))
+        {
+            packed = GD.Load<PackedScene>(path);
+            _sceneCache[path] = packed;
+        }
+
+        return packed;
+    }
+
+    /// <summary>
     ///     在位置触发一个一次性粒子爆发。
     /// </summary>
     /// <param name="scenePath">粒子场景路径。</param>
@@ -567,7 +610,7 @@ public partial class GameRoot : Node2D
     /// <param name="rotationDegrees">旋转（法线角转度）。</param>
     public void SpawnParticle(string scenePath, Vector2 position, float rotationDegrees = 0f)
     {
-        var packed = GD.Load<PackedScene>(scenePath);
+        var packed = GetScene(scenePath);
         if (packed == null)
         {
             return;
