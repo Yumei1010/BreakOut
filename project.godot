@@ -17,7 +17,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 config/name="BreakOut"
 config/tags=PackedStringArray("gamelab")
 run/main_scene="uid://6s2urcdmkpbt"
-config/features=PackedStringArray("4.7", "C#", "GL Compatibility")
+config/features=PackedStringArray("4.7", "C#", "Forward Plus")
 config/save/setting_path="user://"
 config/save/save_path="user://saves"
 config/save/save_slot_prefix="slot_"
@@ -154,6 +154,6 @@ special={
 [rendering]
 
 textures/canvas_textures/default_texture_filter=3
-renderer/rendering_method="gl_compatibility"
-renderer/rendering_method.mobile="gl_compatibility"
+renderer/rendering_method="forward_plus"
+renderer/rendering_method.mobile="forward_plus"
 textures/vram_compression/import_etc2_astc=true
