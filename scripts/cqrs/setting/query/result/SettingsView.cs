@@ -1,6 +1,6 @@
 ﻿using GFramework.Game.Abstractions.Setting.Data;
 
-namespace GFrameworkTemplate.scripts.cqrs.setting.query.result;
+namespace BreakOut.scripts.cqrs.setting.query.result;
 
 /// <summary>
 ///     表示游戏设置视图的数据模型，包含音频和显示设置信息

@@ -1,8 +1,8 @@
-using GFramework.Core.SourceGenerators.Abstractions.Logging;
+﻿using GFramework.Core.SourceGenerators.Abstractions.Logging;
 using Godot;
-using GFrameworkTemplate.scripts.enums.behavior_tree;
+using BreakOut.scripts.enums.behavior_tree;
 
-namespace GFrameworkTemplate.scripts.component.behavior_tree;
+namespace BreakOut.scripts.component.behavior_tree;
 
 /// <summary>
 ///     动作节点：执行一个具体动作，是行为树的叶子节点。

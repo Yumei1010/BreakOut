@@ -1,6 +1,6 @@
-using Godot;
+﻿using Godot;
 
-namespace GFrameworkTemplate.scripts.component.tween_tree;
+namespace BreakOut.scripts.component.tween_tree;
 
 /// <summary>
 ///     属性动画叶子节点：把目标节点的某个属性补间到目标值。

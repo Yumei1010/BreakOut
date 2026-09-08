@@ -1,7 +1,7 @@
-using GFramework.Core.Abstractions.Logging;
+﻿using GFramework.Core.Abstractions.Logging;
 using GFramework.Core.Logging;
 
-namespace GFrameworkTemplate.scripts.framework.logging;
+namespace BreakOut.scripts.framework.logging;
 
 /// <summary>
 ///     组合日志工厂，为每个日志器创建共享一组 Appender 的组合日志器。

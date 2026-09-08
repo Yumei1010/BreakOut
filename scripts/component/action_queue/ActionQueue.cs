@@ -1,8 +1,8 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace GFrameworkTemplate.scripts.component.action_queue;
+namespace BreakOut.scripts.component.action_queue;
 
 /// <summary>
 ///     动作队列：按序串行执行异步步骤（前一个完成才执行下一个）。

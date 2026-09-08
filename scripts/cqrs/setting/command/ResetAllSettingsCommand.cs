@@ -2,7 +2,7 @@
 using GFramework.Core.Extensions;
 using GFramework.Game.Abstractions.Setting;
 
-namespace GFrameworkTemplate.scripts.cqrs.setting.command;
+namespace BreakOut.scripts.cqrs.setting.command;
 
 /// <summary>
 ///     重置设置命令类

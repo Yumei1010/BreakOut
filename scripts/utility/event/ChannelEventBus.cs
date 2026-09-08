@@ -1,7 +1,7 @@
-using GFramework.Core.Abstractions.Events;
+﻿using GFramework.Core.Abstractions.Events;
 using GFramework.Core.Events;
 
-namespace GFrameworkTemplate.scripts.utility.@event;
+namespace BreakOut.scripts.utility.@event;
 
 /// <summary>
 ///     频段事件总线实现：**继承框架原版 <see cref="EventBus"/>**，

@@ -1,4 +1,4 @@
-namespace GFrameworkTemplate.Tests;
+﻿namespace BreakOut.Tests;
 
 /// <summary>
 ///     占位测试——验证测试基础设施正常工作

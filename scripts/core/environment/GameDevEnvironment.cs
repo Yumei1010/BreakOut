@@ -1,7 +1,7 @@
 ﻿using GFramework.Core.Environment;
-using GFrameworkTemplate.scripts.constants;
+using BreakOut.scripts.constants;
 
-namespace GFrameworkTemplate.scripts.core.environment;
+namespace BreakOut.scripts.core.environment;
 
 /// <summary>
 ///     游戏开发环境类，继承自EnvironmentBase

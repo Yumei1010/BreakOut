@@ -1,7 +1,7 @@
-using GFramework.Game.Abstractions.Data;
+﻿using GFramework.Game.Abstractions.Data;
 using GFramework.Game.Abstractions.Enums;
 
-namespace GFrameworkTemplate.scripts.data.setting;
+namespace BreakOut.scripts.data.setting;
 
 public sealed record LocalDataLocation : IDataLocation
 {

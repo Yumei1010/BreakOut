@@ -1,4 +1,4 @@
-# 项目约束规范
+﻿# 项目约束规范
 
 本文档定义基于本框架模板的项目的编码规范、架构约束和命名约定。所有贡献者必须遵守。
 
@@ -11,24 +11,24 @@
 命名空间与目录层次一一对应，使用文件范围声明（`namespace X.Y.Z;`，带分号无大括号）。
 
 ```
-根命名空间: GFrameworkTemplate
+根命名空间: BreakOut
 
-global/ 目录                    → GFrameworkTemplate.global;
-scripts/component/<name>/       → GFrameworkTemplate.scripts.component.<name>;
-scripts/entities/<name>/        → GFrameworkTemplate.scripts.entities.<name>;
-scripts/system/<name>/          → GFrameworkTemplate.scripts.system.<name>;
-scripts/enums/<domain>/         → GFrameworkTemplate.scripts.enums.<domain>;
-scripts/menu/<name>/            → GFrameworkTemplate.scripts.menu.<name>;
-scripts/core/<dir>/             → GFrameworkTemplate.scripts.core.<dir>;
-scripts/cqrs/<domain>/command/  → GFrameworkTemplate.scripts.cqrs.<domain>.command;
-scripts/cqrs/<domain>/command/input/ → GFrameworkTemplate.scripts.cqrs.<domain>.command.input;
-scripts/cqrs/<domain>/event/    → GFrameworkTemplate.scripts.cqrs.<domain>.@event;
+global/ 目录                    → BreakOut.global;
+scripts/component/<name>/       → BreakOut.scripts.component.<name>;
+scripts/entities/<name>/        → BreakOut.scripts.entities.<name>;
+scripts/system/<name>/          → BreakOut.scripts.system.<name>;
+scripts/enums/<domain>/         → BreakOut.scripts.enums.<domain>;
+scripts/menu/<name>/            → BreakOut.scripts.menu.<name>;
+scripts/core/<dir>/             → BreakOut.scripts.core.<dir>;
+scripts/cqrs/<domain>/command/  → BreakOut.scripts.cqrs.<domain>.command;
+scripts/cqrs/<domain>/command/input/ → BreakOut.scripts.cqrs.<domain>.command.input;
+scripts/cqrs/<domain>/event/    → BreakOut.scripts.cqrs.<domain>.@event;
 ```
 
 ### 注意事项
 
 - C# 关键字 `event` 在命名空间中转义为 `@event`
-- `global/` 使用 `GFrameworkTemplate.global`（不含 `scripts.` 前缀）
+- `global/` 使用 `BreakOut.global`（不含 `scripts.` 前缀）
 - 禁止使用传统的花括号命名空间 `namespace X { }` 语法
 
 ---
@@ -117,7 +117,7 @@ scripts/cqrs/<domain>/
 
 **数据事件**（携带属性）— 使用完整类体：
 ```csharp
-namespace GFrameworkTemplate.scripts.cqrs.<domain>.@event;
+namespace BreakOut.scripts.cqrs.<domain>.@event;
 
 public sealed class SomeEvent
 {
@@ -128,7 +128,7 @@ public sealed class SomeEvent
 
 **标记事件**（无数据）— 使用文件范围类型声明：
 ```csharp
-namespace GFrameworkTemplate.scripts.cqrs.<domain>.@event;
+namespace BreakOut.scripts.cqrs.<domain>.@event;
 
 /// <summary>
 ///     某某事件类，用于表示某某事件
@@ -147,7 +147,7 @@ public sealed class SomeEvent;
 
 **带输入的命令**（异步）— 使用主构造函数：
 ```csharp
-namespace GFrameworkTemplate.scripts.cqrs.<domain>.command;
+namespace BreakOut.scripts.cqrs.<domain>.command;
 
 public sealed class SomeCommand(SomeCommandInput input)
     : AbstractAsyncCommand<SomeCommandInput>(input)
@@ -194,7 +194,7 @@ public sealed class SomeCommand : AbstractCommand
 **所有命令输入必须是 `public sealed class`，实现 `ICommandInput`：**
 
 ```csharp
-namespace GFrameworkTemplate.scripts.cqrs.<domain>.command.input;
+namespace BreakOut.scripts.cqrs.<domain>.command.input;
 
 public sealed class SomeCommandInput : ICommandInput
 {
@@ -382,8 +382,8 @@ using GFramework.Godot.extensions;
 using GFramework.Core.SourceGenerators.Abstractions.Logging;
 using GFramework.Core.SourceGenerators.Abstractions.Rule;
 using Godot;
-using GFrameworkTemplate.scripts.entities.my_entity;
-using GFrameworkTemplate.scripts.cqrs.my_domain.@event;
+using BreakOut.scripts.entities.my_entity;
+using BreakOut.scripts.cqrs.my_domain.@event;
 ```
 
 ---

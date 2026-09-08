@@ -1,8 +1,8 @@
-using GFramework.Core.SourceGenerators.Abstractions.Logging;
+﻿using GFramework.Core.SourceGenerators.Abstractions.Logging;
 using Godot;
-using GFrameworkTemplate.scripts.enums.behavior_tree;
+using BreakOut.scripts.enums.behavior_tree;
 
-namespace GFrameworkTemplate.scripts.component.behavior_tree;
+namespace BreakOut.scripts.component.behavior_tree;
 
 /// <summary>
 ///     条件节点：判断某个条件是否成立，是行为树的叶子节点。

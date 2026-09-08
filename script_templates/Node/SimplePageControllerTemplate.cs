@@ -1,4 +1,4 @@
-// meta-name: 简单UI页面控制器类模板
+﻿// meta-name: 简单UI页面控制器类模板
 // meta-description: 负责管理UI页面场景的生命周期和架构关联（语法糖版：AutoUiPage + GetNode + BindNodeSignal）
 using Godot;
 using GFramework.Core.Abstractions.Controller;
@@ -9,9 +9,9 @@ using GFramework.Godot.SourceGenerators.Abstractions;
 using GFramework.Godot.SourceGenerators.Abstractions.UI;
 using GFramework.Core.SourceGenerators.Abstractions.Logging;
 using GFramework.Core.SourceGenerators.Abstractions.Rule;
-using GFrameworkTemplate.scripts.core.ui;
-using GFrameworkTemplate.scripts.enums.ui;
-using GFrameworkTemplate.global;
+using BreakOut.scripts.core.ui;
+using BreakOut.scripts.enums.ui;
+using BreakOut.global;
 
 /// <summary>
 ///     _CLASS_ UI 页面——语法糖模板

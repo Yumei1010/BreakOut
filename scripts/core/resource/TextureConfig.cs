@@ -1,8 +1,8 @@
 ﻿using GFramework.Core.Abstractions.Bases;
-using GFrameworkTemplate.scripts.enums.resources;
+using BreakOut.scripts.enums.resources;
 using Godot;
 
-namespace GFrameworkTemplate.scripts.core.resource;
+namespace BreakOut.scripts.core.resource;
 
 /// <summary>
 /// TextureConfig 类用于配置纹理资源，实现 IKeyValue 接口以提供键值对访问。

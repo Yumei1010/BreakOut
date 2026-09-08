@@ -3,9 +3,9 @@ using GFramework.Core.Extensions;
 using GFramework.Game.Abstractions.Setting;
 using GFramework.Game.Abstractions.Setting.Data;
 using GFramework.Godot.Setting;
-using GFrameworkTemplate.scripts.cqrs.audio.command.input;
+using BreakOut.scripts.cqrs.audio.command.input;
 
-namespace GFrameworkTemplate.scripts.cqrs.audio.command;
+namespace BreakOut.scripts.cqrs.audio.command;
 
 /// <summary>
 ///     更改音效音量命令类，用于处理SFX音量更改操作

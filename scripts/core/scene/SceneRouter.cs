@@ -1,9 +1,9 @@
-using GFramework.Game.Abstractions.Scene;
+﻿using GFramework.Game.Abstractions.Scene;
 using GFramework.Game.Scene;
 using GFramework.Game.Scene.Handler;
 using Godot;
 
-namespace GFrameworkTemplate.scripts.core.scene;
+namespace BreakOut.scripts.core.scene;
 
 /// <summary>
 /// 场景路由器类，负责管理游戏场景的切换和路由功能

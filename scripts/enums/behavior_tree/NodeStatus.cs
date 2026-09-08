@@ -1,4 +1,4 @@
-namespace GFrameworkTemplate.scripts.enums.behavior_tree;
+﻿namespace BreakOut.scripts.enums.behavior_tree;
 
 /// <summary>
 ///     行为树节点执行结果。

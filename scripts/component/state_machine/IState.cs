@@ -1,4 +1,4 @@
-namespace GFrameworkTemplate.scripts.component.state_machine;
+﻿namespace BreakOut.scripts.component.state_machine;
 
 /// <summary>
 ///     状态契约，所有状态必须实现此接口。

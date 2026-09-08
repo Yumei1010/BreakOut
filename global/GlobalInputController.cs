@@ -1,10 +1,10 @@
-using GFramework.Core.SourceGenerators.Abstractions.Logging;
+﻿using GFramework.Core.SourceGenerators.Abstractions.Logging;
 using GFramework.Core.SourceGenerators.Abstractions.Rule;
-using GFrameworkTemplate.scripts.core.controller;
-using GFrameworkTemplate.scripts.enums.input;
+using BreakOut.scripts.core.controller;
+using BreakOut.scripts.enums.input;
 using Godot;
 
-namespace GFrameworkTemplate.global;
+namespace BreakOut.global;
 
 /// <summary>
 ///     全局输入控制器，负责处理全局输入事件

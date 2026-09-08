@@ -1,4 +1,4 @@
-name: Release on Tag
+﻿name: Release on Tag
 
 # 触发条件：当有标签被推送到仓库时触发该工作流。
 # 支持任意格式的标签名，例如 `1.0.0` 或 `v1.0.0`。
@@ -18,7 +18,7 @@ permissions:
 # 定义环境变量供后续步骤使用
 env:
   GODOT_VERSION: 4.6               # 指定使用的 Godot 版本
-  SOLN: My-GFramework-Godot-Template
+  SOLN: BreakOut
   EXPORT_NAME: MyGFrameworkGodotTemplate
 
 # 工作流中的任务定义部分

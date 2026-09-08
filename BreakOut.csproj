@@ -3,7 +3,7 @@
         <TargetFramework>net10.0</TargetFramework>
         <TargetFramework Condition=" '$(GodotTargetPlatform)' == 'android' ">net9.0</TargetFramework>
         <EnableDynamicLoading>true</EnableDynamicLoading>
-        <RootNamespace>GFrameworkTemplate</RootNamespace>
+        <RootNamespace>BreakOut</RootNamespace>
         <Nullable>enable</Nullable>
         <LangVersion>preview</LangVersion>
         <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
@@ -46,7 +46,7 @@
         <Content Include="global\README.md" />
     </ItemGroup>
     <ItemGroup>
-        <InternalsVisibleTo Include="My-GFramework-Godot-Template.Tests" />
+        <InternalsVisibleTo Include="BreakOut.Tests" />
     </ItemGroup>
     <ItemGroup>
         <Folder Include="scripts\component\" />

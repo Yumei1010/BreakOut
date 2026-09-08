@@ -1,7 +1,7 @@
 ﻿using GFramework.Core.Command;
-using GFrameworkTemplate.scripts.utility;
+using BreakOut.scripts.utility;
 
-namespace GFrameworkTemplate.scripts.cqrs.game.command;
+namespace BreakOut.scripts.cqrs.game.command;
 
 /// <summary>
 ///     退出游戏命令类，用于处理游戏退出逻辑

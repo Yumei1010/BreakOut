@@ -1,14 +1,14 @@
-using GFramework.Core.Abstractions.Architectures;
+﻿using GFramework.Core.Abstractions.Architectures;
 using GFramework.Game.Abstractions.Data;
 using GFramework.Game.Data;
 using GFramework.Game.Serializer;
 using GFramework.Godot.Scene;
 using GFramework.Godot.Storage;
 using GFramework.Godot.UI;
-using GFrameworkTemplate.scripts.utility.registry;
+using BreakOut.scripts.utility.registry;
 using Godot;
 
-namespace GFrameworkTemplate.scripts.module;
+namespace BreakOut.scripts.module;
 
 /// <summary>
 ///     工具模块类，负责安装和管理框架中的实用工具组件

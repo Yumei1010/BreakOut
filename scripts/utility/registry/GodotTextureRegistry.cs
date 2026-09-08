@@ -1,7 +1,7 @@
 ﻿using GFramework.Core.Abstractions.Registries;
 using Godot;
 
-namespace GFrameworkTemplate.scripts.utility.registry;
+namespace BreakOut.scripts.utility.registry;
 
 /// <summary>
 /// GodotTextureRegistry 类继承自 KeyValueRegistryBase 并实现 IGodotTextureRegistry 接口。

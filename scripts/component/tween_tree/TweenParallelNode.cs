@@ -1,6 +1,6 @@
-using Godot;
+﻿using Godot;
 
-namespace GFrameworkTemplate.scripts.component.tween_tree;
+namespace BreakOut.scripts.component.tween_tree;
 
 /// <summary>
 ///     并行节点：所有子节点同时开始执行。

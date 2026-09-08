@@ -1,4 +1,4 @@
-# 会话文件日志（framework/logging）
+﻿# 会话文件日志（framework/logging）
 
 把 GFramework 的日志输出从"只进 Godot 控制台"扩展为**控制台 + 会话文件双路输出**，日志以 JSON 结构化持久化，方便开发人员回看与分析错误。
 
@@ -53,7 +53,7 @@ GameEntryPoint.OpenSessionLogDirectory(); // 系统文件管理器打开 user://
 > 注：文件首行含 UTF-8 BOM（框架 `FileAppender` 用 `Encoding.UTF8` 所致，追加不重复）——记事本/Excel 打开友好，接受。
 
 ```json
-{"timestamp":"2026-09-08T02:22:40.8061506Z","level":"INFO","logger":"GFrameworkTemplate.global.GameEntryPoint","message":"框架入口点就绪."}
+{"timestamp":"2026-09-08T02:22:40.8061506Z","level":"INFO","logger":"BreakOut.global.GameEntryPoint","message":"框架入口点就绪."}
 {"timestamp":"2026-09-08T02:22:41.1000000Z","level":"ERROR","logger":"X","message":"计算失败","properties":{"scope":"deck"},"exception":{"type":"System.InvalidOperationException","message":"boom","stackTrace":"..."}}
 ```
 

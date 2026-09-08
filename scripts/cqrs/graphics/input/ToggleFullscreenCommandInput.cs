@@ -1,6 +1,6 @@
 ﻿using GFramework.Cqrs.Abstractions.Cqrs.Command;
 
-namespace GFrameworkTemplate.scripts.cqrs.graphics.input;
+namespace BreakOut.scripts.cqrs.graphics.input;
 
 /// <summary>
 ///     切换全屏命令输入类

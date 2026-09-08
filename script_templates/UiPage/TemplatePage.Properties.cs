@@ -1,4 +1,4 @@
-namespace GFrameworkTemplate.scripts.menu;
+﻿namespace BreakOut.scripts.menu;
 
 public partial class TemplatePage
 {

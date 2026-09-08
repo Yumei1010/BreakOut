@@ -1,6 +1,6 @@
-using GFrameworkTemplate.scripts.component.state_machine;
+﻿using BreakOut.scripts.component.state_machine;
 
-namespace GFrameworkTemplate.scripts.component.hierarchical_state_machine;
+namespace BreakOut.scripts.component.hierarchical_state_machine;
 
 /// <summary>
 ///     状态转换条件接口。

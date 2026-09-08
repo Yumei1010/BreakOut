@@ -2,9 +2,9 @@
 using GFramework.Core.Query;
 using GFramework.Game.Abstractions.Setting;
 using GFramework.Game.Abstractions.Setting.Data;
-using GFrameworkTemplate.scripts.cqrs.setting.query.result;
+using BreakOut.scripts.cqrs.setting.query.result;
 
-namespace GFrameworkTemplate.scripts.cqrs.setting.query;
+namespace BreakOut.scripts.cqrs.setting.query;
 
 /// <summary>
 ///     获取当前设置的查询类

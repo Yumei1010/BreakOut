@@ -1,6 +1,6 @@
-using Godot;
+﻿using Godot;
 
-namespace GFrameworkTemplate.scripts.component.tween_tree;
+namespace BreakOut.scripts.component.tween_tree;
 
 /// <summary>
 ///     延时叶子节点：在序列中插入一段停顿（如"等 0.5 秒再播下一段"）。

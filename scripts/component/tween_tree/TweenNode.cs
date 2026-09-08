@@ -1,8 +1,8 @@
-using GFramework.Core.SourceGenerators.Abstractions.Logging;
+﻿using GFramework.Core.SourceGenerators.Abstractions.Logging;
 using GFramework.Core.SourceGenerators.Abstractions.Rule;
 using Godot;
 
-namespace GFrameworkTemplate.scripts.component.tween_tree;
+namespace BreakOut.scripts.component.tween_tree;
 
 /// <summary>
 ///     Tween 动画树节点抽象基类。

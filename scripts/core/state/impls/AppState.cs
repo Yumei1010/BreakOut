@@ -1,10 +1,10 @@
-using GFramework.Core.Abstractions.State;
+﻿using GFramework.Core.Abstractions.State;
 using GFramework.Core.Extensions;
 using GFramework.Core.State;
 using GFramework.Game.Abstractions.Scene;
 using GFramework.Game.Abstractions.UI;
 
-namespace GFrameworkTemplate.scripts.core.state.impls;
+namespace BreakOut.scripts.core.state.impls;
 
 /// <summary>
 ///     应用默认状态，清除 UI 和场景路由，为推送新页面做准备

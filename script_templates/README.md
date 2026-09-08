@@ -1,4 +1,4 @@
-# script_templates 组织说明
+﻿# script_templates 组织说明
 
 Godot 脚本模板与页面参考示例按域分装：
 
@@ -22,7 +22,7 @@ script_templates/
 Godot 编辑器右键节点 → "附加脚本" → 选择模板，生成单文件脚本。
 模板用 `_CLASS_` / `_BASE_` 占位符（Godot 自动替换）。
 
-- 生成后**无 namespace**——按目录规范补 `namespace GFrameworkTemplate.scripts.xxx;`
+- 生成后**无 namespace**——按目录规范补 `namespace BreakOut.scripts.xxx;`
 - 生成后**按需拆 partial**（复杂页面拆 .Dependencies/.Events/.Signals 等）
 
 ## UiPage/（五文件 partial 参考）

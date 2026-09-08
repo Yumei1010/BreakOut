@@ -4,7 +4,7 @@ using GFramework.Core.Utility;
 using GFramework.Core.SourceGenerators.Abstractions.Logging;
 using Godot;
 
-namespace GFrameworkTemplate.scripts.core.ui;
+namespace BreakOut.scripts.core.ui;
 
 /// <summary>
 /// UI工厂类，用于创建和实例化UI页面

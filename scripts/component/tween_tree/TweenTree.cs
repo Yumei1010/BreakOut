@@ -1,8 +1,8 @@
-using GFramework.Core.SourceGenerators.Abstractions.Logging;
+﻿using GFramework.Core.SourceGenerators.Abstractions.Logging;
 using GFramework.Core.SourceGenerators.Abstractions.Rule;
 using Godot;
 
-namespace GFrameworkTemplate.scripts.component.tween_tree;
+namespace BreakOut.scripts.component.tween_tree;
 
 /// <summary>
 ///     Tween 动画树根节点：挂在场景任意位置，把其子 <see cref="TweenNode"/> 组成的动画树播放出来。

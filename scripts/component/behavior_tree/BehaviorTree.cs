@@ -1,8 +1,8 @@
-using GFramework.Core.SourceGenerators.Abstractions.Logging;
+﻿using GFramework.Core.SourceGenerators.Abstractions.Logging;
 using Godot;
-using GFrameworkTemplate.scripts.enums.behavior_tree;
+using BreakOut.scripts.enums.behavior_tree;
 
-namespace GFrameworkTemplate.scripts.component.behavior_tree;
+namespace BreakOut.scripts.component.behavior_tree;
 
 /// <summary>
 ///     行为树根节点：挂到场景任意位置，自动每帧驱动整棵子树。

@@ -1,7 +1,7 @@
-using GFramework.Core.SourceGenerators.Abstractions.Logging;
-using GFrameworkTemplate.scripts.enums.behavior_tree;
+﻿using GFramework.Core.SourceGenerators.Abstractions.Logging;
+using BreakOut.scripts.enums.behavior_tree;
 
-namespace GFrameworkTemplate.scripts.component.behavior_tree;
+namespace BreakOut.scripts.component.behavior_tree;
 
 /// <summary>
 ///     顺序节点（Sequence）：从左到右依次执行子节点。

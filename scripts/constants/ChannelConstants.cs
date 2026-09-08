@@ -1,4 +1,4 @@
-namespace GFrameworkTemplate.scripts.constants;
+﻿namespace BreakOut.scripts.constants;
 
 /// <summary>
 ///     预定义频段常量，避免魔法字符串。

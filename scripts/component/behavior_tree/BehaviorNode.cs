@@ -1,9 +1,9 @@
-using GFramework.Core.SourceGenerators.Abstractions.Logging;
+﻿using GFramework.Core.SourceGenerators.Abstractions.Logging;
 using GFramework.Core.SourceGenerators.Abstractions.Rule;
 using Godot;
-using GFrameworkTemplate.scripts.enums.behavior_tree;
+using BreakOut.scripts.enums.behavior_tree;
 
-namespace GFrameworkTemplate.scripts.component.behavior_tree;
+namespace BreakOut.scripts.component.behavior_tree;
 
 /// <summary>
 ///     行为树节点的抽象基类。

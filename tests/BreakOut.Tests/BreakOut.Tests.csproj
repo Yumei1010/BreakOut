@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
-    <RootNamespace>GFrameworkTemplate.Tests</RootNamespace>
+    <RootNamespace>BreakOut.Tests</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\My-GFramework-Godot-Template.csproj" />
+    <ProjectReference Include="..\..\BreakOut.csproj" />
   </ItemGroup>
 
   <ItemGroup>

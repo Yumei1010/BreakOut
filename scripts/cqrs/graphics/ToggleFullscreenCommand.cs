@@ -3,9 +3,9 @@ using GFramework.Core.Extensions;
 using GFramework.Game.Abstractions.Setting;
 using GFramework.Game.Abstractions.Setting.Data;
 using GFramework.Godot.Setting;
-using GFrameworkTemplate.scripts.cqrs.graphics.input;
+using BreakOut.scripts.cqrs.graphics.input;
 
-namespace GFrameworkTemplate.scripts.cqrs.graphics.command;
+namespace BreakOut.scripts.cqrs.graphics.command;
 
 /// <summary>
 ///     切换全屏模式命令类

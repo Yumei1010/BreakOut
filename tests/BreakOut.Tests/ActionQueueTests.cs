@@ -1,6 +1,6 @@
-using GFrameworkTemplate.scripts.component.action_queue;
+﻿using BreakOut.scripts.component.action_queue;
 
-namespace GFrameworkTemplate.Tests;
+namespace BreakOut.Tests;
 
 /// <summary>
 ///     动作队列测试：验证串行执行顺序、运行中入队、清空、等待完成。

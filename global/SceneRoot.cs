@@ -1,11 +1,11 @@
-using GFramework.Core.Extensions;
+﻿using GFramework.Core.Extensions;
 using GFramework.Game.Abstractions.Scene;
 using GFramework.Godot.Extensions;
 using GFramework.Core.SourceGenerators.Abstractions.Logging;
 using GFramework.Core.SourceGenerators.Abstractions.Rule;
 using Godot;
 
-namespace GFrameworkTemplate.global;
+namespace BreakOut.global;
 
 /// <summary>
 ///     场景根节点：承载场景行为（ISceneBehavior）的容器。

@@ -3,9 +3,9 @@ using GFramework.Core.Extensions;
 using GFramework.Game.Abstractions.Setting;
 using GFramework.Game.Abstractions.Setting.Data;
 using GFramework.Godot.Setting;
-using GFrameworkTemplate.scripts.cqrs.graphics.input;
+using BreakOut.scripts.cqrs.graphics.input;
 
-namespace GFrameworkTemplate.scripts.cqrs.graphics.command;
+namespace BreakOut.scripts.cqrs.graphics.command;
 
 /// <summary>
 ///     更改分辨率命令类，用于处理分辨率更改操作

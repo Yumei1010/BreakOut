@@ -1,4 +1,4 @@
-using GFramework.Core.Abstractions.Controller;
+﻿using GFramework.Core.Abstractions.Controller;
 using GFramework.Core.SourceGenerators.Abstractions.Logging;
 using GFramework.Core.SourceGenerators.Abstractions.Rule;
 using GFramework.Game.Abstractions.Enums;
@@ -6,10 +6,10 @@ using GFramework.Game.Abstractions.UI;
 using GFramework.Godot.SourceGenerators.Abstractions;
 using GFramework.Godot.SourceGenerators.Abstractions.UI;
 using Godot;
-using GFrameworkTemplate.scripts.core.ui;
-using GFrameworkTemplate.scripts.enums.ui;
+using BreakOut.scripts.core.ui;
+using BreakOut.scripts.enums.ui;
 
-namespace GFrameworkTemplate.scripts.menu;
+namespace BreakOut.scripts.menu;
 
 /// <summary>
 ///     模板页面——语法糖版 UI 页面示例（partial class 模式）

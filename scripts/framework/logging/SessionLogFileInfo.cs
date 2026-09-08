@@ -1,4 +1,4 @@
-namespace GFrameworkTemplate.scripts.framework.logging;
+﻿namespace BreakOut.scripts.framework.logging;
 
 /// <summary>
 ///     会话日志文件信息，描述一次运行产生的日志文件位置。

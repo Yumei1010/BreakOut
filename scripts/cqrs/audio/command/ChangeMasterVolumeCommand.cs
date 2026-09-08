@@ -3,9 +3,9 @@ using GFramework.Core.Extensions;
 using GFramework.Game.Abstractions.Setting;
 using GFramework.Game.Abstractions.Setting.Data;
 using GFramework.Godot.Setting;
-using GFrameworkTemplate.scripts.cqrs.audio.command.input;
+using BreakOut.scripts.cqrs.audio.command.input;
 
-namespace GFrameworkTemplate.scripts.cqrs.audio.command;
+namespace BreakOut.scripts.cqrs.audio.command;
 
 /// <summary>
 ///     更改主音量命令类，用于处理主音量更改操作

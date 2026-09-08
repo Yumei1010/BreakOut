@@ -1,4 +1,4 @@
-namespace GFrameworkTemplate.scripts.cqrs.audio.@event;
+﻿namespace BreakOut.scripts.cqrs.audio.@event;
 
 /// <summary>
 ///     音量变更事件，当任何音频通道（主音量/BGM/音效）的音量发生变化时触发

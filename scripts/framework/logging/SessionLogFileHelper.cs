@@ -1,7 +1,7 @@
-using System;
+﻿using System;
 using System.IO;
 
-namespace GFrameworkTemplate.scripts.framework.logging;
+namespace BreakOut.scripts.framework.logging;
 
 /// <summary>
 ///     会话日志文件创建辅助类，负责生成按会话切分的日志文件路径。

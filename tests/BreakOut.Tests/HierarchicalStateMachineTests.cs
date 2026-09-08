@@ -1,7 +1,7 @@
-using GFrameworkTemplate.scripts.component.hierarchical_state_machine;
-using GFrameworkTemplate.scripts.component.state_machine;
+﻿using BreakOut.scripts.component.hierarchical_state_machine;
+using BreakOut.scripts.component.state_machine;
 
-namespace GFrameworkTemplate.Tests;
+namespace BreakOut.Tests;
 
 /// <summary>
 ///     分层状态机测试。

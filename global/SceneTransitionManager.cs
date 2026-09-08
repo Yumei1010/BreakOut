@@ -7,7 +7,7 @@ using GFramework.Core.SourceGenerators.Abstractions.Logging;
 using GFramework.Core.SourceGenerators.Abstractions.Rule;
 using Godot;
 
-namespace GFrameworkTemplate.global;
+namespace BreakOut.global;
 
 /// <summary>
 /// 场景过渡管理器，负责处理场景之间的平滑过渡效果。

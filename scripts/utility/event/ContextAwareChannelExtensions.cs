@@ -1,9 +1,9 @@
-using GFramework.Core.Abstractions.Events;
+﻿using GFramework.Core.Abstractions.Events;
 using GFramework.Core.Abstractions.Rule;
 using GFramework.Core.Extensions;
-using GFrameworkTemplate.scripts.constants;
+using BreakOut.scripts.constants;
 
-namespace GFrameworkTemplate.scripts.utility.@event;
+namespace BreakOut.scripts.utility.@event;
 
 /// <summary>
 ///     频段事件总线扩展方法：在任意 <c>IContextAware</c> 节点中直接使用频段事件。

@@ -1,12 +1,12 @@
-using GFramework.Core.Abstractions.Architectures;
+﻿using GFramework.Core.Abstractions.Architectures;
 using GFramework.Core.Abstractions.Events;
 using GFramework.Core.Abstractions.Environment;
 using GFramework.Godot.Architectures;
-using GFrameworkTemplate.scripts.module;
-using GFrameworkTemplate.scripts.utility.@event;
+using BreakOut.scripts.module;
+using BreakOut.scripts.utility.@event;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace GFrameworkTemplate.scripts.core;
+namespace BreakOut.scripts.core;
 
 /// <summary>
 ///     游戏架构类，负责安装和管理游戏所需的各种模块

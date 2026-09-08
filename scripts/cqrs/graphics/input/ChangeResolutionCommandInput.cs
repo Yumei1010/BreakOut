@@ -1,6 +1,6 @@
 ﻿using GFramework.Cqrs.Abstractions.Cqrs.Command;
 
-namespace GFrameworkTemplate.scripts.cqrs.graphics.input;
+namespace BreakOut.scripts.cqrs.graphics.input;
 
 /// <summary>
 ///     分辨率更改命令输入类，用于传递分辨率更改所需的参数

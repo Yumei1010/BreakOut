@@ -1,6 +1,6 @@
-using Godot;
+﻿using Godot;
 
-namespace GFrameworkTemplate.scripts.component.tween_tree;
+namespace BreakOut.scripts.component.tween_tree;
 
 /// <summary>
 ///     顺序节点：子节点逐个执行（前一个动画完成才播下一个）。

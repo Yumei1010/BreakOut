@@ -1,6 +1,6 @@
-using GFrameworkTemplate.scripts.component.state_machine;
+﻿using BreakOut.scripts.component.state_machine;
 
-namespace GFrameworkTemplate.scripts.component.hierarchical_state_machine;
+namespace BreakOut.scripts.component.hierarchical_state_machine;
 
 /// <summary>
 ///     状态转换定义：从 <see cref="From"/> 状态在满足 <see cref="Condition"/> 时切换到 <see cref="To"/> 状态。

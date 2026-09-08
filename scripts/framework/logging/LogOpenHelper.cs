@@ -1,6 +1,6 @@
-using Godot;
+﻿using Godot;
 
-namespace GFrameworkTemplate.scripts.framework.logging;
+namespace BreakOut.scripts.framework.logging;
 
 /// <summary>
 ///     日志访问辅助类：负责打印会话日志路径与打开日志所在目录。

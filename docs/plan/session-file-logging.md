@@ -1,4 +1,4 @@
-# 会话文件日志（Session File Logging）
+﻿# 会话文件日志（Session File Logging）
 
 > 状态：已实现（2026-09）| 依赖：GFramework 0.7.1
 
@@ -87,7 +87,7 @@ Provider 内部持有共享 appender 数组：
 `JsonLogFormatter` 输出每行一个 JSON 对象：
 
 ```json
-{"timestamp":"2026-09-07T10:30:00.0000000Z","level":"INFO","logger":"GFrameworkTemplate.global.GameEntryPoint","message":"框架入口点就绪."}
+{"timestamp":"2026-09-07T10:30:00.0000000Z","level":"INFO","logger":"BreakOut.global.GameEntryPoint","message":"框架入口点就绪."}
 ```
 
 - 带结构化属性时附加 `"properties":{...}`

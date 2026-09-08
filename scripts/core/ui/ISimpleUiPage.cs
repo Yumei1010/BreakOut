@@ -1,6 +1,6 @@
 ﻿using GFramework.Game.Abstractions.UI;
 
-namespace GFrameworkTemplate.scripts.core.ui;
+namespace BreakOut.scripts.core.ui;
 
 /// <summary>
 ///     简单UI页面接口，继承自IUiPage接口

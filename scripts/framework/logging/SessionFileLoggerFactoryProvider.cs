@@ -1,11 +1,11 @@
-using System;
+﻿using System;
 using GFramework.Core.Abstractions.Logging;
 using GFramework.Core.Logging;
 using GFramework.Core.Logging.Appenders;
 using GFramework.Core.Logging.Formatters;
 using GFramework.Godot.Logging;
 
-namespace GFrameworkTemplate.scripts.framework.logging;
+namespace BreakOut.scripts.framework.logging;
 
 /// <summary>
 ///     会话文件日志工厂提供者：让每条日志同时输出到 Godot 控制台与本次会话的日志文件。

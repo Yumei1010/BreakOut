@@ -1,7 +1,7 @@
-using GFramework.Core.SourceGenerators.Abstractions.Logging;
-using GFrameworkTemplate.scripts.enums.behavior_tree;
+﻿using GFramework.Core.SourceGenerators.Abstractions.Logging;
+using BreakOut.scripts.enums.behavior_tree;
 
-namespace GFrameworkTemplate.scripts.component.behavior_tree;
+namespace BreakOut.scripts.component.behavior_tree;
 
 /// <summary>
 ///     选择节点（Selector）：从左到右依次尝试子节点，找到第一个成功的执行。

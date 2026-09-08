@@ -1,6 +1,13 @@
-# My GFramework Godot Template
+﻿# BreakOut
 
-基于 [GFramework](https://github.com/GeWuYou/GFramework) (v0.7.1) 的 Godot 4.7 项目起手模板，**经 [Twenty-four](https://github.com/Yumei1010/Twenty-four) 项目重度实战魔改后反向提炼**，贴合个人使用习惯。
+基于 [GFramework](https://github.com/GeWuYou/GFramework) (v0.7.1) 与 [My-GFramework-Godot-Template](https://github.com/Yumei1010/My-GFramework-Godot-Template) 的 **打砖块架构示范项目**。
+
+源自 [game_juice_breakout_4](https://github.com/GeWuYou/game_juice_breakout_4)（GDScript juice 教学）——以打砖块为载体，验证"小体量手感型游戏"的规范化架构：
+
+- **domain 纯 C# 可单测**：bump 时机判定 / 分数规则 / 砖种数据 / 关卡生成
+- **presentation Godot 薄壳**：实体只做碰撞转发与 juice 表现
+- **内容数据驱动**：砖种 / 板能力注册表化，加玩法不改核心代码
+- CQRS 事件仅在规则级状态变化使用，不硬套每帧物理
 
 ## 项目渊源
 
@@ -9,7 +16,7 @@ GFramework（上游 CQRS/ECS 框架）
     ↓
 Twenty-four（24 点游戏，重度魔改 GFramework 用法）
     ↓
-My-GFramework-Godot-Template（从 Twenty-four 剥离业务逻辑，保留骨架）
+BreakOut（从 Twenty-four 剥离业务逻辑，保留骨架）
 ```
 
 本模板并非 GFramework 官方模板，与上游 [GFramework-Godot-Template](https://github.com/GeWuYou/GFramework-Godot-Template) 出发点相似但走向不同。Twenty-four 项目在大量实战中沉淀下来的**个人偏好**——DI 模块划分、partial class 拆分粒度、CQRS 事件/命令的 `sealed` + `init` 约束、XML 注释规范、Godot 节点注入模式等——都保留在了这套骨架里。
@@ -74,7 +81,7 @@ My-GFramework-Godot-Template（从 Twenty-four 剥离业务逻辑，保留骨架
 点击仓库首页 **"Use this template"** 按钮即可从本模板创建新仓库，或：
 
 ```bash
-git clone https://github.com/Yumei1010/My-GFramework-Godot-Template.git MyNewProject
+git clone https://github.com/Yumei1010/BreakOut.git MyNewProject
 cd MyNewProject
 dotnet build
 # 用 Godot 打开 project.godot 即可开始开发
@@ -82,7 +89,7 @@ dotnet build
 
 ## 与新项目对接
 
-1. 全局替换命名空间 `GFrameworkTemplate` → 你的项目名
+1. 全局替换命名空间 `BreakOut` → 你的项目名
 2. 重命名 `.csproj`、`.sln` 文件
 3. 在 `scripts/enums/ui/UiKey.cs` 中添加你的 UI 页面键
 4. 在 `scripts/enums/scene/SceneKey.cs` 中添加你的场景键

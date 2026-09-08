@@ -1,6 +1,6 @@
-using GFrameworkTemplate.scripts.enums.behavior_tree;
+﻿using BreakOut.scripts.enums.behavior_tree;
 
-namespace GFrameworkTemplate.scripts.component.behavior_tree;
+namespace BreakOut.scripts.component.behavior_tree;
 
 /// <summary>
 ///     行为树节点接口契约。

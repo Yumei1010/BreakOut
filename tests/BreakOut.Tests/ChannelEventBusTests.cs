@@ -1,7 +1,7 @@
-using GFrameworkTemplate.scripts.constants;
-using GFrameworkTemplate.scripts.utility.@event;
+﻿using BreakOut.scripts.constants;
+using BreakOut.scripts.utility.@event;
 
-namespace GFrameworkTemplate.Tests;
+namespace BreakOut.Tests;
 
 /// <summary>
 ///     频段事件总线测试。

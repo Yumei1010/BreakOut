@@ -1,10 +1,10 @@
-using System;
+﻿using System;
 using System.IO;
 using GFramework.Core.Logging.Appenders;
 using GFramework.Core.Logging.Formatters;
-using GFrameworkTemplate.scripts.framework.logging;
+using BreakOut.scripts.framework.logging;
 
-namespace GFrameworkTemplate.Tests;
+namespace BreakOut.Tests;
 
 /// <summary>
 ///     会话日志组件测试：文件名生成与 JSON 落盘验证。

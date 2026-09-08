@@ -1,7 +1,7 @@
-﻿using GFrameworkTemplate.global;
+﻿using BreakOut.global;
 using Godot;
 
-namespace GFrameworkTemplate.scripts.utility;
+namespace BreakOut.scripts.utility;
 
 /// <summary>
 ///     提供游戏相关的工具方法。

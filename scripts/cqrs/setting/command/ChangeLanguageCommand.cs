@@ -3,9 +3,9 @@ using GFramework.Core.Extensions;
 using GFramework.Game.Abstractions.Setting;
 using GFramework.Game.Abstractions.Setting.Data;
 using GFramework.Godot.Setting;
-using GFrameworkTemplate.scripts.cqrs.setting.command.input;
+using BreakOut.scripts.cqrs.setting.command.input;
 
-namespace GFrameworkTemplate.scripts.cqrs.setting.command;
+namespace BreakOut.scripts.cqrs.setting.command;
 
 /// <summary>
 ///     更改语言命令类

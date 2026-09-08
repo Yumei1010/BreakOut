@@ -1,4 +1,4 @@
-namespace GFrameworkTemplate.scripts.component.hierarchical_state_machine;
+﻿namespace BreakOut.scripts.component.hierarchical_state_machine;
 
 /// <summary>
 ///     布尔转换条件：封装一个可随时更新的布尔值，满足时触发转换。

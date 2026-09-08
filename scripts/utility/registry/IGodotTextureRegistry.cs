@@ -1,7 +1,7 @@
 ﻿using GFramework.Game.Abstractions.Asset;
 using Godot;
 
-namespace GFrameworkTemplate.scripts.utility.registry;
+namespace BreakOut.scripts.utility.registry;
 
 /// <summary>
 ///     Godot 纹理注册表接口，用于管理纹理资源的注册和查找

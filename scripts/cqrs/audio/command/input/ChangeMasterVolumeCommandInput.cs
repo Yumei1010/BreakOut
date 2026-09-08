@@ -1,6 +1,6 @@
 ﻿using GFramework.Cqrs.Abstractions.Cqrs.Command;
 
-namespace GFrameworkTemplate.scripts.cqrs.audio.command.input;
+namespace BreakOut.scripts.cqrs.audio.command.input;
 
 /// <summary>
 ///     主音量更改命令输入类，用于传递主音量更改所需的参数

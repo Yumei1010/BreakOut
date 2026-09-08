@@ -1,4 +1,4 @@
-using GFramework.Core.Abstractions.Architectures;
+﻿using GFramework.Core.Abstractions.Architectures;
 using GFramework.Core.Abstractions.Logging;
 using GFramework.Core.Abstractions.Properties;
 using GFramework.Core.Abstractions.State;
@@ -13,18 +13,18 @@ using GFramework.Godot.UI;
 using GFramework.Ecs.Arch.Extensions;
 using GFramework.Core.SourceGenerators.Abstractions.Logging;
 using GFramework.Core.SourceGenerators.Abstractions.Rule;
-using GFrameworkTemplate.scripts.core;
-using GFrameworkTemplate.scripts.core.environment;
-using GFrameworkTemplate.scripts.core.resource;
-using GFrameworkTemplate.scripts.core.state.impls;
-using GFrameworkTemplate.scripts.framework.logging;
-using GFrameworkTemplate.scripts.enums.scene;
-using GFrameworkTemplate.scripts.utility.registry;
-using GFrameworkTemplate.scripts.cqrs.setting.command;
+using BreakOut.scripts.core;
+using BreakOut.scripts.core.environment;
+using BreakOut.scripts.core.resource;
+using BreakOut.scripts.core.state.impls;
+using BreakOut.scripts.framework.logging;
+using BreakOut.scripts.enums.scene;
+using BreakOut.scripts.utility.registry;
+using BreakOut.scripts.cqrs.setting.command;
 using Godot;
 using Godot.Collections;
 
-namespace GFrameworkTemplate.global;
+namespace BreakOut.global;
 
 /// <summary>
 ///     游戏入口点节点类，负责初始化游戏架构和管理全局游戏状态

@@ -3,7 +3,7 @@ using GFramework.Game.UI.Handler;
 using GFramework.Core.SourceGenerators.Abstractions.Logging;
 using GFramework.Core.SourceGenerators.Abstractions.Rule;
 
-namespace GFrameworkTemplate.scripts.core.ui;
+namespace BreakOut.scripts.core.ui;
 
 /// <summary>
 ///     UI路由类，提供页面栈管理功能
