@@ -11,47 +11,16 @@ using BreakOut.scripts.entities.paddle;
 namespace BreakOut.scripts.entities.ball;
 
 /// <summary>
-///     球视图（薄壳）：加载 ball 场景骨架，把碰撞结果转发给 domain 规则后回写速度与表现。
+///     球实体（薄壳）：加载 ball 场景骨架，把碰撞结果转发给规则后回写速度与表现。
 /// </summary>
 /// <remarks>
-///     挂载于 scenes/ball/ball.tscn 根（CharacterBody2D），子节点（Sprite/粒子/拖尾/动画/音效）由布局场景提供。
-///     碰撞分派：碰板 → 顶部/侧面 × 移动/静止细分调 domain BallMotion；碰砖 → BrickField 判定。
+///     挂载于 scenes/ball/ball.tscn 根（CharacterBody2D）。碰撞分派：碰板 → 细分反弹调规则 BallMotion；碰砖 → 转发。
+///     按 partial 拆分：.cs 核心 / .Dependencies 注入 / .Properties 字段 / .Events 事件 / .Signals 信号。
 /// </remarks>
 [Log]
 [ContextAware]
 public partial class BallView : CharacterBody2D
 {
-    private const float Radius = 12f;
-
-    private GameRoot _root = null!;
-    private PaddleView _paddle = null!;
-    private Sprite2D _sprite = null!;
-    private AnimationPlayer _anim = null!;
-    private GpuParticles2D _speedParticles = null!;
-    private GpuParticles2D _appearParticles = null!;
-    private Line2D _velocityLine = null!;
-    private bool _lastCollisionFacing;
-    private bool _attached;
-    private float _boostFactor = BumpJudge.NoBoost;
-    private int _framesSincePaddleCollision;
-    private int _hitstopFrames;
-    private bool _visualReady;
-
-    /// <summary>
-    ///     获取或设置是否已死亡（掉出底部）。
-    /// </summary>
-    public bool Dead { get; set; }
-
-    /// <summary>
-    ///     获取或设置是否可移动（false 时冻结）。
-    /// </summary>
-    public bool CanMove { get; set; } = true;
-
-    /// <summary>
-    ///     获取自出生以来的反弹次数（供结算统计）。
-    /// </summary>
-    public int Bounces { get; private set; }
-
     /// <summary>
     ///     初始化视图：引用场景子节点（吸附由 GameRoot 组装完成后显式编排）。
     /// </summary>
@@ -67,29 +36,6 @@ public partial class BallView : CharacterBody2D
         ResolveVisualNodes();
     }
 
-    /// <summary>
-    ///     场景组装完成后初始化（由 GameRoot 显式调用，规避场景实例化顺序问题）。
-    /// </summary>
-    /// <param name="paddle">板视图。</param>
-    public void OnSceneReady(PaddleView paddle)
-    {
-        _paddle = paddle;
-        AttachToPaddle();
-    }
-
-    /// <summary>
-    ///     解析布局场景提供的视觉子节点。
-    /// </summary>
-    private void ResolveVisualNodes()
-    {
-        _sprite = GetNodeOrNull<Sprite2D>("Sprite2D");
-        _anim = GetNodeOrNull<AnimationPlayer>("AnimationPlayer");
-        _speedParticles = GetNodeOrNull<GpuParticles2D>("SpeedParticles");
-        _appearParticles = GetNodeOrNull<GpuParticles2D>("AppearParticles");
-        _velocityLine = GetNodeOrNull<Line2D>("VelocityLine");
-        _visualReady = _sprite != null;
-    }
-
     /// <inheritdoc />
     public override void _Process(double delta)
     {
@@ -100,50 +46,6 @@ public partial class BallView : CharacterBody2D
 
         ScaleByVelocity();
         ColorByVelocity();
-    }
-
-    /// <summary>
-    ///     随速度拉伸/朝向（原版 scale_based_on_velocity：动画播放时不覆盖）。
-    /// </summary>
-    private void ScaleByVelocity()
-    {
-        if (_anim != null && _anim.IsPlaying())
-        {
-            return; // bounce/appear 动画期间保持动画姿态
-        }
-
-        var speedRatio = Mathf.Clamp(Velocity.Length() / BallMotion.MaxSpeed, 0f, 1f);
-        // 基准 0.375 缩放到 max 时 1.4×0.375 / 0.5×0.375
-        _sprite.Scale = new Vector2(
-            Mathf.Lerp(0.375f, 0.375f * 1.4f, speedRatio),
-            Mathf.Lerp(0.375f, 0.375f * 0.5f, speedRatio));
-        _sprite.Rotation = Velocity.Angle();
-    }
-
-    /// <summary>
-    ///     随速度变色（原版 color_based_on_velocity：球/拖尾/速度粒子同步）。
-    /// </summary>
-    private void ColorByVelocity()
-    {
-        // val = remap(speed, Speed→MaxSpeed, 0→1) 钳制
-        var val = Mathf.Clamp(
-            (Velocity.Length() - BallMotion.Speed) / (BallMotion.MaxSpeed - BallMotion.Speed),
-            0f, 1f);
-        // 高速时变红（原版 max_speed_color = (1, 0, 0.2, 1)）
-        var tint = Colors.White.Lerp(new Color(1f, 0f, 0.2f), val);
-        _sprite.SelfModulate = tint;
-
-        var trail = GetNodeOrNull<Line2D>("Trail2D");
-        if (trail != null)
-        {
-            trail.DefaultColor = tint;
-        }
-
-        if (_speedParticles != null)
-        {
-            _speedParticles.SelfModulate = tint;
-            _speedParticles.Emitting = Velocity.Length() > BallMotion.Speed + 100f;
-        }
     }
 
     /// <summary>
@@ -188,7 +90,6 @@ public partial class BallView : CharacterBody2D
                 HandleBrickCollision(brick, collision.GetNormal(), velocityBeforeCollision);
                 break;
             default:
-                // 墙/其他（原版 HIT OTHER）：软碰撞反馈 + 标准反射
                 HandleWallCollision(collision);
                 break;
         }
@@ -346,9 +247,6 @@ public partial class BallView : CharacterBody2D
     }
 
     /// <summary>
-    ///     出现粒子表现（发球/重生时）。
-    /// </summary>
-    /// <summary>
     ///     出现动画序列：RESET → appear（原版 await 编排），并触发出现粒子。
     /// </summary>
     public async void PlayAppear()
@@ -368,20 +266,4 @@ public partial class BallView : CharacterBody2D
     private static Vec2 ToVec(Vector2 v) => new(v.X, v.Y);
 
     private static Vector2 ToGodot(Vec2 v) => new(v.X, v.Y);
-
-    private GameRoot FindGameRoot()
-    {
-        var node = GetParent();
-        while (node != null)
-        {
-            if (node is GameRoot root)
-            {
-                return root;
-            }
-
-            node = node.GetParent();
-        }
-
-        return null;
-    }
 }
