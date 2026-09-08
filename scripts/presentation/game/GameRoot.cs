@@ -42,6 +42,8 @@ public partial class GameRoot : Node2D
 
     private readonly List<BrickView> _brickViews = new();
     private Camera2D? _camera;
+    private ColorRect? _pattern;
+    private ColorRect? _bw;
 
     /// <summary>
     ///     获取本局状态（domain）。
@@ -102,6 +104,9 @@ public partial class GameRoot : Node2D
         {
             _camera.Position = new Vector2(960, 540);
         }
+
+        _pattern = GetNodeOrNull<ColorRect>("Pattern");
+        _bw = GetNodeOrNull<ColorRect>("EffectCanvasLayer/BW");
 
         // 组装完成后再初始化球（Paddle 已就绪）
         if (Paddle != null && Ball != null)
@@ -369,6 +374,25 @@ public partial class GameRoot : Node2D
 
     private static Vector2 ToGodot(Vec2 v) => new(v.X, v.Y);
 
+    /// <summary>
+    ///     全屏 Pattern 脉冲（原版 pattern.gd bounce：size_scale 弹性缩放后回 30）。
+    /// </summary>
+    /// <param name="force">冲击强度 0-1。</param>
+    public void PatternBounce(float force)
+    {
+        if (_pattern?.Material is not ShaderMaterial material)
+        {
+            return;
+        }
+
+        var target = Mathf.Lerp(22.5f, 27.5f, 1f - force);
+        var tween = CreateTween();
+        tween.TweenProperty(material, "shader_parameter/size_scale", target, 0.15)
+            .SetTrans(Tween.TransitionType.Elastic).SetEase(Tween.EaseType.Out);
+        tween.TweenProperty(material, "shader_parameter/size_scale", 30f, 0.3)
+            .SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.InOut);
+    }
+
     // ==== 粒子效果（实例化 *_particles.tscn，one_shot 自停 + 延迟清理） ====
 
     private static readonly string[] BurstParticleScenes =
@@ -433,7 +457,25 @@ public partial class GameRoot : Node2D
 
         Sfx.PlayBallDestroyed();
         Shake.Shake(0.5f, 30f, 20f);
+        FadeGrayscale(true);
         await FocusBallTween(zoomTo: 1.5f);
+        FadeGrayscale(false);
+    }
+
+    /// <summary>
+    ///     BW 灰阶渐变（原版死亡序列的 mix_val 控制）。
+    /// </summary>
+    /// <param name="on">true 渐变到黑白。</param>
+    private void FadeGrayscale(bool on)
+    {
+        if (_bw?.Material is not ShaderMaterial material)
+        {
+            return;
+        }
+
+        var tween = CreateTween();
+        tween.TweenProperty(material, "shader_parameter/mix_val", on ? 1f : 0f, 0.5)
+            .SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.InOut);
     }
 
     /// <summary>

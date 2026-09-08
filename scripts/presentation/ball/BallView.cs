@@ -204,6 +204,7 @@ public partial class BallView : CharacterBody2D
 
         var normal = collision.GetNormal();
         PlayBounceFx(normal);
+        _root.PatternBounce(0.3f);
         _root.SpawnParticle("res://scenes/ball/bump_particles.tscn",
             collision.GetPosition(), Mathf.RadToDeg(normal.Angle()));
 
@@ -243,12 +244,14 @@ public partial class BallView : CharacterBody2D
             Velocity = velocityBeforeCollision;
             _root.Sfx.PlayStrongHit();
             _root.Shake.Shake(1.0f, 25f, 20f);
+            _root.PatternBounce(0.8f);
         }
         else
         {
             Velocity = Velocity.Bounce(normal);
             _root.Sfx.PlayBrickHit();
             _root.Shake.Shake(0.25f, 20f, 15f);
+            _root.PatternBounce(0.25f);
             _root.SpawnParticle("res://scenes/ball/bounce_particles.tscn",
                 GlobalPosition, Mathf.RadToDeg(normal.Angle()));
         }
