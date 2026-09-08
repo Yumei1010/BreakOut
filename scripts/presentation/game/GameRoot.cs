@@ -253,6 +253,7 @@ public partial class GameRoot : Node2D
         }
 
         Ball.Die();
+        SpawnParticle("res://scenes/ball/ball_explode_particles.tscn", Ball.GlobalPosition);
         var dead = Run.OnBallLost();
         Sfx.PlayBallDestroyed();
         Shake.Shake(0.45f, 30f, 25f);
@@ -294,9 +295,10 @@ public partial class GameRoot : Node2D
             _log.Debug($"砖摧毁 {result.Brick.Type}（{result.Reason}）");
         }
 
-        foreach (var result in results)
+        SpawnParticle("res://scenes/brick/brick_explode_particles.tscn", view.GlobalPosition);
+        if (results.Any(r => BrickSpecs.IsExplosive(r.Brick.Type)))
         {
-            BurstDebris(view.GlobalPosition, new Color(0.85f, 0.5f, 0.2f));
+            SpawnParticle("res://scenes/brick/bomb_explode_particles.tscn", view.GlobalPosition);
         }
 
         Sfx.PlayBrickDestroyed();
@@ -366,6 +368,41 @@ public partial class GameRoot : Node2D
     private static Vec2 ToVec(Vector2 v) => new(v.X, v.Y);
 
     private static Vector2 ToGodot(Vec2 v) => new(v.X, v.Y);
+
+    // ==== 粒子效果（实例化 *_particles.tscn，one_shot 自停 + 延迟清理） ====
+
+    private static readonly string[] BurstParticleScenes =
+    [
+        "res://scenes/ball/bounce_particles.tscn",
+        "res://scenes/ball/bump_particles.tscn",
+        "res://scenes/ball/ball_explode_particles.tscn",
+        "res://scenes/brick/brick_explode_particles.tscn",
+        "res://scenes/brick/bomb_explode_particles.tscn",
+    ];
+
+    /// <summary>
+    ///     在位置触发一个一次性粒子爆发。
+    /// </summary>
+    /// <param name="scenePath">粒子场景路径。</param>
+    /// <param name="position">爆发位置。</param>
+    /// <param name="rotationDegrees">旋转（法线角转度）。</param>
+    public void SpawnParticle(string scenePath, Vector2 position, float rotationDegrees = 0f)
+    {
+        var packed = GD.Load<PackedScene>(scenePath);
+        if (packed == null)
+        {
+            return;
+        }
+
+        var particles = packed.Instantiate<GpuParticles2D>();
+        AddChild(particles);
+        particles.GlobalPosition = position;
+        particles.RotationDegrees = rotationDegrees;
+        particles.Emitting = true;
+
+        // one_shot 结束后延迟一帧清理
+        particles.Finished += particles.QueueFree;
+    }
 
     // ==== juice：相机序列 + 碎裂粒子 ====
 
