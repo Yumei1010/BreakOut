@@ -39,3 +39,4 @@ addons/*
 
 # Pi agent memory
 .pi/
+__pycache__/
