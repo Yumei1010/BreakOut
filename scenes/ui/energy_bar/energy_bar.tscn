@@ -1,0 +1,110 @@
+[gd_scene load_steps=12 format=3 uid="uid://c48m66isx4utm"]
+
+[ext_resource type="Script" path="res://scenes/ui/energy_bar/scripts/energy_bar.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://clkxun12gq2gv" path="res://scenes/ui/shared/visuals/Container.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://doqriorw2lonx" path="res://scenes/ball/visuals/ball.png" id="3_i66wm"]
+[ext_resource type="Script" path="res://addons/shaker/shaker.gd" id="4_sclbk"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_531ku"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_opnc5"]
+bg_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="Gradient" id="Gradient_4iuxl"]
+offsets = PackedFloat32Array(0, 0.642405, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_otxi7"]
+gradient = SubResource("Gradient_4iuxl")
+
+[sub_resource type="Curve" id="Curve_gqpgq"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.495677, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_2xagg"]
+curve = SubResource("Curve_gqpgq")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_vcups"]
+lifetime_randomness = 0.13
+emission_shape = 3
+emission_box_extents = Vector3(20, 91, 1)
+particle_flag_disable_z = true
+spread = 180.0
+gravity = Vector3(0, -25, 0)
+initial_velocity_min = 6.0
+initial_velocity_max = 12.0
+orbit_velocity_min = 0.0
+orbit_velocity_max = 0.0
+scale_min = 0.03
+scale_max = 0.1
+scale_curve = SubResource("CurveTexture_2xagg")
+color_ramp = SubResource("GradientTexture1D_otxi7")
+
+[node name="EnergyBar" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 111.0
+offset_bottom = 256.0
+script = ExtResource("1")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+modulate = Color(0.0980392, 0.0980392, 0.0980392, 1)
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -40.0
+offset_top = -8.0
+offset_right = 40.0
+offset_bottom = 8.0
+texture = ExtResource("2")
+expand_mode = 1
+stretch_mode = 5
+flip_h = true
+
+[node name="EnergyBar" type="ProgressBar" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 40.0
+offset_top = 37.0
+offset_right = -40.0
+offset_bottom = -36.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(15.5, 91.5)
+theme_override_styles/background = SubResource("StyleBoxFlat_531ku")
+theme_override_styles/fill = SubResource("StyleBoxFlat_opnc5")
+value = 48.67
+fill_mode = 3
+show_percentage = false
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="EnergyBar"]
+show_behind_parent = true
+position = Vector2(17, 91)
+amount = 300
+process_material = SubResource("ParticleProcessMaterial_vcups")
+texture = ExtResource("3_i66wm")
+lifetime = 2.4
+
+[node name="Shaker" type="Node" parent="." node_paths=PackedStringArray("target_node")]
+script = ExtResource("4_sclbk")
+target_node = NodePath("../EnergyBar")
+target_property = &"rotation_degrees"
+min_value = -5.0
+max_value = 5.0
+constant = true

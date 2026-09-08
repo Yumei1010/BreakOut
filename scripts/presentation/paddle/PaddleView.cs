@@ -121,11 +121,16 @@ public partial class PaddleView : CharacterBody2D
     }
 
     /// <summary>
-    ///     每物理帧移动（由物理引擎处理，这里保持空实现以便扩展）。
+    ///     每物理帧应用移动（CharacterBody2D 必须 MoveAndSlide 才产生位移）。
     /// </summary>
     public override void _PhysicsProcess(double delta)
     {
-        // 球吸附时跟随板移动在 BallView 处理
+        if (GetTree().Paused)
+        {
+            return;
+        }
+
+        MoveAndSlide();
     }
 
     /// <summary>

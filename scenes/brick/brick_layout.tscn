@@ -1,0 +1,192 @@
+[gd_scene format=3 uid="uid://stcivysk52ie"]
+
+[ext_resource type="Script" path="res://scenes/brick/scripts/brick.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://sj3pgix10e46" path="res://scenes/brick/visuals/BlockSmallBorder.png" id="2_13k7k"]
+[ext_resource type="Texture2D" uid="uid://bwm4qn3tg7gfe" path="res://scenes/brick/visuals/Bomb.png" id="3_tq0m8"]
+[ext_resource type="AudioStream" uid="uid://5411lypwr5lo" path="res://scenes/brick/audio/destroyed.sfxr" id="4_hm4ru"]
+[ext_resource type="AudioStream" uid="uid://dx8y1bnsxpc3s" path="res://scenes/brick/audio/explosion.sfxr" id="5_gqq7x"]
+[ext_resource type="AudioStream" uid="uid://djxnqbpa1cnpo" path="res://scenes/brick/audio/explosion_2.sfxr" id="6_c24lc"]
+
+[sub_resource type="RectangleShape2D" id="1"]
+size = Vector2(124.434, 61.9452)
+
+[sub_resource type="RectangleShape2D" id="2"]
+size = Vector2(62.7676, 61.469)
+
+[sub_resource type="CircleShape2D" id="3"]
+radius = 288.0
+
+[sub_resource type="Animation" id="Animation_qkydo"]
+length = 0.001
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Size:scale:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(1, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Size:scale:y")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(1, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/2/type = "bezier"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Type:scale:x")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(1, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/3/type = "bezier"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Type:scale:y")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(1, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Type:rotation")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+
+[sub_resource type="Animation" id="Animation_pc21j"]
+resource_name = "appear"
+length = 0.65
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Size:scale:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.197126, 2.35828, 1, -0.21513, -0.736298, 0.0791136, 0),
+"times": PackedFloat32Array(0, 0.4)
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Size:scale:y")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(0, 2),
+"points": PackedFloat32Array(0, -0.25, 0, 0.080689, 2.4281, 1, -0.275392, -0.841027, 0, 0),
+"times": PackedFloat32Array(0, 0.4)
+}
+tracks/2/type = "bezier"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Type:scale:x")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.1, 1.27026, 1, -0.1, -1.09121, 0.2, -0.0439237),
+"times": PackedFloat32Array(0.1, 0.6)
+}
+tracks/3/type = "bezier"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Type:scale:y")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.1, 0.94444, 1, -0.1, -1.06794, 0.25, 0),
+"times": PackedFloat32Array(0.1, 0.6)
+}
+
+[sub_resource type="Animation" id="Animation_mfj22"]
+resource_name = "wiggle"
+length = 2.5
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Type:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.125, 0.35, 0.65, 0.925),
+"transitions": PackedFloat32Array(-2, -2, -2, -2, -2),
+"update": 0,
+"values": [0.0, -0.701622, 0.617847, -0.483456, 0.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_a4g6c"]
+_data = {
+"RESET": SubResource("Animation_qkydo"),
+"appear": SubResource("Animation_pc21j"),
+"wiggle": SubResource("Animation_mfj22")
+}
+
+[node name="Brick" type="StaticBody2D" groups=["Bricks"]]
+collision_layer = 5
+collision_mask = 5
+script = ExtResource("1")
+
+[node name="CollisionShapeLong" type="CollisionShape2D" parent="."]
+shape = SubResource("1")
+
+[node name="CollisionShapeSmall" type="CollisionShape2D" parent="."]
+shape = SubResource("2")
+disabled = true
+
+[node name="ExplosionArea" type="Area2D" parent="."]
+collision_layer = 4
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ExplosionArea"]
+shape = SubResource("3")
+
+[node name="Size" type="Sprite2D" parent="."]
+texture = ExtResource("2_13k7k")
+
+[node name="Type" type="Sprite2D" parent="."]
+texture = ExtResource("3_tq0m8")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+autoplay = "appear"
+libraries = {
+"": SubResource("AnimationLibrary_a4g6c")
+}
+
+[node name="Destroy" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("4_hm4ru")
+
+[node name="Explode" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("5_gqq7x")
+
+[node name="Explode2" type="AudioStreamPlayer2D" parent="Explode"]
+stream = ExtResource("6_c24lc")
+
+[connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_animation_player_animation_finished"]
+[connection signal="finished" from="Destroy" to="." method="_on_audio_finished"]
+[connection signal="finished" from="Explode" to="." method="_on_audio_finished"]

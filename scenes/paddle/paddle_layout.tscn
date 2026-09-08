@@ -1,0 +1,184 @@
+[gd_scene format=3 uid="uid://dyy7lp07carkr"]
+
+[ext_resource type="Script" path="res://scenes/paddle/scripts/paddle.gd" id="1"]
+[ext_resource type="PackedScene" uid="uid://bf0hn220saeh8" path="res://scenes/paddle/laser.tscn" id="2"]
+[ext_resource type="Texture2D" uid="uid://blae5o6klukpa" path="res://scenes/paddle/visuals/Paddle.png" id="3"]
+[ext_resource type="Shader" path="res://scenes/effects/deform.gdshader" id="3_75eq2"]
+[ext_resource type="PackedScene" uid="uid://ctm4reyuyvi3j" path="res://scenes/paddle/ghost_spawner.tscn" id="4_gipss"]
+[ext_resource type="AudioStream" uid="uid://cbokwv8a2tnrh" path="res://scenes/paddle/audio/paddle_bump.sfxr" id="6_ob0ir"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_r6y1s"]
+shader = ExtResource("3_75eq2")
+shader_parameter/x_factor = 2.0
+shader_parameter/bulge = 4.75e-08
+shader_parameter/color = Color(0.0980392, 0.0980392, 0.0980392, 1)
+
+[sub_resource type="Gradient" id="Gradient_sijml"]
+offsets = PackedFloat32Array(0, 0.242254, 0.543662, 1)
+colors = PackedColorArray(0, 0.458356, 1, 1, 1, 0, 0.267736, 1, 1, 0.926361, 0, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_huwex"]
+gradient = SubResource("Gradient_sijml")
+
+[sub_resource type="Curve" id="Curve_aodnq"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_qqjbg"]
+curve = SubResource("Curve_aodnq")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ujfxm"]
+particle_flag_disable_z = true
+direction = Vector3(0, 1, 0)
+spread = 4.0
+gravity = Vector3(0, 0, 0)
+initial_velocity_min = 46.15
+initial_velocity_max = 55.49
+orbit_velocity_min = 0.0
+orbit_velocity_max = 0.0
+angle_max = 720.0
+scale_min = 20.29
+scale_max = 21.99
+scale_curve = SubResource("CurveTexture_qqjbg")
+color_ramp = SubResource("GradientTexture1D_huwex")
+
+[sub_resource type="RectangleShape2D" id="1"]
+size = Vector2(152, 34)
+
+[sub_resource type="Animation" id="3"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Paddle:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 4)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Paddle:material:shader_parameter/bulge")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [4.75e-08]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Paddle:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_mw08t"]
+resource_name = "bounce"
+length = 0.4
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Paddle:material:shader_parameter/bulge")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.05, 0.175, 0.35),
+"transitions": PackedFloat32Array(-2, -2, -2, -2),
+"update": 0,
+"values": [4.75e-08, 0.426, -0.291, 4.75e-08]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Paddle:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.05, 0.175, 0.35),
+"transitions": PackedFloat32Array(-2, -2, -2, -2),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1, 0.622), Vector2(1, 1.357), Vector2(1, 1)]
+}
+
+[sub_resource type="Animation" id="2"]
+resource_name = "bump"
+length = 0.25
+step = 0.01
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Paddle:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.05, 0.14, 0.25),
+"transitions": PackedFloat32Array(-2, -2, -2, -2),
+"update": 0,
+"values": [Vector2(0, 4), Vector2(0, -10.639), Vector2(0, 12.081), Vector2(0, 4)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_cnhir"]
+_data = {
+"RESET": SubResource("3"),
+"bounce": SubResource("Animation_mw08t"),
+"bump": SubResource("2")
+}
+
+[node name="Paddle" type="CharacterBody2D" groups=["Paddle"]]
+process_priority = -2
+script = ExtResource("1")
+speed = 850.0
+dash_speed = 2500.0
+
+[node name="Laser" parent="." instance=ExtResource("2")]
+
+[node name="Paddle" type="Sprite2D" parent="."]
+self_modulate = Color(0.0980392, 0.0980392, 0.0980392, 1)
+material = SubResource("ShaderMaterial_r6y1s")
+position = Vector2(0, 4)
+texture = ExtResource("3")
+
+[node name="ThrustParticles" type="GPUParticles2D" parent="Paddle"]
+show_behind_parent = true
+position = Vector2(0, 13)
+amount = 51
+process_material = SubResource("ParticleProcessMaterial_ujfxm")
+local_coords = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("1")
+
+[node name="LaunchPoint" type="Marker2D" parent="."]
+position = Vector2(0, -37)
+
+[node name="DashTimer" type="Timer" parent="."]
+one_shot = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_cnhir")
+}
+
+[node name="Timer" type="Timer" parent="."]
+
+[node name="GhostSpawner" parent="." node_paths=PackedStringArray("sprite") instance=ExtResource("4_gipss")]
+sprite = NodePath("../Paddle")
+color = Color(0, 0.784314, 1, 0.423529)
+
+[node name="Bump" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_ob0ir")
+volume_db = -6.0
+
+[connection signal="timeout" from="DashTimer" to="." method="_on_DashTimer_timeout"]

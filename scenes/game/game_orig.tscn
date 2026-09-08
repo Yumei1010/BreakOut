@@ -1,0 +1,354 @@
+[gd_scene format=3 uid="uid://c1cvnrsabg3s1"]
+
+[ext_resource type="PackedScene" uid="uid://dyy7lp07carkr" path="res://scenes/paddle/paddle.tscn" id="1"]
+[ext_resource type="PackedScene" uid="uid://cvg0cmgxvdkk0" path="res://scenes/ball/ball.tscn" id="2"]
+[ext_resource type="Script" path="res://scenes/game/scripts/game.gd" id="3"]
+[ext_resource type="PackedScene" uid="uid://stcivysk52ie" path="res://scenes/brick/brick.tscn" id="4"]
+[ext_resource type="Script" path="res://scenes/game/scripts/pattern.gd" id="4_ar0yk"]
+[ext_resource type="FontFile" uid="uid://br01odh1twpni" path="res://shared/fonts/aldo_the_apache/AldotheApache.ttf" id="4_lbq23"]
+[ext_resource type="PackedScene" uid="uid://c48m66isx4utm" path="res://scenes/ui/energy_bar/energy_bar.tscn" id="5"]
+[ext_resource type="Shader" path="res://scenes/game/effects/combo.gdshader" id="5_a2d6o"]
+[ext_resource type="PackedScene" uid="uid://lc5lho6dqctj" path="res://scenes/ui/health/health.tscn" id="6"]
+[ext_resource type="Texture2D" uid="uid://cca2cimj26xys" path="res://scenes/game/visuals/walls.png" id="7"]
+[ext_resource type="Shader" path="res://scenes/game/effects/wave.gdshader" id="7_hww07"]
+[ext_resource type="Texture2D" uid="uid://dds87jvstluyg" path="res://scenes/game/visuals/background.png" id="8"]
+[ext_resource type="Texture2D" uid="uid://doqriorw2lonx" path="res://scenes/ball/visuals/ball.png" id="8_a1usc"]
+[ext_resource type="Texture2D" uid="uid://sh7g4gfmqe73" path="res://scenes/game/visuals/pattern.png" id="9"]
+[ext_resource type="Script" path="res://scenes/game/scripts/camera_final.gd" id="9_mbjye"]
+[ext_resource type="PackedScene" uid="uid://cn3a4bs7x53tq" path="res://scenes/ui/score/score.tscn" id="10_lkj00"]
+[ext_resource type="Shader" path="res://scenes/game/effects/grayscale.gdshader" id="17_wq6rs"]
+
+[sub_resource type="Shader" id="6"]
+code = "shader_type canvas_item;
+
+uniform sampler2D pattern: repeat_enable;
+uniform float speed = 1.0;
+uniform float size_scale = 1.0;
+uniform vec4 color: source_color;
+
+void fragment() {
+	vec2 centered_uv = UV * 2.0 - 1.0;
+	vec2 scaled_uv = centered_uv * size_scale;
+	scaled_uv = scaled_uv * 0.5 + 0.5;
+	vec2 moving_uv = vec2(scaled_uv.x - (TIME*speed), scaled_uv.y);
+	vec4 in_tex = texture(pattern, moving_uv);
+	COLOR = in_tex * color;
+}"
+
+[sub_resource type="ShaderMaterial" id="7"]
+shader = SubResource("6")
+shader_parameter/speed = 0.3
+shader_parameter/size_scale = 30.0
+shader_parameter/color = Color(0.74902, 0.74902, 0.74902, 0.254902)
+shader_parameter/pattern = ExtResource("9")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ua5mp"]
+shader = ExtResource("5_a2d6o")
+shader_parameter/fill_v = 0.0
+shader_parameter/color = Color(0.462745, 0.462745, 0.462745, 0.180392)
+
+[sub_resource type="RectangleShape2D" id="1"]
+size = Vector2(1920, 80)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_tkmje"]
+shader = ExtResource("7_hww07")
+shader_parameter/speed = 0.2
+shader_parameter/frequency_y = 10.0
+shader_parameter/frequency_x = 0.0
+shader_parameter/amplitude_y = 0.4
+shader_parameter/amplitude_x = 0.0
+shader_parameter/inclination = 0.0
+
+[sub_resource type="Gradient" id="4"]
+colors = PackedColorArray(1, 0.752941, 0.0117647, 1, 1, 0.517647, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="5"]
+gradient = SubResource("4")
+
+[sub_resource type="Gradient" id="Gradient_t0x3e"]
+offsets = PackedFloat32Array(0, 0.266821, 0.50116, 0.682135, 0.87239, 1)
+colors = PackedColorArray(1, 0.517647, 0, 1, 1, 0.517647, 0, 1, 1, 0.831075, 0, 1, 0.0980392, 0.0980392, 0.0980392, 1, 0.0980392, 0.0980392, 0.0980392, 1, 0.0980392, 0.0980392, 0.0980392, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_pa3m8"]
+gradient = SubResource("Gradient_t0x3e")
+
+[sub_resource type="Curve" id="Curve_s646s"]
+_data = [Vector2(0.00518135, 0), 0.0, 0.0, 0, 0, Vector2(0.15544, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_qj7lp"]
+curve = SubResource("Curve_s646s")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_aauo2"]
+lifetime_randomness = 0.38
+emission_shape = 3
+emission_box_extents = Vector3(1000, 1, 1)
+particle_flag_disable_z = true
+direction = Vector3(0, -1, 0)
+gravity = Vector3(0, -10, 0)
+initial_velocity_min = 28.0
+initial_velocity_max = 45.0
+orbit_velocity_min = 0.0
+orbit_velocity_max = 0.0
+scale_min = 0.05
+scale_max = 0.25
+scale_curve = SubResource("CurveTexture_qj7lp")
+color_ramp = SubResource("GradientTexture1D_pa3m8")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ttwcg"]
+shader = ExtResource("17_wq6rs")
+shader_parameter/mix_val = 0.0
+
+[node name="Game" type="Node2D"]
+script = ExtResource("3")
+
+[node name="Background" type="Sprite2D" parent="."]
+position = Vector2(960, 540)
+texture = ExtResource("8")
+
+[node name="Pattern" type="ColorRect" parent="."]
+material = SubResource("7")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -846.0
+offset_top = -1139.0
+offset_right = 2756.0
+offset_bottom = 2463.0
+rotation = -0.785398
+pivot_offset = Vector2(1801, 1801)
+script = ExtResource("4_ar0yk")
+
+[node name="Combo" type="Label" parent="."]
+modulate = Color(0.462745, 0.462745, 0.462745, 0.180392)
+material = SubResource("ShaderMaterial_ua5mp")
+offset_left = 310.0
+offset_top = 402.0
+offset_right = 1629.0
+offset_bottom = 737.0
+pivot_offset = Vector2(659, 167)
+theme_override_fonts/font = ExtResource("4_lbq23")
+theme_override_font_sizes/font_size = 400
+text = "COMBO 4"
+
+[node name="DeathArea" type="Area2D" parent="."]
+position = Vector2(960, 1101)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DeathArea"]
+shape = SubResource("1")
+
+[node name="Polygon2D" type="Polygon2D" parent="DeathArea"]
+material = SubResource("ShaderMaterial_tkmje")
+position = Vector2(-960, -1104)
+color = Color(1, 0.752941, 0.0117647, 1)
+antialiased = true
+texture = SubResource("5")
+polygon = PackedVector2Array(-152, 1067, -152, 1579, 2072, 1579, 2072, 1067, 1824, 1067, 1792, 1067, 1760, 1067, 1728, 1067, 1696, 1067, 1664, 1067, 1632, 1067, 1600, 1067, 1568, 1067, 1536, 1067, 1504, 1067, 1472, 1067, 1440, 1067, 1408, 1067, 1376, 1067, 1352, 1067, 1320, 1067, 1280, 1067, 1248, 1067, 1216, 1067, 1184, 1067, 1152, 1067, 1120, 1067, 1088, 1067, 1056, 1067, 1024, 1067, 1000, 1067, 960, 1067, 928, 1067, 896, 1067, 864, 1067, 832, 1067, 800, 1067, 768, 1067, 744, 1067, 704, 1067, 672, 1067, 640, 1067, 608, 1067, 576, 1067, 544, 1067, 512, 1067, 472, 1067, 448, 1067, 416, 1067, 384, 1067, 352, 1067, 320, 1067, 288, 1067, 256, 1067, 224, 1067, 192, 1067, 160, 1067, 128, 1067, 96, 1067, 64, 1067)
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="DeathArea"]
+show_behind_parent = true
+position = Vector2(0, -24)
+amount = 150
+process_material = SubResource("ParticleProcessMaterial_aauo2")
+texture = ExtResource("8_a1usc")
+lifetime = 3.5
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="StaticBody2D"]
+polygon = PackedVector2Array(106, 1189, -151, 1189, -153, -152, 2073, -150, 2070, 1189, 1814, 1189, 1814, 778, 1766, 705, 1766, 414, 1814, 342, 1814, 107, 106, 108, 106, 342, 154, 415, 154, 705, 106, 777)
+
+[node name="Walls" type="Sprite2D" parent="StaticBody2D"]
+position = Vector2(960, 498)
+texture = ExtResource("7")
+
+[node name="Ball" parent="." instance=ExtResource("2")]
+position = Vector2(960, 912)
+
+[node name="SpawnPos" type="Node" parent="."]
+
+[node name="Marker2D" type="Marker2D" parent="SpawnPos"]
+position = Vector2(259, 237)
+
+[node name="Position2D2" type="Marker2D" parent="SpawnPos"]
+position = Vector2(459, 237)
+
+[node name="Position2D3" type="Marker2D" parent="SpawnPos"]
+position = Vector2(659, 237)
+
+[node name="Position2D4" type="Marker2D" parent="SpawnPos"]
+position = Vector2(859, 237)
+
+[node name="Position2D5" type="Marker2D" parent="SpawnPos"]
+position = Vector2(1059, 237)
+
+[node name="Position2D6" type="Marker2D" parent="SpawnPos"]
+position = Vector2(1259, 237)
+
+[node name="Position2D7" type="Marker2D" parent="SpawnPos"]
+position = Vector2(1459, 237)
+
+[node name="Position2D8" type="Marker2D" parent="SpawnPos"]
+position = Vector2(1659, 237)
+
+[node name="Position2D10" type="Marker2D" parent="SpawnPos"]
+position = Vector2(259, 365)
+
+[node name="Position2D11" type="Marker2D" parent="SpawnPos"]
+position = Vector2(459, 365)
+
+[node name="Position2D12" type="Marker2D" parent="SpawnPos"]
+position = Vector2(659, 365)
+
+[node name="Position2D13" type="Marker2D" parent="SpawnPos"]
+position = Vector2(859, 365)
+
+[node name="Position2D14" type="Marker2D" parent="SpawnPos"]
+position = Vector2(1059, 365)
+
+[node name="Position2D15" type="Marker2D" parent="SpawnPos"]
+position = Vector2(1259, 365)
+
+[node name="Position2D16" type="Marker2D" parent="SpawnPos"]
+position = Vector2(1459, 365)
+
+[node name="Position2D17" type="Marker2D" parent="SpawnPos"]
+position = Vector2(1659, 365)
+
+[node name="Position2D20" type="Marker2D" parent="SpawnPos"]
+position = Vector2(459, 493)
+
+[node name="Position2D21" type="Marker2D" parent="SpawnPos"]
+position = Vector2(659, 493)
+
+[node name="Position2D22" type="Marker2D" parent="SpawnPos"]
+position = Vector2(859, 493)
+
+[node name="Position2D23" type="Marker2D" parent="SpawnPos"]
+position = Vector2(1059, 493)
+
+[node name="Position2D24" type="Marker2D" parent="SpawnPos"]
+position = Vector2(1259, 493)
+
+[node name="Position2D25" type="Marker2D" parent="SpawnPos"]
+position = Vector2(1459, 493)
+
+[node name="Bricks" type="Node" parent="."]
+
+[node name="Brick" parent="Bricks" instance=ExtResource("4")]
+visible = false
+position = Vector2(161, 128)
+
+[node name="Brick2" parent="Bricks" instance=ExtResource("4")]
+visible = false
+position = Vector2(361, 128)
+type = 1
+
+[node name="Brick3" parent="Bricks" instance=ExtResource("4")]
+visible = false
+position = Vector2(561, 128)
+type = 2
+
+[node name="Brick4" parent="Bricks" instance=ExtResource("4")]
+visible = false
+position = Vector2(761, 128)
+type = 3
+size = 1
+
+[node name="Brick5" parent="Bricks" instance=ExtResource("4")]
+visible = false
+position = Vector2(961, 128)
+type = 4
+size = 1
+
+[node name="Brick6" parent="Bricks" instance=ExtResource("4")]
+visible = false
+position = Vector2(1161, 128)
+type = 4
+size = 1
+
+[node name="Brick7" parent="Bricks" instance=ExtResource("4")]
+visible = false
+position = Vector2(1361, 128)
+type = 4
+size = 1
+
+[node name="Brick8" parent="Bricks" instance=ExtResource("4")]
+visible = false
+position = Vector2(1561, 128)
+type = 4
+size = 1
+
+[node name="Brick9" parent="Bricks" instance=ExtResource("4")]
+visible = false
+position = Vector2(1761, 128)
+type = 4
+size = 1
+
+[node name="Paddle" parent="." instance=ExtResource("1")]
+position = Vector2(960, 990)
+damp = 7.0
+velocity_multiplier = 0.5
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(960, 540)
+script = ExtResource("9_mbjye")
+dynamic_enabled = true
+dynamic_factor = 0.3
+
+[node name="HUDCanvasLayer" type="CanvasLayer" parent="."]
+follow_viewport_enabled = true
+
+[node name="EnergyBar" parent="HUDCanvasLayer" instance=ExtResource("5")]
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -87.0
+offset_top = -128.0
+offset_right = 24.0
+offset_bottom = 128.0
+grow_horizontal = 0
+grow_vertical = 2
+
+[node name="HealthBar" parent="HUDCanvasLayer" instance=ExtResource("6")]
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = -24.0
+offset_top = -128.0
+offset_right = 87.0
+offset_bottom = 128.0
+grow_vertical = 2
+
+[node name="Score" parent="HUDCanvasLayer" instance=ExtResource("10_lkj00")]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -178.5
+offset_top = -14.0
+offset_right = 178.5
+offset_bottom = 98.0
+grow_horizontal = 2
+
+[node name="EffectCanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="BW" type="ColorRect" parent="EffectCanvasLayer"]
+material = SubResource("ShaderMaterial_ttwcg")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="UICanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="ComboTimer" type="Timer" parent="."]
+wait_time = 2.0
+one_shot = true
+
+[connection signal="body_entered" from="DeathArea" to="." method="_on_DeathArea_body_entered"]
+[connection signal="hit_block" from="Ball" to="." method="_on_ball_hit_block"]
+[connection signal="start" from="Paddle" to="." method="_on_paddle_start"]
+[connection signal="timeout" from="ComboTimer" to="." method="_on_combo_timer_timeout"]
