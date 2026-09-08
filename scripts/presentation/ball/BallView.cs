@@ -302,6 +302,7 @@ public partial class BallView : CharacterBody2D
         _boostFactor = BumpJudge.BoostOf(grade);
         StartHitstop(grade == BumpGrade.Perfect ? 10 : 5);
         _root.OnBumpJudged(grade);
+        _root.SpawnBumpTiming(grade, GlobalPosition + new Vector2(0, -40));
     }
 
     /// <summary>

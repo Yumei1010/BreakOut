@@ -72,7 +72,7 @@ public partial class BrickView : StaticBody2D
         }
 
         var field = _root.BrickField;
-        var results = field.HitBrick(Data, 1, onEnergyBrickDestroyed: _root.Run.OnEnergyBrickDestroyed);
+        var results = field.HitBrick(Data, 1, onEnergyBrickDestroyed: _root.OnEnergyBrickDestroyed);
 
         if (Data.IsDestroyed)
         {

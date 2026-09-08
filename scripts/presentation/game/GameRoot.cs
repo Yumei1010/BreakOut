@@ -44,6 +44,12 @@ public partial class GameRoot : Node2D
     private Camera2D? _camera;
     private ColorRect? _pattern;
     private ColorRect? _bw;
+    private CanvasLayer? _uiLayer;
+    private int _earlyBumps;
+    private int _lateBumps;
+    private int _perfectBumps;
+    private double _elapsedTime;
+    private bool _ultimateShown;
 
     /// <summary>
     ///     获取本局状态（domain）。
@@ -135,16 +141,8 @@ public partial class GameRoot : Node2D
         Shake = new CameraShake { Name = "Shake" };
         _camera.AddChild(Shake);
 
-        // 反馈层与结算层（原版 UI 场景已在场景内：EnergyBar/HealthBar/Score）
-        var hudLayer = GetNodeOrNull<CanvasLayer>("HUDCanvasLayer");
-        if (hudLayer != null && GetNodeOrNull("Feedback") == null)
-        {
-            var feedback = new FeedbackLayer { Name = "Feedback" };
-            hudLayer.AddChild(feedback);
-
-            var overlay = new ResultOverlay { Name = "ResultOverlay" };
-            hudLayer.AddChild(overlay);
-        }
+        // 弹层统一挂 HUDCanvasLayer（原版 UI 场景已在场景内）
+        _uiLayer = GetNodeOrNull<CanvasLayer>("HUDCanvasLayer");
     }
 
     /// <summary>
@@ -152,6 +150,11 @@ public partial class GameRoot : Node2D
     /// </summary>
     public override void _PhysicsProcess(double delta)
     {
+        if (Run.Phase == RunPhase.Playing)
+        {
+            _elapsedTime += delta;
+        }
+
         if (Ball == null || Ball.Dead || !Ball.CanMove)
         {
             return;
@@ -275,6 +278,7 @@ public partial class GameRoot : Node2D
         {
             _log.Warn("游戏结束");
             PlayDeathSequence();
+            ShowGameOver();
             return;
         }
 
@@ -290,9 +294,30 @@ public partial class GameRoot : Node2D
     {
         Run.OnBrickHit();
         Score.OnBrickTouched();
+        TryShowUltimate();
         this.SendEvent(ChannelConstants.Gameplay, new ScoreChangedEvent(Score.Score, Score.Combo));
         this.SendEvent(ChannelConstants.Gameplay,
             new EnergyChangedEvent(Run.Energy, Run.Energy >= RunState.MaxEnergy));
+    }
+
+    /// <summary>
+    ///     能量砖被摧毁（BrickField 回调）：补能量并检查满能量提示。
+    /// </summary>
+    public void OnEnergyBrickDestroyed()
+    {
+        Run.OnEnergyBrickDestroyed();
+        TryShowUltimate();
+    }
+
+    /// <summary>
+    ///     能量刚达上限时显示终极就绪提示（能量回落后可再次触发）。
+    /// </summary>
+    private void TryShowUltimate()
+    {
+        if (Run.Energy >= RunState.MaxEnergy)
+        {
+            ShowUltimateReady();
+        }
     }
 
     /// <summary>
@@ -331,6 +356,74 @@ public partial class GameRoot : Node2D
             Run.OnLevelCleared();
             _log.Info("关卡清除！");
             PlayLevelClearSequence();
+            ShowStageClear();
+        }
+    }
+
+    /// <summary>
+    ///     显示游戏结束弹层（原版 game_over 场景）。
+    /// </summary>
+    private void ShowGameOver()
+    {
+        AddOverlay<GameOverView>("res://scenes/ui/game_over/game_over.tscn");
+    }
+
+    /// <summary>
+    ///     显示过关结算弹层（原版 stage_clear 场景）。
+    /// </summary>
+    private void ShowStageClear()
+    {
+        AddOverlay<StageClearView>("res://scenes/ui/stage_clear/stage_clear.tscn");
+    }
+
+    /// <summary>
+    ///     显示满能量提示（原版 ultimate_ready 场景）。
+    /// </summary>
+    public void ShowUltimateReady()
+    {
+        if (_uiLayer != null && _uiLayer.GetNodeOrNull("UltimateReady") == null)
+        {
+            var view = GD.Load<PackedScene>("res://scenes/ui/ultimate/ultimate_ready.tscn").Instantiate<UltimateReadyView>();
+            _uiLayer.AddChild(view);
+        }
+    }
+
+    /// <summary>
+    ///     在位置显示 bump 判定飘字（原版 bump_timing 场景）。
+    /// </summary>
+    /// <param name="grade">判定等级。</param>
+    /// <param name="position">飘字位置（球碰撞处）。</param>
+    public void SpawnBumpTiming(BumpGrade grade, Vector2 position)
+    {
+        if (_uiLayer == null)
+        {
+            return;
+        }
+
+        var packed = GD.Load<PackedScene>("res://scenes/effects/bump/bump_timing.tscn");
+        var view = packed.Instantiate<BumpTimingView>();
+        _uiLayer.AddChild(view);
+        view.Position = position;
+        view.Setup(grade);
+    }
+
+    /// <summary>
+    ///     向 UI 层添加一个弹层场景实例。
+    /// </summary>
+    private void AddOverlay<T>(string scenePath) where T : Node
+    {
+        if (_uiLayer == null)
+        {
+            return;
+        }
+
+        var packed = GD.Load<PackedScene>(scenePath);
+        var view = packed.Instantiate<T>();
+        view.Name = typeof(T).Name;
+        _uiLayer.AddChild(view);
+        if (view is CanvasItem canvasItem)
+        {
+            canvasItem.MoveToFront();
         }
     }
 
@@ -345,6 +438,19 @@ public partial class GameRoot : Node2D
             Sfx.PlayStrongHit();
         }
 
+        switch (grade)
+        {
+            case BumpGrade.Perfect:
+                _perfectBumps++;
+                break;
+            case BumpGrade.Late:
+                _lateBumps++;
+                break;
+            case BumpGrade.Early:
+                _earlyBumps++;
+                break;
+        }
+
         this.SendEvent(ChannelConstants.Gameplay, new BumpJudgedEvent(grade));
     }
 
@@ -353,7 +459,7 @@ public partial class GameRoot : Node2D
     /// </summary>
     public StageResult BuildStageResult()
     {
-        return new StageResult(0, 0, 0, Ball?.Bounces ?? 0, Score.Score);
+        return new StageResult(_earlyBumps, _lateBumps, _perfectBumps, Ball?.Bounces ?? 0, Score.Score);
     }
 
     /// <summary>
