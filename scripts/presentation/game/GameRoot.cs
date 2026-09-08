@@ -20,6 +20,8 @@ using BreakOut.scripts.presentation.brick;
 using BreakOut.scripts.presentation.effect;
 using BreakOut.scripts.presentation.paddle;
 using BreakOut.scripts.presentation.ui;
+using BreakOut.scripts.system.brick;
+using BreakOut.scripts.system.level;
 using BreakOut.scripts.system.scoring;
 using BreakOut.scripts.utility.@event;
 
@@ -57,7 +59,6 @@ public partial class GameRoot : Node2D
     /// </summary>
     private const float ExplosionRadius = 120f;
 
-    private readonly List<BrickView> _brickViews = new();
     private Camera2D? _camera;
     private ColorRect? _pattern;
     private ColorRect? _bw;
@@ -77,9 +78,14 @@ public partial class GameRoot : Node2D
     public ScoringSystem Scoring { get; } = new();
 
     /// <summary>
-    ///     获取砖墙（domain）。
+    ///     获取砖墙系统（规则 + 视图注册表）。
     /// </summary>
-    public BrickField BrickField { get; } = new(ExplosionRadius);
+    public BrickSystem Bricks { get; } = new();
+
+    /// <summary>
+    ///     获取关卡系统。
+    /// </summary>
+    public LevelSystem Level { get; } = new();
 
     /// <summary>
     ///     获取音效管理器。
@@ -112,7 +118,7 @@ public partial class GameRoot : Node2D
         AttachJuice();
         GenerateLevel();
         PublishInitialState();
-        _log.Info($"BreakOut 玩法就绪：{BrickField.AliveCount} 块砖");
+        _log.Info($"BreakOut 玩法就绪：{Bricks.AliveCount} 块砖");
     }
 
     /// <summary>
@@ -206,22 +212,14 @@ public partial class GameRoot : Node2D
         ClearBricks();
 
         var anchors = ReadSpawnAnchors();
-        var generator = new LevelGenerator();
-        var spawns = generator.Generate(anchors, LevelConfig.Default);
+        var spawns = Level.Generate(anchors, LevelConfig.Default);
 
         var brickScene = GetScene("res://scenes/brick/brick.tscn");
         var bricksRoot = GetNodeOrNull<Node2D>("Bricks") ?? this;
 
         foreach (var spawn in spawns)
         {
-            var data = new Brick(spawn.Type, spawn.Size);
-            BrickField.Add(data, spawn.Position);
-
-            var view = brickScene.Instantiate<BrickView>();
-            view.Position = ToGodot(spawn.Position);
-            bricksRoot.AddChild(view);
-            view.Setup(data);
-            _brickViews.Add(view);
+            Bricks.AddBrick(spawn, brickScene, bricksRoot);
         }
     }
 
@@ -252,23 +250,11 @@ public partial class GameRoot : Node2D
     /// </summary>
     private void ClearBricks()
     {
-        var bricksRoot = GetNodeOrNull("Bricks");
+        var bricksRoot = GetNodeOrNull<Node2D>("Bricks");
         if (bricksRoot != null)
         {
-            foreach (var child in bricksRoot.GetChildren())
-            {
-                if (child is BrickView view)
-                {
-                    view.QueueFree();
-                }
-                else if (child is StaticBody2D)
-                {
-                    child.QueueFree(); // 场景预置砖
-                }
-            }
+            Bricks.ClearAll(bricksRoot);
         }
-
-        _brickViews.Clear();
     }
 
     /// <summary>
@@ -397,12 +383,12 @@ public partial class GameRoot : Node2D
         }
 
         view.QueueFree();
-        _brickViews.Remove(view);
+        Bricks.RemoveView(view);
 
-        var levelCleared = BrickField.AliveCount == 0;
+        var levelCleared = Bricks.AliveCount == 0;
         ShowCombo();
         this.SendEvent(ChannelConstants.Gameplay,
-            new BrickDestroyedEvent(results.Count, BrickField.AliveCount, levelCleared));
+            new BrickDestroyedEvent(results.Count, Bricks.AliveCount, levelCleared));
         this.SendEvent(ChannelConstants.Gameplay, new ScoreChangedEvent(Scoring.Score.Score, Scoring.Score.Combo));
 
         if (levelCleared)
