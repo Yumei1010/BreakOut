@@ -59,6 +59,8 @@ public partial class GameRoot : Node2D
     /// </summary>
     public BrickField BrickField { get; } = new(ExplosionRadius);
 
+    private Camera2D? _camera;
+
     /// <summary>
     ///     获取音效管理器。
     /// </summary>
@@ -120,8 +122,9 @@ public partial class GameRoot : Node2D
         AddChild(background);
 
         // 相机 + 抖动
-        var camera = new Camera2D { Position = new Vector2(960, 540) };
+        var camera = new Camera2D { Position = new Vector2(960, 540), Zoom = new Vector2(1.15f, 1.15f) };
         AddChild(camera);
+        _camera = camera;
         Shake = new CameraShake { Name = "Shake" };
         camera.AddChild(Shake);
 
@@ -215,6 +218,7 @@ public partial class GameRoot : Node2D
         if (dead)
         {
             _log.Warn("游戏结束");
+            PlayDeathSequence();
             return;
         }
 
@@ -247,7 +251,12 @@ public partial class GameRoot : Node2D
             _log.Debug($"砖摧毁 {result.Brick.Type}（{result.Reason}）");
         }
 
-        // 表现：任何摧毁播爆炸声；若含爆炸砖源则强化
+        // 表现：碎裂粒子 + 音效；爆炸砖源强化
+        foreach (var result in results)
+        {
+            BurstDebris(view.GlobalPosition, new Color(0.85f, 0.5f, 0.2f));
+        }
+
         Sfx.PlayBrickDestroyed();
         if (results.Any(r => BrickSpecs.IsExplosive(r.Brick.Type)))
         {
@@ -266,6 +275,7 @@ public partial class GameRoot : Node2D
         {
             Run.OnLevelCleared();
             _log.Info("关卡清除！");
+            PlayLevelClearSequence();
         }
     }
 
@@ -304,4 +314,103 @@ public partial class GameRoot : Node2D
     }
 
     private static Vector2 ToGodot(Vec2 v) => new(v.X, v.Y);
+}
+
+// ==== juice 相机序列（移植 game_juice_breakout_4 慢动作/聚焦/回位编排） ====
+
+public partial class GameRoot
+{
+    /// <summary>
+    ///     关卡清除序列：慢动作聚焦球后回位（time_scale + 相机 tween 编排）。
+    /// </summary>
+    private async void PlayLevelClearSequence()
+    {
+        if (_camera == null || Ball == null)
+        {
+            return;
+        }
+
+        Sfx.PlayUltimateReady();
+        Shake.Shake(0.5f, 25f, 25f);
+        await FocusBallTween(zoomTo: 1.6f);
+    }
+
+    /// <summary>
+    ///     死亡序列：慢动作聚焦球。
+    /// </summary>
+    private async void PlayDeathSequence()
+    {
+        if (_camera == null || Ball == null)
+        {
+            return;
+        }
+
+        Sfx.PlayBallDestroyed();
+        Shake.Shake(0.5f, 30f, 20f);
+        await FocusBallTween(zoomTo: 1.5f);
+    }
+
+    /// <summary>
+    ///     慢动作 → 聚焦球放大 → 停顿 → 恢复回位。
+    /// </summary>
+    private async System.Threading.Tasks.Task FocusBallTween(float zoomTo)
+    {
+        if (_camera == null || Ball == null)
+        {
+            return;
+        }
+
+        var originalZoom = _camera.Zoom;
+        var originalPos = _camera.Position;
+
+        global::Godot.Engine.TimeScale = 0.15f;
+
+        var focus = CreateTween().SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.InOut);
+        focus.Parallel().TweenProperty(_camera, "position", Ball.GlobalPosition, 0.3);
+        focus.Parallel().TweenProperty(_camera, "zoom", new Vector2(zoomTo, zoomTo), 0.3);
+        await ToSignal(focus, Tween.SignalName.Finished);
+
+        // 停顿（真实时间）
+        await ToSignal(GetTree().CreateTimer(0.4), SceneTreeTimer.SignalName.Timeout);
+
+        global::Godot.Engine.TimeScale = 1.0f;
+
+        var restore = CreateTween().SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.InOut);
+        restore.Parallel().TweenProperty(_camera, "position", originalPos, 0.4);
+        restore.Parallel().TweenProperty(_camera, "zoom", originalZoom, 0.4);
+        await ToSignal(restore, Tween.SignalName.Finished);
+    }
+}
+
+// ==== 简易碎裂粒子（Sprite 缩放淡出模拟爆炸，替代 GPUParticles 预制） ====
+
+public partial class GameRoot
+{
+    /// <summary>
+    ///     在位置生成一次碎裂视觉：若干碎片向外扩散并淡出。
+    /// </summary>
+    /// <param name="position">爆炸中心。</param>
+    /// <param name="baseColor">碎片颜色。</param>
+    public void BurstDebris(Vector2 position, Color baseColor)
+    {
+        for (var i = 0; i < 8; i++)
+        {
+            var piece = new ColorRect
+            {
+                Size = new Vector2(14, 14),
+                Color = baseColor,
+                Position = position - new Vector2(7, 7),
+                Rotation = (float)GD.RandRange(0, Mathf.Tau)
+            };
+            AddChild(piece);
+
+            var tween = CreateTween().SetParallel(true);
+            var dir = Vector2.Right.Rotated((float)GD.RandRange(0, Mathf.Tau));
+            tween.TweenProperty(piece, "position", piece.Position + dir * (float)GD.RandRange(60, 140), 0.5)
+                .SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.Out);
+            tween.TweenProperty(piece, "modulate:a", 0f, 0.4)
+                .SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.In);
+            tween.Chain().TweenCallback(Callable.From(piece.QueueFree));
+        }
+    }
 }
