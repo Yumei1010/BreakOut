@@ -1,6 +1,6 @@
 using Godot;
 
-namespace BreakOut.scripts.presentation.assets;
+namespace BreakOut.scripts.utility.effects;
 
 /// <summary>
 ///     游戏音效管理器：集中加载 sfxr 资产并提供池化播放。

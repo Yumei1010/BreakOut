@@ -1,6 +1,6 @@
 using Godot;
 using BreakOut.scripts.rules.brick;
-using BreakOut.scripts.presentation.assets;
+using BreakOut.scripts.utility.effects;
 
 namespace BreakOut.scripts.entities.brick;
 

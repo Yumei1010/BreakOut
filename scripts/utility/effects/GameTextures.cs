@@ -1,6 +1,6 @@
 using Godot;
 
-namespace BreakOut.scripts.presentation.assets;
+namespace BreakOut.scripts.utility.effects;
 
 /// <summary>
 ///     游戏纹理加载器：集中管理资产路径，避免视图代码散落魔法字符串。

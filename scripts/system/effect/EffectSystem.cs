@@ -1,6 +1,6 @@
 using Godot;
-using BreakOut.scripts.presentation.assets;
-using BreakOut.scripts.presentation.effect;
+using BreakOut.scripts.utility.effects;
+using BreakOut.scripts.utility.effects;
 
 namespace BreakOut.scripts.system.effect;
 

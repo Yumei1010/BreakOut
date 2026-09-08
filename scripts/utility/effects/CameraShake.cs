@@ -1,6 +1,6 @@
 using Godot;
 
-namespace BreakOut.scripts.presentation.effect;
+namespace BreakOut.scripts.utility.effects;
 
 /// <summary>
 ///     相机抖动控制器：移植自 game_juice_breakout_4 的 camera_final.gd 抖动数学。

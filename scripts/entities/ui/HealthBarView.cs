@@ -5,7 +5,7 @@ using GFramework.Core.SourceGenerators.Abstractions.Rule;
 using GFramework.Godot.Extensions;
 using BreakOut.scripts.constants;
 using BreakOut.scripts.cqrs.run.@event;
-using BreakOut.scripts.presentation.assets;
+using BreakOut.scripts.utility.effects;
 using BreakOut.scripts.utility.@event;
 
 namespace BreakOut.scripts.entities.ui;
