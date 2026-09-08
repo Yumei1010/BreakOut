@@ -20,6 +20,7 @@ using BreakOut.scripts.presentation.brick;
 using BreakOut.scripts.presentation.effect;
 using BreakOut.scripts.presentation.paddle;
 using BreakOut.scripts.presentation.ui;
+using BreakOut.scripts.system.scoring;
 using BreakOut.scripts.utility.@event;
 
 namespace BreakOut.scripts.presentation.game;
@@ -64,21 +65,16 @@ public partial class GameRoot : Node2D
     private readonly Dictionary<string, PackedScene> _sceneCache = new();
     private Label? _comboLabel;
     private Timer? _comboHideTimer;
-    private int _earlyBumps;
-    private int _lateBumps;
-    private int _perfectBumps;
-    private double _elapsedTime;
+
     private bool _ultimateShown;
 
     /// <summary>
     ///     获取本局状态（domain）。
     /// </summary>
-    public RunState Run { get; } = new();
-
     /// <summary>
-    ///     获取计分规则（domain）。
+    ///     获取计分/对局系统（持有规则，纯 C#）。
     /// </summary>
-    public ScoreRule Score { get; } = new();
+    public ScoringSystem Scoring { get; } = new();
 
     /// <summary>
     ///     获取砖墙（domain）。
@@ -181,10 +177,7 @@ public partial class GameRoot : Node2D
     /// </summary>
     public override void _PhysicsProcess(double delta)
     {
-        if (Run.Phase == RunPhase.Playing)
-        {
-            _elapsedTime += delta;
-        }
+        Scoring.TickTime(delta);
 
         if (Ball == null || Ball.Dead || !Ball.CanMove)
         {
@@ -283,8 +276,8 @@ public partial class GameRoot : Node2D
     /// </summary>
     private void PublishInitialState()
     {
-        this.SendEvent(ChannelConstants.Gameplay, new ScoreChangedEvent(Score.Score, Score.Combo));
-        this.SendEvent(ChannelConstants.Gameplay, new EnergyChangedEvent(Run.Energy, false));
+        this.SendEvent(ChannelConstants.Gameplay, new ScoreChangedEvent(Scoring.Score.Score, Scoring.Score.Combo));
+        this.SendEvent(ChannelConstants.Gameplay, new EnergyChangedEvent(Scoring.Run.Energy, false));
     }
 
     /// <summary>
@@ -300,11 +293,11 @@ public partial class GameRoot : Node2D
         Ball.Die();
         SpawnParticle("res://scenes/ball/ball_explode_particles.tscn", Ball.GlobalPosition);
         SpawnParticle("res://scenes/game/lava_splash_particles.tscn", Ball.GlobalPosition + new Vector2(0, 20));
-        var dead = Run.OnBallLost();
+        var dead = Scoring.Run.OnBallLost();
         Sfx.PlayBallDestroyed();
         Shake.Shake(0.45f, 30f, 25f);
-        this.SendEvent(ChannelConstants.Gameplay, new BallLostEvent(Run.Health, dead));
-        _log.Debug($"球落底，剩余生命 {Run.Health}");
+        this.SendEvent(ChannelConstants.Gameplay, new BallLostEvent(Scoring.Run.Health, dead));
+        _log.Debug($"球落底，剩余生命 {Scoring.Run.Health}");
 
         if (dead)
         {
@@ -324,13 +317,13 @@ public partial class GameRoot : Node2D
     /// </summary>
     public void OnBrickHit(BrickType visualType)
     {
-        Run.OnBrickHit();
-        Score.OnBrickTouched();
+        Scoring.OnBrickHitEnergy();
+        Scoring.OnBrickTouched();
         ShowCombo();
         TryShowUltimate();
-        this.SendEvent(ChannelConstants.Gameplay, new ScoreChangedEvent(Score.Score, Score.Combo));
+        this.SendEvent(ChannelConstants.Gameplay, new ScoreChangedEvent(Scoring.Score.Score, Scoring.Score.Combo));
         this.SendEvent(ChannelConstants.Gameplay,
-            new EnergyChangedEvent(Run.Energy, Run.Energy >= RunState.MaxEnergy));
+            new EnergyChangedEvent(Scoring.Run.Energy, Scoring.Run.Energy >= BreakOut.scripts.rules.run.RunState.MaxEnergy));
     }
 
     /// <summary>
@@ -338,7 +331,7 @@ public partial class GameRoot : Node2D
     /// </summary>
     public void OnEnergyBrickDestroyed()
     {
-        Run.OnEnergyBrickDestroyed();
+        Scoring.OnEnergyBrickDestroyed();
         TryShowUltimate();
     }
 
@@ -352,7 +345,7 @@ public partial class GameRoot : Node2D
             return;
         }
 
-        if (Score.Combo <= 1)
+        if (Scoring.Score.Combo <= 1)
         {
             _comboLabel.Visible = false;
             _comboHideTimer.Stop();
@@ -360,7 +353,7 @@ public partial class GameRoot : Node2D
         }
 
         _comboLabel.Visible = true;
-        _comboLabel.Text = $"COMBO {Score.Combo}";
+        _comboLabel.Text = $"COMBO {Scoring.Score.Combo}";
         _comboLabel.Scale = new Vector2(0.4f, 0.4f);
         var tween = CreateTween().SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.InOut);
         tween.TweenProperty(_comboLabel, "scale", Vector2.One, 0.25);
@@ -374,7 +367,7 @@ public partial class GameRoot : Node2D
     /// </summary>
     private void TryShowUltimate()
     {
-        if (Run.Energy >= RunState.MaxEnergy)
+        if (Scoring.Run.Energy >= BreakOut.scripts.rules.run.RunState.MaxEnergy)
         {
             ShowUltimateReady();
         }
@@ -387,7 +380,7 @@ public partial class GameRoot : Node2D
     {
         foreach (var result in results)
         {
-            Score.OnBrickDestroyed();
+            Scoring.OnBrickDestroyed();
             _log.Debug($"砖摧毁 {result.Brick.Type}（{result.Reason}）");
         }
 
@@ -410,11 +403,11 @@ public partial class GameRoot : Node2D
         ShowCombo();
         this.SendEvent(ChannelConstants.Gameplay,
             new BrickDestroyedEvent(results.Count, BrickField.AliveCount, levelCleared));
-        this.SendEvent(ChannelConstants.Gameplay, new ScoreChangedEvent(Score.Score, Score.Combo));
+        this.SendEvent(ChannelConstants.Gameplay, new ScoreChangedEvent(Scoring.Score.Score, Scoring.Score.Combo));
 
         if (levelCleared)
         {
-            Run.OnLevelCleared();
+            Scoring.Run.OnLevelCleared();
             _log.Info("关卡清除！");
             PlayLevelClearSequence();
             ShowStageClear();
@@ -499,18 +492,7 @@ public partial class GameRoot : Node2D
             Sfx.PlayStrongHit();
         }
 
-        switch (grade)
-        {
-            case BumpGrade.Perfect:
-                _perfectBumps++;
-                break;
-            case BumpGrade.Late:
-                _lateBumps++;
-                break;
-            case BumpGrade.Early:
-                _earlyBumps++;
-                break;
-        }
+        Scoring.RecordBump(grade);
 
         this.SendEvent(ChannelConstants.Gameplay, new BumpJudgedEvent(grade));
     }
@@ -520,7 +502,7 @@ public partial class GameRoot : Node2D
     /// </summary>
     public StageResult BuildStageResult()
     {
-        return new StageResult(_earlyBumps, _lateBumps, _perfectBumps, Ball?.Bounces ?? 0, Score.Score);
+        return Scoring.BuildStageResult(Ball?.Bounces ?? 0);
     }
 
     /// <summary>
