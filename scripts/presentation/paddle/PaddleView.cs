@@ -45,7 +45,12 @@ public partial class PaddleView : CharacterBody2D
     /// </summary>
     public override void _Ready()
     {
-        _root = GetParent<GameRoot>();
+        _root = FindGameRoot();
+        if (_root == null)
+        {
+            GD.PushError("视图未找到 GameRoot");
+            return;
+        }
         ResolveVisualNodes();
     }
 
@@ -174,5 +179,21 @@ public partial class PaddleView : CharacterBody2D
             tween.TweenProperty(ghost, "modulate:a", 0f, 0.25);
             tween.TweenCallback(Callable.From(ghost.QueueFree));
         }
+    }
+
+    private GameRoot FindGameRoot()
+    {
+        var node = GetParent();
+        while (node != null)
+        {
+            if (node is GameRoot root)
+            {
+                return root;
+            }
+
+            node = node.GetParent();
+        }
+
+        return null;
     }
 }

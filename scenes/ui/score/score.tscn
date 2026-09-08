@@ -1,7 +1,6 @@
 [gd_scene format=3 uid="uid://cn3a4bs7x53tq"]
 
-[ext_resource type="Script" path="res://scenes/ui/score/scripts/score.gd" id="1_6pk4h"]
-[ext_resource type="Texture2D" uid="uid://ckmlf7upjao31" path="res://scenes/ui/score/visuals/container_horizontal.png" id="1_wktrx"]
+[ext_resource type="Texture2D" uid="uid://btadntwh8x77a" path="res://scenes/ui/score/visuals/container_horizontal.png" id="1_wktrx"]
 [ext_resource type="FontFile" uid="uid://br01odh1twpni" path="res://shared/fonts/aldo_the_apache/AldotheApache.ttf" id="2_cniln"]
 
 [node name="Score" type="Control"]
@@ -9,7 +8,6 @@ layout_mode = 3
 anchors_preset = 0
 offset_right = 357.0
 offset_bottom = 112.0
-script = ExtResource("1_6pk4h")
 
 [node name="TextureRect" type="TextureRect" parent="."]
 modulate = Color(0.0980392, 0.0980392, 0.0980392, 1)

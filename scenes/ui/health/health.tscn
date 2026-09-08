@@ -1,15 +1,13 @@
 [gd_scene format=3 uid="uid://lc5lho6dqctj"]
 
-[ext_resource type="Texture2D" uid="uid://cj51dnttt3at2" path="res://scenes/ui/health/visuals/HeartFull.png" id="1"]
-[ext_resource type="Script" path="res://scenes/ui/health/scripts/health.gd" id="2"]
-[ext_resource type="Texture2D" uid="uid://clkxun12gq2gv" path="res://scenes/ui/shared/visuals/Container.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://cmb7r8kkmhk4y" path="res://scenes/ui/health/visuals/HeartFull.png" id="1"]
+[ext_resource type="Texture2D" uid="uid://detnlim5hn6js" path="res://scenes/ui/shared/visuals/Container.png" id="3"]
 
 [node name="HealthBar" type="Control"]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 111.0
 offset_bottom = 256.0
-script = ExtResource("2")
 
 [node name="TextureRect" type="TextureRect" parent="."]
 modulate = Color(0.0980392, 0.0980392, 0.0980392, 1)

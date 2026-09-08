@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://6s2urcdmkpbt"]
+[gd_scene format=3 uid="uid://c1cvnrsabg3s1"]
 
 [ext_resource type="Script" uid="uid://dehhmutvtlldg" path="res://scripts/presentation/game/GameRoot.cs" id="gameroot"]
 
@@ -295,39 +295,6 @@ dynamic_factor = 0.3
 
 [node name="HUDCanvasLayer" type="CanvasLayer" parent="."]
 follow_viewport_enabled = true
-
-[node name="EnergyBar" parent="HUDCanvasLayer" instance=ExtResource("5")]
-anchors_preset = 6
-anchor_left = 1.0
-anchor_top = 0.5
-anchor_right = 1.0
-anchor_bottom = 0.5
-offset_left = -87.0
-offset_top = -128.0
-offset_right = 24.0
-offset_bottom = 128.0
-grow_horizontal = 0
-grow_vertical = 2
-
-[node name="HealthBar" parent="HUDCanvasLayer" instance=ExtResource("6")]
-anchors_preset = 4
-anchor_top = 0.5
-anchor_bottom = 0.5
-offset_left = -24.0
-offset_top = -128.0
-offset_right = 87.0
-offset_bottom = 128.0
-grow_vertical = 2
-
-[node name="Score" parent="HUDCanvasLayer" instance=ExtResource("10_lkj00")]
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -178.5
-offset_top = -14.0
-offset_right = 178.5
-offset_bottom = 98.0
-grow_horizontal = 2
 
 [node name="EffectCanvasLayer" type="CanvasLayer" parent="."]
 

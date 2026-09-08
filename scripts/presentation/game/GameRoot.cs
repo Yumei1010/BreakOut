@@ -15,9 +15,9 @@ using BreakOut.scripts.domain.level;
 using BreakOut.scripts.domain.run;
 using BreakOut.scripts.domain.scoring;
 using BreakOut.scripts.presentation.assets;
-using BreakOut.scripts.presentation.effect;
 using BreakOut.scripts.presentation.ball;
 using BreakOut.scripts.presentation.brick;
+using BreakOut.scripts.presentation.effect;
 using BreakOut.scripts.presentation.paddle;
 using BreakOut.scripts.presentation.ui;
 using BreakOut.scripts.utility.@event;
@@ -25,11 +25,11 @@ using BreakOut.scripts.utility.@event;
 namespace BreakOut.scripts.presentation.game;
 
 /// <summary>
-///     玩法场景根节点：组装 domain 实例、生成关卡、驱动视图，并在规则级状态变化时广播 CQRS 事件。
+///     玩法场景根：挂载于 main(game).tscn 根，场景驱动——从场景读取 Paddle/Ball/相机/锚点。
 /// </summary>
 /// <remarks>
-///     单场景游戏不走 UI 页面栈，本节点常驻 main.tscn。
-///     事件桥：规则变化（得分/生命/能量/bump/砖毁）发事件 → HUD/特效订阅刷新，视图不做直接耦合。
+///     场景节点树（背景/墙/死亡区/Pattern/锚点/相机）由 game.tscn 布局提供；
+///     本类只做 domain 组装、砖墙生成、事件桥与相机序列。Paddle/Ball 为场景内实例。
 /// </remarks>
 [Log]
 [ContextAware]
@@ -40,9 +40,8 @@ public partial class GameRoot : Node2D
     /// </summary>
     private const float ExplosionRadius = 120f;
 
-    private static readonly Vec2[] SpawnPositions = BuildSpawnGrid();
-
     private readonly List<BrickView> _brickViews = new();
+    private Camera2D? _camera;
 
     /// <summary>
     ///     获取本局状态（domain）。
@@ -59,8 +58,6 @@ public partial class GameRoot : Node2D
     /// </summary>
     public BrickField BrickField { get; } = new(ExplosionRadius);
 
-    private Camera2D? _camera;
-
     /// <summary>
     ///     获取音效管理器。
     /// </summary>
@@ -72,28 +69,82 @@ public partial class GameRoot : Node2D
     public CameraShake Shake { get; private set; } = null!;
 
     /// <summary>
-    ///     获取板视图。
+    ///     获取板视图（场景实例）。
     /// </summary>
     public PaddleView? Paddle { get; private set; }
 
     /// <summary>
-    ///     获取球视图。
+    ///     获取球视图（场景实例）。
     /// </summary>
     public BallView? Ball { get; private set; }
 
     /// <summary>
-    ///     创建视图节点（场景树构建）并广播初始状态。
+    ///     创建视图引用并广播初始状态。
     /// </summary>
     public override void _Ready()
     {
-        BuildScene();
+        ResolveSceneNodes();
+        AttachJuice();
         GenerateLevel();
         PublishInitialState();
         _log.Info($"BreakOut 玩法就绪：{BrickField.AliveCount} 块砖");
     }
 
     /// <summary>
-    ///     每物理帧检查边界（球出界等）。
+    ///     解析场景内节点引用。
+    /// </summary>
+    private void ResolveSceneNodes()
+    {
+        Paddle = GetNodeOrNull<PaddleView>("Paddle");
+        Ball = GetNodeOrNull<BallView>("Ball");
+        _camera = GetNodeOrNull<Camera2D>("Camera2D");
+        if (_camera != null)
+        {
+            _camera.Position = new Vector2(960, 540);
+        }
+
+        // 组装完成后再初始化球（Paddle 已就绪）
+        if (Paddle != null && Ball != null)
+        {
+            Ball.OnSceneReady(Paddle);
+        }
+    }
+
+    /// <summary>
+    ///     挂载音效与相机抖动（SfxManager 节点在场景外，此处动态创建）。
+    /// </summary>
+    private void AttachJuice()
+    {
+        Sfx = new SfxManager { Name = "Sfx" };
+        AddChild(Sfx);
+
+        if (_camera == null)
+        {
+            _camera = new Camera2D { Position = new Vector2(960, 540) };
+            AddChild(_camera);
+        }
+
+        Shake = new CameraShake { Name = "Shake" };
+        _camera.AddChild(Shake);
+
+        // HUD（场景无 HUD 节点时动态创建）
+        if (GetNodeOrNull("HudLayer") == null)
+        {
+            var hudLayer = new CanvasLayer { Name = "HudLayer" };
+            var hud = new HudView { Name = "Hud" };
+            hudLayer.AddChild(hud);
+
+            var feedback = new FeedbackLayer { Name = "Feedback" };
+            hudLayer.AddChild(feedback);
+
+            var overlay = new ResultOverlay { Name = "ResultOverlay" };
+            hudLayer.AddChild(overlay);
+            AddChild(hudLayer);
+        }
+    }
+
+    /// <summary>
+    ///     每物理帧检查边界（球出界）。
     /// </summary>
     public override void _PhysicsProcess(double delta)
     {
@@ -109,64 +160,18 @@ public partial class GameRoot : Node2D
     }
 
     /// <summary>
-    ///     构建玩法场景节点树。
-    /// </summary>
-    private void BuildScene()
-    {
-        var background = new Sprite2D
-        {
-            Texture = GameTextures.Background,
-            Centered = false,
-            Scale = new Vector2(2f, 2f)
-        };
-        AddChild(background);
-
-        // 相机 + 抖动
-        var camera = new Camera2D { Position = new Vector2(960, 540), Zoom = new Vector2(1.15f, 1.15f) };
-        AddChild(camera);
-        _camera = camera;
-        Shake = new CameraShake { Name = "Shake" };
-        camera.AddChild(Shake);
-
-        // 音效
-        Sfx = new SfxManager { Name = "Sfx" };
-        AddChild(Sfx);
-
-        // 板：实例化布局场景（paddle_layout.tscn 挂 PaddleView.cs）
-        var paddleScene = GD.Load<PackedScene>("res://scenes/paddle/paddle_layout.tscn");
-        Paddle = paddleScene.Instantiate<PaddleView>();
-        Paddle.Position = new Vector2(960, 990);
-        AddChild(Paddle);
-
-        // 球：实例化布局场景（ball_layout.tscn 挂 BallView.cs）
-        var ballScene = GD.Load<PackedScene>("res://scenes/ball/ball_layout.tscn");
-        Ball = ballScene.Instantiate<BallView>();
-        Ball.Position = new Vector2(960, 900);
-        AddChild(Ball);
-
-        var hudLayer = new CanvasLayer { Name = "HudLayer" };
-        var hud = new HudView { Name = "Hud" };
-        hudLayer.AddChild(hud);
-
-        var feedback = new FeedbackLayer { Name = "Feedback" };
-        hudLayer.AddChild(feedback);
-
-        var overlay = new ResultOverlay { Name = "ResultOverlay" };
-        hudLayer.AddChild(overlay);
-        AddChild(hudLayer);
-    }
-
-    /// <summary>
-    ///     生成新关卡砖墙。
+    ///     生成新关卡：读场景 SpawnPos 锚点生成砖墙。
     /// </summary>
     private void GenerateLevel()
     {
         ClearBricks();
 
+        var anchors = ReadSpawnAnchors();
         var generator = new LevelGenerator();
-        var spawns = generator.Generate(SpawnPositions, LevelConfig.Default);
+        var spawns = generator.Generate(anchors, LevelConfig.Default);
 
         var brickScene = GD.Load<PackedScene>("res://scenes/brick/brick_layout.tscn");
+        var bricksRoot = GetNodeOrNull<Node2D>("Bricks") ?? this;
 
         foreach (var spawn in spawns)
         {
@@ -175,28 +180,56 @@ public partial class GameRoot : Node2D
 
             var view = brickScene.Instantiate<BrickView>();
             view.Position = ToGodot(spawn.Position);
-            AddChild(view);
+            bricksRoot.AddChild(view);
             view.Setup(data);
             _brickViews.Add(view);
         }
     }
 
     /// <summary>
-    ///     清空现有砖（视图 + domain）。
+    ///     读取场景 SpawnPos 下的 Marker2D 锚点位置。
+    /// </summary>
+    private IReadOnlyList<Vec2> ReadSpawnAnchors()
+    {
+        var anchors = new List<Vec2>();
+        var spawnPos = GetNodeOrNull("SpawnPos");
+        if (spawnPos != null)
+        {
+            foreach (var child in spawnPos.GetChildren())
+            {
+                if (child is Marker2D marker)
+                {
+                    anchors.Add(ToVec(marker.GlobalPosition));
+                }
+            }
+        }
+
+        // 场景无锚点时回退默认网格
+        return anchors.Count > 0 ? anchors : BuildSpawnGrid();
+    }
+
+    /// <summary>
+    ///     清空砖（视图 + domain）。
     /// </summary>
     private void ClearBricks()
     {
-        foreach (var view in _brickViews)
+        var bricksRoot = GetNodeOrNull("Bricks");
+        if (bricksRoot != null)
         {
-            view.QueueFree();
+            foreach (var child in bricksRoot.GetChildren())
+            {
+                if (child is BrickView view)
+                {
+                    view.QueueFree();
+                }
+                else if (child is StaticBody2D)
+                {
+                    child.QueueFree(); // 场景预置砖
+                }
+            }
         }
 
         _brickViews.Clear();
-
-        foreach (var brick in BrickField.Bricks.ToArray())
-        {
-            BrickField.HitBrick(brick, 999);
-        }
     }
 
     /// <summary>
@@ -209,7 +242,7 @@ public partial class GameRoot : Node2D
     }
 
     /// <summary>
-    ///     球落底：扣命、广播事件并处理重挂/游戏结束。
+    ///     球落底：扣命、广播并处理重挂/游戏结束。
     /// </summary>
     private void OnBallLost()
     {
@@ -238,20 +271,19 @@ public partial class GameRoot : Node2D
     }
 
     /// <summary>
-    ///     砖被球碰到（未摧毁）：补充能量并广播。
+    ///     砖被球碰到（未摧毁）：补能量与触碰分并广播。
     /// </summary>
     public void OnBrickHit(BrickType visualType)
     {
         Run.OnBrickHit();
         Score.OnBrickTouched();
-        this.SendEvent(ChannelConstants.Gameplay,
-            new ScoreChangedEvent(Score.Score, Score.Combo));
+        this.SendEvent(ChannelConstants.Gameplay, new ScoreChangedEvent(Score.Score, Score.Combo));
         this.SendEvent(ChannelConstants.Gameplay,
             new EnergyChangedEvent(Run.Energy, Run.Energy >= RunState.MaxEnergy));
     }
 
     /// <summary>
-    ///     砖被摧毁：计分、统计清场并广播。
+    ///     砖被摧毁：计分、碎裂表现、清场判断并广播。
     /// </summary>
     public void OnBrickDestroyed(BrickView view, IReadOnlyList<BrickDestroyedResult> results)
     {
@@ -261,7 +293,6 @@ public partial class GameRoot : Node2D
             _log.Debug($"砖摧毁 {result.Brick.Type}（{result.Reason}）");
         }
 
-        // 表现：碎裂粒子 + 音效；爆炸砖源强化
         foreach (var result in results)
         {
             BurstDebris(view.GlobalPosition, new Color(0.85f, 0.5f, 0.2f));
@@ -290,7 +321,7 @@ public partial class GameRoot : Node2D
     }
 
     /// <summary>
-    ///     记录 bump 判定结果并广播（结算统计由订阅方维护或本地汇总）。
+    ///     记录 bump 判定并广播。
     /// </summary>
     public void OnBumpJudged(BumpGrade grade)
     {
@@ -304,7 +335,15 @@ public partial class GameRoot : Node2D
     }
 
     /// <summary>
-    ///     生成砖锚点网格（对照原版 SpawnPos 布局：8 列 × 3 行）。
+    ///     计算当前对局结算结果。
+    /// </summary>
+    public StageResult BuildStageResult()
+    {
+        return new StageResult(0, 0, 0, Ball?.Bounces ?? 0, Score.Score);
+    }
+
+    /// <summary>
+    ///     回退锚点网格（场景无 SpawnPos 时）。
     /// </summary>
     private static Vec2[] BuildSpawnGrid()
     {
@@ -323,15 +362,14 @@ public partial class GameRoot : Node2D
         return positions.ToArray();
     }
 
+    private static Vec2 ToVec(Vector2 v) => new(v.X, v.Y);
+
     private static Vector2 ToGodot(Vec2 v) => new(v.X, v.Y);
-}
 
-// ==== juice 相机序列（移植 game_juice_breakout_4 慢动作/聚焦/回位编排） ====
+    // ==== juice：相机序列 + 碎裂粒子 ====
 
-public partial class GameRoot
-{
     /// <summary>
-    ///     关卡清除序列：慢动作聚焦球后回位（time_scale + 相机 tween 编排）。
+    ///     关卡清除序列：慢动作聚焦球后回位。
     /// </summary>
     private async void PlayLevelClearSequence()
     {
@@ -380,7 +418,6 @@ public partial class GameRoot
         focus.Parallel().TweenProperty(_camera, "zoom", new Vector2(zoomTo, zoomTo), 0.3);
         await ToSignal(focus, Tween.SignalName.Finished);
 
-        // 停顿（真实时间）
         await ToSignal(GetTree().CreateTimer(0.4), SceneTreeTimer.SignalName.Timeout);
 
         global::Godot.Engine.TimeScale = 1.0f;
@@ -390,17 +427,10 @@ public partial class GameRoot
         restore.Parallel().TweenProperty(_camera, "zoom", originalZoom, 0.4);
         await ToSignal(restore, Tween.SignalName.Finished);
     }
-}
 
-// ==== 简易碎裂粒子（Sprite 缩放淡出模拟爆炸，替代 GPUParticles 预制） ====
-
-public partial class GameRoot
-{
     /// <summary>
-    ///     在位置生成一次碎裂视觉：若干碎片向外扩散并淡出。
+    ///     在位置生成一次碎裂视觉。
     /// </summary>
-    /// <param name="position">爆炸中心。</param>
-    /// <param name="baseColor">碎片颜色。</param>
     public void BurstDebris(Vector2 position, Color baseColor)
     {
         for (var i = 0; i < 8; i++)

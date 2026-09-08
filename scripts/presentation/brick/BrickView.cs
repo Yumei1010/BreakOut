@@ -42,10 +42,11 @@ public partial class BrickView : StaticBody2D
     /// </summary>
     public override void _Ready()
     {
-        _root = GetParent<GameRoot>();
+        _root = FindGameRoot();
         if (_root == null)
         {
-            _root = GetTree().CurrentScene?.GetNodeOrNull<GameRoot>(".");
+            GD.PushError("BrickView 未找到 GameRoot");
+            return;
         }
 
         ResolveVisualNodes();
@@ -174,5 +175,21 @@ public partial class BrickView : StaticBody2D
     public void PlayHitBounce()
     {
         GetNodeOrNull<AnimationPlayer>("AnimationPlayer")?.Play("bounce");
+    }
+
+    private GameRoot FindGameRoot()
+    {
+        var node = GetParent();
+        while (node != null)
+        {
+            if (node is GameRoot root)
+            {
+                return root;
+            }
+
+            node = node.GetParent();
+        }
+
+        return null;
     }
 }

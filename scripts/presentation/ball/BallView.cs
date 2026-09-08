@@ -51,13 +51,27 @@ public partial class BallView : CharacterBody2D
     public int Bounces { get; private set; }
 
     /// <summary>
-    ///     初始化视图：引用场景子节点并吸附到板。
+    ///     初始化视图：引用场景子节点（吸附由 GameRoot 组装完成后显式编排）。
     /// </summary>
     public override void _Ready()
     {
-        _root = GetParent<GameRoot>();
-        _paddle = _root.Paddle!;
+        _root = FindGameRoot();
+        if (_root == null)
+        {
+            GD.PushError("BallView 未找到 GameRoot");
+            return;
+        }
+
         ResolveVisualNodes();
+    }
+
+    /// <summary>
+    ///     场景组装完成后初始化（由 GameRoot 显式调用，规避场景实例化顺序问题）。
+    /// </summary>
+    /// <param name="paddle">板视图。</param>
+    public void OnSceneReady(PaddleView paddle)
+    {
+        _paddle = paddle;
         AttachToPaddle();
     }
 
@@ -104,9 +118,9 @@ public partial class BallView : CharacterBody2D
     /// </summary>
     public override void _PhysicsProcess(double delta)
     {
-        if (Dead || !CanMove)
+        if (_paddle == null || Dead || !CanMove)
         {
-            return;
+            return; // OnSceneReady 前冻结
         }
 
         if (_hitstopFrames > 0)
@@ -266,4 +280,20 @@ public partial class BallView : CharacterBody2D
     private static Vec2 ToVec(Vector2 v) => new(v.X, v.Y);
 
     private static Vector2 ToGodot(Vec2 v) => new(v.X, v.Y);
+
+    private GameRoot FindGameRoot()
+    {
+        var node = GetParent();
+        while (node != null)
+        {
+            if (node is GameRoot root)
+            {
+                return root;
+            }
+
+            node = node.GetParent();
+        }
+
+        return null;
+    }
 }

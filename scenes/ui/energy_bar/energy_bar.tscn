@@ -1,8 +1,7 @@
 [gd_scene load_steps=12 format=3 uid="uid://c48m66isx4utm"]
 
-[ext_resource type="Script" path="res://scenes/ui/energy_bar/scripts/energy_bar.gd" id="1"]
-[ext_resource type="Texture2D" uid="uid://clkxun12gq2gv" path="res://scenes/ui/shared/visuals/Container.png" id="2"]
-[ext_resource type="Texture2D" uid="uid://doqriorw2lonx" path="res://scenes/ball/visuals/ball.png" id="3_i66wm"]
+[ext_resource type="Texture2D" uid="uid://detnlim5hn6js" path="res://scenes/ui/shared/visuals/Container.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://cjqq3huxrcfne" path="res://scenes/ball/visuals/ball.png" id="3_i66wm"]
 [ext_resource type="Script" path="res://addons/shaker/shaker.gd" id="4_sclbk"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_531ku"]
@@ -59,7 +58,6 @@ layout_mode = 3
 anchors_preset = 0
 offset_right = 111.0
 offset_bottom = 256.0
-script = ExtResource("1")
 
 [node name="TextureRect" type="TextureRect" parent="."]
 modulate = Color(0.0980392, 0.0980392, 0.0980392, 1)
