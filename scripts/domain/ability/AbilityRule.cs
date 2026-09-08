@@ -72,6 +72,16 @@ public sealed class AbilityRule
     }
 
     /// <summary>
+    ///     尝试磁力召回：免费能力，仅受冷却限制。
+    /// </summary>
+    /// <param name="canUse">冷却是否就绪。</param>
+    /// <returns>触发结果。</returns>
+    public static AbilityResult TryMagnet(bool canUse)
+    {
+        return canUse ? AbilityResult.Success : AbilityResult.NotReady;
+    }
+
+    /// <summary>
     ///     尝试吸引球：按当前帧时长消耗能量，返回消耗是否可行。
     /// </summary>
     /// <param name="run">对局状态。</param>

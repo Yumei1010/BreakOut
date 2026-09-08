@@ -95,7 +95,8 @@ public partial class BrickView : StaticBody2D
         }
 
         // 背景：普通砖 Full 底 / 特效砖 Border 底（尺寸由资产决定，仅定缩放）
-        var isEffect = BrickSpecs.IsEnergy(Data.Type) || BrickSpecs.IsExplosive(Data.Type);
+        var isEffect = BrickSpecs.IsEnergy(Data.Type) || BrickSpecs.IsExplosive(Data.Type)
+                       || Data.Type is BrickType.Metal;
         var isLong = Data.Size == BrickSize.Long;
         var bgScale = isLong ? new Vector2(1.0f, 1.0f) : new Vector2(0.55f, 1.0f);
         _bgSprite.Texture = isEffect
@@ -103,18 +104,10 @@ public partial class BrickView : StaticBody2D
             : (isLong ? GameTextures.BrickLongFull : GameTextures.BrickSmallFull);
         _bgSprite.Scale = bgScale;
 
-        // 前景：按当前血量对应的视觉类型选图标
-        _iconSprite.Texture = Data.Type switch
-        {
-            BrickType.Explosive => GameTextures.BrickBomb,
-            BrickType.Energy => GameTextures.BrickEnergy,
-            _ => Data.VisualType switch
-            {
-                BrickType.Three => GameTextures.BrickThree,
-                BrickType.Two => GameTextures.BrickTwo,
-                _ => GameTextures.BrickOne
-            }
-        };
+        // 前景：按类型选图标；Metal/Rainbow 复用基础图标 + 色调区分
+        var (iconTexture, tint) = SelectIcon();
+        _iconSprite.Texture = iconTexture;
+        _iconSprite.SelfModulate = tint;
         _iconSprite.Scale = bgScale;
 
         // 碰撞尺寸：长砖 192×64 / 短砖 96×64
@@ -122,6 +115,31 @@ public partial class BrickView : StaticBody2D
         {
             rect.Size = isLong ? new Vector2(192, 64) : new Vector2(96, 64);
         }
+    }
+
+    /// <summary>
+    ///     选择图标纹理与色调（Metal 金属灰 / Rainbow 随视觉循环变色）。
+    /// </summary>
+    private (Texture2D, Color) SelectIcon()
+    {
+        return Data.Type switch
+        {
+            BrickType.Explosive => (GameTextures.BrickBomb, Colors.White),
+            BrickType.Energy => (GameTextures.BrickEnergy, Colors.White),
+            BrickType.Metal => (GameTextures.BrickTwo, new Color(0.75f, 0.75f, 0.8f)),
+            BrickType.Rainbow => Data.VisualType switch
+            {
+                BrickType.Two => (GameTextures.BrickTwo, new Color(1f, 0.4f, 0.4f)),
+                BrickType.Three => (GameTextures.BrickThree, new Color(0.4f, 1f, 0.4f)),
+                _ => (GameTextures.BrickOne, new Color(0.4f, 0.6f, 1f))
+            },
+            _ => Data.VisualType switch
+            {
+                BrickType.Three => (GameTextures.BrickThree, Colors.White),
+                BrickType.Two => (GameTextures.BrickTwo, Colors.White),
+                _ => (GameTextures.BrickOne, Colors.White)
+            }
+        };
     }
 
     /// <summary>

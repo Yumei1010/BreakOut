@@ -149,6 +149,12 @@ public sealed class BrickField
             }
 
             var target = pair.Key;
+            if (target.ImmuneToChain)
+            {
+                // 金属砖免疫连锁，但仍可能被后续直接命中摧毁
+                continue;
+            }
+
             if (target.Damage(ExplosionDamage))
             {
                 ResolveDestroy(target, BrickDestroyReason.ChainExplosion, onEnergyBrickDestroyed, results);

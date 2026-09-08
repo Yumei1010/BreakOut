@@ -72,3 +72,26 @@ public class AbilityRuleTests
         Assert.Equal(2f, run.Energy);
     }
 }
+
+/// <summary>
+///     Magnet 新能力测试（免费召回 + 冷却）。
+/// </summary>
+public class MagnetAbilityTests
+{
+    [Fact]
+    public void TryMagnet_冷却中不可用()
+    {
+        Assert.Equal(AbilityResult.NotReady, AbilityRule.TryMagnet(canUse: false));
+        Assert.Equal(AbilityResult.Success, AbilityRule.TryMagnet(canUse: true));
+    }
+
+    [Fact]
+    public void TryMagnet_免费不消耗能量()
+    {
+        var run = new RunState();
+        run.AddEnergy(50f);
+
+        Assert.Equal(AbilityResult.Success, AbilityRule.TryMagnet(canUse: true));
+        Assert.Equal(50f, run.Energy); // 免费能力能量不变
+    }
+}

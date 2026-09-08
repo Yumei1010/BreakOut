@@ -35,12 +35,15 @@ public class LevelTests
         }
 
         double RatioOf(BrickType t) => (double)buckets.GetValueOrDefault(t) / samples;
-        // 原版比例 ±2% 容差
-        Assert.InRange(RatioOf(BrickType.Explosive), 0.03, 0.07);
-        Assert.InRange(RatioOf(BrickType.Energy), 0.08, 0.12);
-        Assert.InRange(RatioOf(BrickType.Three), 0.18, 0.22);
-        Assert.InRange(RatioOf(BrickType.Two), 0.28, 0.32);
-        Assert.InRange(RatioOf(BrickType.One), 0.33, 0.37);
+        // 权重驱动后总权重 110：基础砖比例按 Catalog 权重折算 ±1.5% 容差
+        Assert.InRange(RatioOf(BrickType.Explosive), 5f / 110 - 0.015, 5f / 110 + 0.015);
+        Assert.InRange(RatioOf(BrickType.Energy), 10f / 110 - 0.02, 10f / 110 + 0.02);
+        Assert.InRange(RatioOf(BrickType.Three), 20f / 110 - 0.02, 20f / 110 + 0.02);
+        Assert.InRange(RatioOf(BrickType.Two), 30f / 110 - 0.02, 30f / 110 + 0.02);
+        Assert.InRange(RatioOf(BrickType.One), 35f / 110 - 0.02, 35f / 110 + 0.02);
+        // 拓展砖种按注册权重出现
+        Assert.InRange(RatioOf(BrickType.Metal), 6f / 110 - 0.015, 6f / 110 + 0.015);
+        Assert.InRange(RatioOf(BrickType.Rainbow), 4f / 110 - 0.015, 4f / 110 + 0.015);
     }
 
     [Fact]

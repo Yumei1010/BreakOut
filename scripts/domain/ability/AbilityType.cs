@@ -18,5 +18,10 @@ public enum AbilityType
     /// <summary>
     ///     吸引：按住时持续消耗能量将球拉向板。
     /// </summary>
-    Attract
+    Attract,
+
+    /// <summary>
+    ///     磁力：新能力示例——短暂将球吸附回板发射点（带冷却，免费）。
+    /// </summary>
+    Magnet
 }

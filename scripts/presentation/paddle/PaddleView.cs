@@ -27,6 +27,7 @@ public partial class PaddleView : CharacterBody2D
 
     private GameRoot _root = null!;
     private bool _dashCooldownReady = true;
+    private bool _magnetCooldownReady = true;
 
     /// <summary>
     ///     获取发射点（球吸附位置）。
@@ -97,6 +98,22 @@ public partial class PaddleView : CharacterBody2D
             {
                 _root.Run.SpendEnergy(RunState.MaxEnergy);
                 _log.Debug("激光发射");
+            }
+        }
+
+        // Magnet（新能力）：按 attract 键召回球回板（免能量）
+        if (Input.IsActionJustPressed("attract"))
+        {
+            if (AbilityRule.TryMagnet(_magnetCooldownReady) != AbilityResult.Success)
+            {
+                _log.Debug("Magnet 冷却中");
+            }
+            else if (_root.Ball is { Dead: false } ball)
+            {
+                _magnetCooldownReady = false;
+                GetTree().CreateTimer(2.0).Timeout += () => _magnetCooldownReady = true;
+                ball.AttachToPaddle();
+                _log.Debug("Magnet 召回球");
             }
         }
     }

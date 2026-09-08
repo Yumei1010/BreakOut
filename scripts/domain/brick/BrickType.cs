@@ -28,5 +28,15 @@ public enum BrickType
     /// <summary>
     ///     能量砖：摧毁时一次性补充大量能量。
     /// </summary>
-    Energy
+    Energy,
+
+    /// <summary>
+    ///     金属砖：高血量且免疫连锁爆炸（拓展砖种）。
+    /// </summary>
+    Metal,
+
+    /// <summary>
+    ///     彩虹砖：每次受击变换颜色，摧毁获得高连击分（拓展砖种）。
+    /// </summary>
+    Rainbow
 }
