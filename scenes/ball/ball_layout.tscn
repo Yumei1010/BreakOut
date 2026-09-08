@@ -1,4 +1,6 @@
-[gd_scene format=3 uid="uid://cvg0cmgxvdkk0"]
+[gd_scene load_steps=6 format=3 uid="uid://cvg0cmgxvdkk0"]
+
+[ext_resource type="Script" uid="uid://1kobawbexdb3" path="res://scripts/presentation/ball/BallView.cs" id="ballview"]
 
 [ext_resource type="Texture2D" uid="uid://cjqq3huxrcfne" path="res://scenes/ball/visuals/ball.png" id="1"]
 [ext_resource type="Script" path="res://addons/trail_2d/trail_2d.gd" id="3_io5yy"]
@@ -172,8 +174,7 @@ _data = {
 }
 
 [node name="Ball" type="CharacterBody2D" groups=["Ball"]]
-speed = 700.0
-max_speed_color = Color(1, 0, 0.203922, 1)
+script = ExtResource("ballview")
 
 [node name="Trail2D" type="Line2D" parent="."]
 width = 25.0

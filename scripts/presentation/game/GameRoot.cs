@@ -133,8 +133,12 @@ public partial class GameRoot : Node2D
         AddChild(Sfx);
 
         Paddle = new PaddleView { Position = new Vector2(960, 990) };
-        Ball = new BallView { Position = new Vector2(960, 900) };
         AddChild(Paddle);
+
+        // 球：实例化布局场景（ball_layout.tscn 挂 BallView.cs）
+        var ballScene = GD.Load<PackedScene>("res://scenes/ball/ball_layout.tscn");
+        Ball = ballScene.Instantiate<BallView>();
+        Ball.Position = new Vector2(960, 900);
         AddChild(Ball);
 
         var hudLayer = new CanvasLayer { Name = "HudLayer" };

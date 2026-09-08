@@ -4,7 +4,6 @@ using GFramework.Core.SourceGenerators.Abstractions.Rule;
 using BreakOut.scripts.domain.ball;
 using BreakOut.scripts.domain.bump;
 using BreakOut.scripts.domain.common;
-using BreakOut.scripts.presentation.assets;
 using BreakOut.scripts.presentation.brick;
 using BreakOut.scripts.presentation.game;
 using BreakOut.scripts.presentation.paddle;
@@ -12,13 +11,11 @@ using BreakOut.scripts.presentation.paddle;
 namespace BreakOut.scripts.presentation.ball;
 
 /// <summary>
-///     球视图（薄壳）：Godot 物理载体，把碰撞结果转发给 domain 规则后回写速度与表现。
+///     球视图（薄壳）：加载 ball_layout 场景骨架，把碰撞结果转发给 domain 规则后回写速度与表现。
 /// </summary>
 /// <remarks>
-///     移植自 game_juice_breakout_4 的 ball.gd 碰撞分派：
-///     碰板 → 顶部/侧面 × 移动/静止 细分后调 domain BallMotion 计算反弹速度；
-///     碰砖 → 转发 BrickField 判定并触发得分事件。
-///     速度/增益/角度等全部数值出自 domain 常量，本类不写魔法数。
+///     挂载于 scenes/ball/ball_layout.tscn 根（CharacterBody2D），子节点（Sprite/粒子/拖尾/动画/音效）由布局场景提供。
+///     碰撞分派：碰板 → 顶部/侧面 × 移动/静止细分调 domain BallMotion；碰砖 → BrickField 判定。
 /// </remarks>
 [Log]
 [ContextAware]
@@ -29,10 +26,14 @@ public partial class BallView : CharacterBody2D
     private GameRoot _root = null!;
     private PaddleView _paddle = null!;
     private Sprite2D _sprite = null!;
+    private GpuParticles2D _speedParticles = null!;
+    private GpuParticles2D _appearParticles = null!;
+    private Line2D _velocityLine = null!;
     private bool _attached;
     private float _boostFactor = BumpJudge.NoBoost;
     private int _framesSincePaddleCollision;
     private int _hitstopFrames;
+    private bool _visualReady;
 
     /// <summary>
     ///     获取或设置是否已死亡（掉出底部）。
@@ -40,7 +41,7 @@ public partial class BallView : CharacterBody2D
     public bool Dead { get; set; }
 
     /// <summary>
-    ///     获取或设置是否可移动（false 时冻结，如过关/暂停）。
+    ///     获取或设置是否可移动（false 时冻结）。
     /// </summary>
     public bool CanMove { get; set; } = true;
 
@@ -50,31 +51,52 @@ public partial class BallView : CharacterBody2D
     public int Bounces { get; private set; }
 
     /// <summary>
-    ///     初始化视图：取引用并吸附到板。
+    ///     初始化视图：引用场景子节点并吸附到板。
     /// </summary>
     public override void _Ready()
     {
         _root = GetParent<GameRoot>();
         _paddle = _root.Paddle!;
-        BuildVisual();
+        ResolveVisualNodes();
         AttachToPaddle();
+    }
+
+    /// <summary>
+    ///     解析布局场景提供的视觉子节点。
+    /// </summary>
+    private void ResolveVisualNodes()
+    {
+        _sprite = GetNodeOrNull<Sprite2D>("Sprite2D");
+        _speedParticles = GetNodeOrNull<GpuParticles2D>("SpeedParticles");
+        _appearParticles = GetNodeOrNull<GpuParticles2D>("AppearParticles");
+        _velocityLine = GetNodeOrNull<Line2D>("VelocityLine");
+        _visualReady = _sprite != null;
     }
 
     /// <inheritdoc />
     public override void _Process(double delta)
     {
-        // 速度反馈：随速度水平拉伸/变色（原版 scale/color_based_on_velocity）
-        if (_sprite == null || Dead)
+        if (!_visualReady || Dead)
         {
             return;
         }
 
+        // 速度反馈：随速度拉伸/变色/旋转
         var speed = Velocity.Length();
         var t = Mathf.Clamp((speed - BallMotion.Speed) / (BallMotion.MaxSpeed - BallMotion.Speed), 0f, 1f);
-        _sprite.Scale = new Vector2(0.35f + t * 0.15f, 0.35f - t * 0.08f);
-        var tint = new Color(1f, 1f - t * 0.5f, 1f - t * 0.7f);
-        _sprite.SelfModulate = tint;
+        _sprite.Scale = new Vector2(0.375f + t * 0.12f, 0.375f - t * 0.06f);
         _sprite.Rotation = Velocity.Angle();
+        _sprite.SelfModulate = new Color(1f, 1f - t * 0.5f, 1f - t * 0.7f);
+
+        if (_velocityLine != null)
+        {
+            _velocityLine.Visible = speed > BallMotion.Speed * 1.2f;
+        }
+
+        if (_speedParticles != null)
+        {
+            _speedParticles.Emitting = speed > BallMotion.Speed + 100f;
+        }
     }
 
     /// <summary>
@@ -87,7 +109,6 @@ public partial class BallView : CharacterBody2D
             return;
         }
 
-        // Hitstop：冻结若干物理帧
         if (_hitstopFrames > 0)
         {
             _hitstopFrames -= 1;
@@ -96,7 +117,6 @@ public partial class BallView : CharacterBody2D
 
         _framesSincePaddleCollision += 1;
 
-        // 速度向基准收敛（domain 数学）
         Velocity = ToGodot(BallMotion.DecayToward(ToVec(Velocity), BallMotion.Speed, (float)delta));
 
         if (_attached)
@@ -137,26 +157,22 @@ public partial class BallView : CharacterBody2D
 
         var normal = collision.GetNormal();
 
-        // 顶部碰撞（法线朝上）最常见
         if (normal.Dot(Vector2.Up) > 0f)
         {
             var offsetX = collision.GetPosition().X - paddle.GlobalPosition.X;
             if (paddle.Velocity.Length() > 0f)
             {
-                // 板在移动：吸收板速并翻转
                 Velocity = ToGodot(BallMotion.BounceOffMovingPaddle(
                     ToVec(Velocity), ToVec(paddle.Velocity), _boostFactor));
             }
             else
             {
-                // 板静止：按碰撞点偏移倾斜法线
                 Velocity = ToGodot(BallMotion.BounceOffStaticPaddle(
                     ToVec(Velocity), offsetX, _boostFactor));
             }
         }
         else
         {
-            // 侧面碰撞：保底垂直反弹
             Velocity = Velocity.Bounce(normal);
             Velocity = ToGodot(ToVec(Velocity) * (BumpJudge.NoBoost + BallMotion.BounceBaseBoost));
         }
@@ -166,13 +182,12 @@ public partial class BallView : CharacterBody2D
     }
 
     /// <summary>
-    ///     处理与砖的碰撞：转发 domain 判定并触发得分。
+    ///     处理与砖的碰撞。
     /// </summary>
     private void HandleBrickCollision(BrickView brick, Vector2 normal, Vector2 velocityBeforeCollision)
     {
         if (brick.IsEnergyOrExplosive)
         {
-            // 能量/爆炸砖：不反弹直接穿过（保留原版手感），强反馈
             Velocity = velocityBeforeCollision;
             _root.Sfx.PlayStrongHit();
             _root.Shake.Shake(1.0f, 25f, 20f);
@@ -189,9 +204,8 @@ public partial class BallView : CharacterBody2D
     }
 
     /// <summary>
-    ///     尝试 bump 击球增益（玩家在球离板后按 bump 提升）。
+    ///     尝试 bump 击球增益。
     /// </summary>
-    /// <param name="paddle">板视图。</param>
     public void TryBump(PaddleView paddle)
     {
         var distance = GlobalPosition.DistanceTo(paddle.GlobalPosition) - 96f;
@@ -202,13 +216,14 @@ public partial class BallView : CharacterBody2D
     }
 
     /// <summary>
-    ///     发球：解除吸附，赋予向上初速。
+    ///     发球。
     /// </summary>
     public void Launch()
     {
         _attached = false;
         Velocity = new Vector2(0, -BallMotion.Speed);
         _boostFactor = BumpJudge.NoBoost;
+        PlayAppear();
     }
 
     /// <summary>
@@ -223,7 +238,7 @@ public partial class BallView : CharacterBody2D
     }
 
     /// <summary>
-    ///     球死亡（掉出底部）。
+    ///     球死亡。
     /// </summary>
     public void Die()
     {
@@ -241,37 +256,14 @@ public partial class BallView : CharacterBody2D
     }
 
     /// <summary>
-    ///     构建视觉与碰撞（球纹理 + 圆形碰撞）。
+    ///     出现粒子表现（发球/重生时）。
     /// </summary>
-    private void BuildVisual()
+    public void PlayAppear()
     {
-        _sprite = new Sprite2D
-        {
-            Texture = GameTextures.Ball,
-            Scale = new Vector2(0.35f, 0.35f)
-        };
-        AddChild(_sprite);
-
-        var shape = new CollisionShape2D
-        {
-            Shape = new CircleShape2D { Radius = Radius }
-        };
-        AddChild(shape);
-        AddToGroup("Ball");
+        _appearParticles?.Restart();
     }
 
-    /// <inheritdoc />
-    public override void _Draw()
-    {
-    }
-
-    /// <summary>
-    ///     转换 Godot 向量为 domain 向量。
-    /// </summary>
     private static Vec2 ToVec(Vector2 v) => new(v.X, v.Y);
 
-    /// <summary>
-    ///     转换 domain 向量为 Godot 向量。
-    /// </summary>
     private static Vector2 ToGodot(Vec2 v) => new(v.X, v.Y);
 }
