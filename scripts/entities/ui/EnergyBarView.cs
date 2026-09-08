@@ -8,7 +8,7 @@ using BreakOut.scripts.cqrs.run.@event;
 using BreakOut.scripts.rules.run;
 using BreakOut.scripts.utility.@event;
 
-namespace BreakOut.scripts.presentation.ui;
+namespace BreakOut.scripts.entities.ui;
 
 /// <summary>
 ///     能量条视图：挂 energy_bar.tscn 根，订阅 EnergyChangedEvent 刷新原版 UI。

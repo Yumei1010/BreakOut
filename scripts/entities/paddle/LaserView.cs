@@ -1,10 +1,10 @@
 using Godot;
 using GFramework.Core.SourceGenerators.Abstractions.Logging;
 using GFramework.Core.SourceGenerators.Abstractions.Rule;
-using BreakOut.scripts.presentation.brick;
-using BreakOut.scripts.presentation.game;
+using BreakOut.scripts.entities.brick;
+using BreakOut.scripts.entities.game;
 
-namespace BreakOut.scripts.presentation.paddle;
+namespace BreakOut.scripts.entities.paddle;
 
 /// <summary>
 ///     激光视图：挂 laser.tscn，Paddle 满能量时 shoot——显形并伤害 Area2D 内砖（原版 laser.gd）。

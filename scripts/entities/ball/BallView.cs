@@ -4,11 +4,11 @@ using GFramework.Core.SourceGenerators.Abstractions.Rule;
 using BreakOut.scripts.rules.ball;
 using BreakOut.scripts.rules.bump;
 using BreakOut.scripts.rules.common;
-using BreakOut.scripts.presentation.brick;
-using BreakOut.scripts.presentation.game;
-using BreakOut.scripts.presentation.paddle;
+using BreakOut.scripts.entities.brick;
+using BreakOut.scripts.entities.game;
+using BreakOut.scripts.entities.paddle;
 
-namespace BreakOut.scripts.presentation.ball;
+namespace BreakOut.scripts.entities.ball;
 
 /// <summary>
 ///     球视图（薄壳）：加载 ball 场景骨架，把碰撞结果转发给 domain 规则后回写速度与表现。

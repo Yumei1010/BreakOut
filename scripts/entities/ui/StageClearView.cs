@@ -1,9 +1,9 @@
 using Godot;
 using GFramework.Core.SourceGenerators.Abstractions.Logging;
 using GFramework.Core.SourceGenerators.Abstractions.Rule;
-using BreakOut.scripts.presentation.game;
+using BreakOut.scripts.entities.game;
 
-namespace BreakOut.scripts.presentation.ui;
+namespace BreakOut.scripts.entities.ui;
 
 /// <summary>
 ///     过关结算面板：挂 stage_clear.tscn，展示统计并进入下一关（原版 stage_clear.gd 简化）。

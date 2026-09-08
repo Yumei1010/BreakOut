@@ -1,6 +1,6 @@
 using Godot;
 
-namespace BreakOut.scripts.presentation.ui;
+namespace BreakOut.scripts.entities.ui;
 
 /// <summary>
 ///     终极就绪提示：挂 ultimate_ready.tscn，弹性放大后自动消失（原版 ultimate_ready.gd）。

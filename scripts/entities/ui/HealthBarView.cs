@@ -8,7 +8,7 @@ using BreakOut.scripts.cqrs.run.@event;
 using BreakOut.scripts.presentation.assets;
 using BreakOut.scripts.utility.@event;
 
-namespace BreakOut.scripts.presentation.ui;
+namespace BreakOut.scripts.entities.ui;
 
 /// <summary>
 ///     生命条视图：挂 health.tscn 根，订阅 BallLostEvent 按剩余生命切换心形纹理（原版 health.gd）。

@@ -3,9 +3,9 @@ using GFramework.Core.SourceGenerators.Abstractions.Logging;
 using GFramework.Core.SourceGenerators.Abstractions.Rule;
 using BreakOut.scripts.rules.brick;
 using BreakOut.scripts.presentation.assets;
-using BreakOut.scripts.presentation.game;
+using BreakOut.scripts.entities.game;
 
-namespace BreakOut.scripts.presentation.brick;
+namespace BreakOut.scripts.entities.brick;
 
 /// <summary>
 ///     砖视图（薄壳）：加载 brick 场景骨架，绑定 domain Brick 并转发受击。

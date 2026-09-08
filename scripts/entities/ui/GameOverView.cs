@@ -2,7 +2,7 @@ using Godot;
 using GFramework.Core.SourceGenerators.Abstractions.Logging;
 using GFramework.Core.SourceGenerators.Abstractions.Rule;
 
-namespace BreakOut.scripts.presentation.ui;
+namespace BreakOut.scripts.entities.ui;
 
 /// <summary>
 ///     游戏结束面板：挂 game_over.tscn，Retry 重开 / Quit 退出（原版 game_over.gd）。

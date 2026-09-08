@@ -4,7 +4,7 @@ using Godot;
 using BreakOut.scripts.rules.brick;
 using BreakOut.scripts.rules.common;
 using BreakOut.scripts.rules.level;
-using BreakOut.scripts.presentation.brick;
+using BreakOut.scripts.entities.brick;
 
 namespace BreakOut.scripts.system.brick;
 

@@ -11,7 +11,7 @@
 [ext_resource type="Texture2D" uid="uid://cjqq3huxrcfne" path="res://assets/texture/ball/ball.png" id="8_a1usc"]
 [ext_resource type="Texture2D" uid="uid://d2lp3bgyc3eje" path="res://assets/texture/game/pattern.png" id="9"]
 [ext_resource type="Shader" uid="uid://ctd8xquxy2fm5" path="res://assets/shader/grayscale.gdshader" id="17_wq6rs"]
-[ext_resource type="Script" uid="uid://dehhmutvtlldg" path="res://scripts/presentation/game/GameRoot.cs" id="gameroot"]
+[ext_resource type="Script" uid="uid://dehhmutvtlldg" path="res://scripts/entities/game/GameRoot.cs" id="gameroot"]
 [ext_resource type="PackedScene" uid="uid://c48m66isx4utm" path="res://scenes/ui/energy_bar/energy_bar.tscn" id="ui_energy"]
 [ext_resource type="PackedScene" uid="uid://lc5lho6dqctj" path="res://scenes/ui/health/health.tscn" id="ui_health"]
 [ext_resource type="PackedScene" uid="uid://cn3a4bs7x53tq" path="res://scenes/ui/score/score.tscn" id="ui_score"]

@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cvg0cmgxvdkk0"]
 
-[ext_resource type="Script" uid="uid://1kobawbexdb3" path="res://scripts/presentation/ball/BallView.cs" id="ballview"]
+[ext_resource type="Script" uid="uid://1kobawbexdb3" path="res://scripts/entities/ball/BallView.cs" id="ballview"]
 
 [ext_resource type="Texture2D" uid="uid://cjqq3huxrcfne" path="res://assets/texture/ball/ball.png" id="1"]
 [ext_resource type="Script" path="res://addons/trail_2d/trail_2d.gd" id="3_io5yy"]

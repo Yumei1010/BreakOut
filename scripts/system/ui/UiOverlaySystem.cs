@@ -1,5 +1,5 @@
 using Godot;
-using BreakOut.scripts.presentation.ui;
+using BreakOut.scripts.entities.ui;
 using BreakOut.scripts.rules.bump;
 
 namespace BreakOut.scripts.system.ui;

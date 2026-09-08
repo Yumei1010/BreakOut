@@ -1,6 +1,6 @@
 [gd_scene load_steps=15 format=3 uid="uid://canp13qn2ffhd"]
 
-[ext_resource type="Script" uid="uid://cn2mqo3mel77e" path="res://scripts/presentation/ui/GameOverView.cs" id="view"]
+[ext_resource type="Script" uid="uid://cn2mqo3mel77e" path="res://scripts/entities/ui/GameOverView.cs" id="view"]
 
 [ext_resource type="FontFile" uid="uid://e6lyd63ocyd8" path="res://shared/fonts/aldo_the_apache/AldotheApache.ttf" id="1"]
 [ext_resource type="Theme" uid="uid://8wej1kve5gix" path="res://scenes/ui/shared/theme.tres" id="3_h2orf"]

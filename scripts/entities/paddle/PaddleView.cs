@@ -3,10 +3,10 @@ using GFramework.Core.SourceGenerators.Abstractions.Logging;
 using GFramework.Core.SourceGenerators.Abstractions.Rule;
 using BreakOut.scripts.rules.ability;
 using BreakOut.scripts.rules.run;
-using BreakOut.scripts.presentation.ball;
-using BreakOut.scripts.presentation.game;
+using BreakOut.scripts.entities.ball;
+using BreakOut.scripts.entities.game;
 
-namespace BreakOut.scripts.presentation.paddle;
+namespace BreakOut.scripts.entities.paddle;
 
 /// <summary>
 ///     板视图（薄壳）：加载 paddle 场景骨架，输入/动效转发，规则判定走 domain。

@@ -1,7 +1,7 @@
 using Godot;
 using BreakOut.scripts.rules.bump;
 
-namespace BreakOut.scripts.presentation.ui;
+namespace BreakOut.scripts.entities.ui;
 
 /// <summary>
 ///     Bump 判定飘字：挂 bump_timing.tscn，按类型设文本/颜色后弹性上浮淡出自毁。

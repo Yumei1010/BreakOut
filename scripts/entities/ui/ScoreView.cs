@@ -7,7 +7,7 @@ using BreakOut.scripts.constants;
 using BreakOut.scripts.cqrs.scoring.@event;
 using BreakOut.scripts.utility.@event;
 
-namespace BreakOut.scripts.presentation.ui;
+namespace BreakOut.scripts.entities.ui;
 
 /// <summary>
 ///     分数视图：挂 score.tscn 根，订阅 ScoreChangedEvent 刷新分数 Label（原版 score.gd）。

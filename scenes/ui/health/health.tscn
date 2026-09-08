@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://lc5lho6dqctj"]
 
-[ext_resource type="Script" uid="uid://drapyo78d4rgl" path="res://scripts/presentation/ui/HealthBarView.cs" id="view"]
+[ext_resource type="Script" uid="uid://drapyo78d4rgl" path="res://scripts/entities/ui/HealthBarView.cs" id="view"]
 
 [ext_resource type="Texture2D" uid="uid://du7fa513yg3n5" path="res://assets/texture/ui/HeartFull.png" id="1"]
 [ext_resource type="Texture2D" uid="uid://dmky5p3nl7ego" path="res://assets/texture/ui/Container.png" id="3"]

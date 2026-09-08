@@ -15,11 +15,11 @@ using BreakOut.scripts.rules.level;
 using BreakOut.scripts.rules.run;
 using BreakOut.scripts.rules.scoring;
 using BreakOut.scripts.presentation.assets;
-using BreakOut.scripts.presentation.ball;
-using BreakOut.scripts.presentation.brick;
+using BreakOut.scripts.entities.ball;
+using BreakOut.scripts.entities.brick;
 using BreakOut.scripts.presentation.effect;
-using BreakOut.scripts.presentation.paddle;
-using BreakOut.scripts.presentation.ui;
+using BreakOut.scripts.entities.paddle;
+using BreakOut.scripts.entities.ui;
 using BreakOut.scripts.system.brick;
 using BreakOut.scripts.system.effect;
 using BreakOut.scripts.system.level;
@@ -28,7 +28,7 @@ using BreakOut.scripts.system.scoring;
 using BreakOut.scripts.system.ui;
 using BreakOut.scripts.utility.@event;
 
-namespace BreakOut.scripts.presentation.game;
+namespace BreakOut.scripts.entities.game;
 
 /// <summary>
 ///     玩法场景根：挂载于 main(game).tscn 根，场景驱动——从场景读取 Paddle/Ball/相机/锚点。

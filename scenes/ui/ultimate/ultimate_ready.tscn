@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://addons/shaker/shaker.gd" id="shaker"]
 
-[ext_resource type="Script" uid="uid://bt6cbhkrloo1" path="res://scripts/presentation/ui/UltimateReadyView.cs" id="view"]
+[ext_resource type="Script" uid="uid://bt6cbhkrloo1" path="res://scripts/entities/ui/UltimateReadyView.cs" id="view"]
 
 
 [ext_resource type="FontFile" uid="uid://e6lyd63ocyd8" path="res://shared/fonts/aldo_the_apache/AldotheApache.ttf" id="1_3l6qb"]
