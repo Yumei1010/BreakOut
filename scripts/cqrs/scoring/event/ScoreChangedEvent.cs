@@ -1,4 +1,4 @@
-using BreakOut.scripts.domain.scoring;
+using BreakOut.scripts.rules.scoring;
 
 namespace BreakOut.scripts.cqrs.scoring.@event;
 

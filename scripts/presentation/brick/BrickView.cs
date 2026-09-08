@@ -1,7 +1,7 @@
 using Godot;
 using GFramework.Core.SourceGenerators.Abstractions.Logging;
 using GFramework.Core.SourceGenerators.Abstractions.Rule;
-using BreakOut.scripts.domain.brick;
+using BreakOut.scripts.rules.brick;
 using BreakOut.scripts.presentation.assets;
 using BreakOut.scripts.presentation.game;
 

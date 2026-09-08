@@ -1,8 +1,8 @@
 using Godot;
 using GFramework.Core.SourceGenerators.Abstractions.Logging;
 using GFramework.Core.SourceGenerators.Abstractions.Rule;
-using BreakOut.scripts.domain.ability;
-using BreakOut.scripts.domain.run;
+using BreakOut.scripts.rules.ability;
+using BreakOut.scripts.rules.run;
 using BreakOut.scripts.presentation.ball;
 using BreakOut.scripts.presentation.game;
 

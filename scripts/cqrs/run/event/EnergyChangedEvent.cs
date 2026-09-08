@@ -1,4 +1,4 @@
-using BreakOut.scripts.domain.run;
+using BreakOut.scripts.rules.run;
 
 namespace BreakOut.scripts.cqrs.run.@event;
 

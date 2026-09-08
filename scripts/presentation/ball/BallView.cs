@@ -1,9 +1,9 @@
 using Godot;
 using GFramework.Core.SourceGenerators.Abstractions.Logging;
 using GFramework.Core.SourceGenerators.Abstractions.Rule;
-using BreakOut.scripts.domain.ball;
-using BreakOut.scripts.domain.bump;
-using BreakOut.scripts.domain.common;
+using BreakOut.scripts.rules.ball;
+using BreakOut.scripts.rules.bump;
+using BreakOut.scripts.rules.common;
 using BreakOut.scripts.presentation.brick;
 using BreakOut.scripts.presentation.game;
 using BreakOut.scripts.presentation.paddle;
