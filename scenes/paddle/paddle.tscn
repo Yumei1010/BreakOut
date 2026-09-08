@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dyy7lp07carkr"]
 
-[ext_resource type="Script" uid="uid://hp5irq2l5x3n" path="res://scripts/entities/paddle/PaddleView.cs" id="paddleview"]
+[ext_resource type="Script" uid="uid://7gfrspcjmchx" path="res://scripts/entities/paddle/PaddleView.cs" id="paddleview"]
 
 [ext_resource type="PackedScene" uid="uid://bf0hn220saeh8" path="res://scenes/paddle/laser.tscn" id="2"]
 [ext_resource type="Texture2D" uid="uid://mv5dda55c7c7" path="res://assets/texture/paddle/Paddle.png" id="3"]

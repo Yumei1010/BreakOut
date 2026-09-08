@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://stcivysk52ie"]
 
-[ext_resource type="Script" uid="uid://bp308mxbqpfp1" path="res://scripts/entities/brick/BrickView.cs" id="brickview"]
+[ext_resource type="Script" uid="uid://pmxj40odsvrj" path="res://scripts/entities/brick/BrickView.cs" id="brickview"]
 
 [ext_resource type="Texture2D" uid="uid://bdr21iqh3scjq" path="res://assets/texture/brick/BlockSmallBorder.png" id="2_13k7k"]
 [ext_resource type="Texture2D" uid="uid://dtlir7m080xm8" path="res://assets/texture/brick/Bomb.png" id="3_tq0m8"]

@@ -1,6 +1,6 @@
 [gd_scene load_steps=11 format=3 uid="uid://b5uyful5m0wg5"]
 
-[ext_resource type="Script" uid="uid://bh1hj74875de6" path="res://scripts/entities/ui/StageClearView.cs" id="view"]
+[ext_resource type="Script" uid="uid://cyoocbtx5cb71" path="res://scripts/entities/ui/StageClearView.cs" id="view"]
 
 [ext_resource type="FontFile" uid="uid://e6lyd63ocyd8" path="res://shared/fonts/aldo_the_apache/AldotheApache.ttf" id="1"]
 [ext_resource type="Shader" path="res://assets/shader/blur.gdshader" id="2_tpdoi"]

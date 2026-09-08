@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bvva26qaaleve"]
 
-[ext_resource type="Script" uid="uid://dehhmutvtlldg" path="res://scripts/entities/game/GameRoot.cs" id="gameroot"]
+[ext_resource type="Script" uid="uid://bm162vys6jj4o" path="res://scripts/entities/game/GameRoot.cs" id="gameroot"]
 
 [ext_resource type="PackedScene" uid="uid://dyy7lp07carkr" path="res://scenes/paddle/paddle.tscn" id="1"]
 [ext_resource type="PackedScene" uid="uid://cvg0cmgxvdkk0" path="res://scenes/ball/ball.tscn" id="2"]
