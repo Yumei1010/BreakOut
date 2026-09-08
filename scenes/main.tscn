@@ -158,6 +158,9 @@ polygon = PackedVector2Array(106, 1189, -151, 1189, -153, -152, 2073, -150, 2070
 position = Vector2(960, 498)
 texture = ExtResource("7")
 
+[node name="Paddle" parent="." instance=ExtResource("1")]
+position = Vector2(960, 990)
+
 [node name="Ball" parent="." unique_id=962140182 instance=ExtResource("2")]
 position = Vector2(960, 912)
 
