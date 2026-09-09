@@ -40,3 +40,5 @@ addons/*
 # Pi agent memory
 .pi/
 __pycache__/
+# Obsidian (vault 本地配置)
+.obsidian/
